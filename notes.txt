@@ -1,0 +1,274 @@
+entities.lua mit Entity-Beschreibungen. Darin Entity-Component mit Component-Inheritance und "transzendenten" components, die sachen können, die selbst implementierte nicht können (Polygone zb.)
+
+---------------------------------------------------------
+Somewhere:
+(Button) Show Scene Window
+(Button) Show Console Window
+(Button) Show Object Widow
+
+(Window) Scene
+    (List) Entity types
+    (Button) Create Instance - Binds the Object to the mouse (movemode) upon creation
+    
+    (List) Objects -> editor.selected (eine list)
+    (Button) Remove Object - Spawns a Dialog
+    (Button) Up / (Button) Down
+    
+    (Label) Menu
+    (Button) New file - Fragt nach einem Pfad für den Spielordner. Dieser Ordner kann (sollte) nicht mehr verändert werden. Und fragt anschließend nach dem Pfad zur entities-Datei.
+            Es gibt keine Möglichkeit diese Pfade zu ändern, da damit alle relativen Pfade zu allen assets invalid werden würden.
+    (Button) Load 
+    (Button) Save / (Button) Save As
+    (Button) Set custom entities-file - Ist nur ein Pfad, eigene Inklusionen sind selbstversändlich möglich.
+    (Checkbox) Show CLI commands while hovering
+    
+    (Category) Core
+    (Checkbox) Show Grid
+    (Checkbox) Show Names
+    (Checkbox) Show Details
+    
+    Category für jedes global setting von jedem benutzten component
+    
+(Window) Console
+    output text field + input text field. Every CLI-command will be output here.
+
+(Window) Object
+    (Category) Core
+    (Checkbox) hidden
+    
+    Every component can specify a category in which the corresponding gui-elements will be placed
+    
+--- Code specifics
+Every entity specifies a list of components and their default property values
+
+Components:
+TransformTranslate
+    Drag&Drop für alle Objekte
+TransformRotate
+    Drag&Drop für Rotation (es sollte Marker fürs Zentrum geben)
+TransformOffset
+    Drag&Drop für Offset + marker fürs Zentrum (Mausbewegungen müssen vorher auch transmorfiert werden)
+TransformScale
+    siehe oben
+Ein Transform-Component mit drei booleans
+Sprite
+    global gui element - show image borders
+TexturedPolygon
+    gloabl gui elements - show vertices and edges
+    all polygons should have flags for textures (so they can only be edges+vertices (for game logic stuff))
+FannedPolygon
+FancyPolygon
+    Sollten wir als erstes in doof implementieren
+Alle Polygons kriegen TextureTransforms! Die auch einfach Drag&drop aber für die Textur sind. Als globales boolean kann man auch die ganze Textur im Hintergrund rendern, wenn man will.
+MetadataBoolean
+    label - gui label
+    name - non-editor name (easier parsable)
+    value
+MetadataString
+MetadataNumber
+    min, max
+MetadataChoice
+    choices = list of id-label-pairs
+vllt. MetadataEntity? Um Entites zu verbinden - mit Linien malen? (auch an/aus-bar)
+    GUI: Dropdown wäre geil.
+    Es geht aber auch mit nem Edit-Mode <-----
+    
+Edit Modes:
+ALT-Selection, muss auch in Edit modes verwendbar sein können (API/effiziente helfer dafür finden)
+Edit-Modes sind eigentlich nur Maus-Event-Handler
+
+Multiple selection sollte vom CLI unterstützt sein (alle Funktione sind in der Lage eine Liste von Objekten zu verarbeiten), sodass man, falls wirklich nötig, das CLI benutzen kann um effizient mehrere Entities auf einmal zu bearbeiten, aber man macht sich nicht dir Arbeit das GUI und die edit-modes multiple selection unterstützen zu lassen (besonders, da dies nicht trivial ist und auf versch. arten und weisen gelöst werden kann).
+
+shortcuts can be bound by something like bind("lctrl+m,rctrl+m", "editor.changeEditMode(TransformTranslate.editModes.move)"). Something like that?
+
+Big three objects (tables): editor, gui, map
+map is the whole map-state (saved as-is), gui is everything thats not the editor, editor is the rest
+
+Action-Stack (essentially a Stack with named deltas to the map-object):
+cmd, {keys}, {values}
+moveObjectTo(blaobject, x, y), map.objects[12].properties.TransformTranslate.x, x
+
+Alternativ:
+cmd (for identification only), whole map object
+So MapStack is only a stack of map objects 
+
+pop(), push() (pushes copy on top of seeked position), seek(delta), tell, print
+
+bind("lctrl+z,rctrl+z", "mapStack.seek(-1)")
+bind("lctrl+y,rctrl+y", "mapStack.seek(1)")
+
+Vielleicht ist immer mapStack.top() == map -> Ne, weil seek, dann keinen Sinn ergibt.
+
+mapStack.print() gibt im CLI eine liste von allen cmd's an mit index (absteigend, sodass das letzte index 1 ist)
+
+Vermutlich muss man einfach einen Game-Ordner angeben, damit man nicht alles gedoppelt hat und nicht kompliziert kopieren muss. Entweder der Editor ist dann irgendwo im game-ordner? (shiiiiat). Oder man macht io mit dem Lua-io-Modul und wrappt den ganzen love-shit. Man muss dann auch einen kleinen File-Browser frickeln (shiiiiit).
+Funktioniert auch nicht, weil directory access nicht ohne Probleme funktioniert, wenn man das Lua io-Modul benutzt.
+Dafür wird gebraucht:
+    getDirectoryItems
+    isDirectory, isFile
+    exists
+    newFolder
+    setWorkingDirectory
+    getWorkingDirectory
+=======>
+Wir wollten LoveFS verwenden. Eventuell kann man in Erwägung ziehen mit dem LuaJIT-FFI die WinAPI-dlls direkt zu laden und die entsprechenden Funktionen direkt aufzurufen, um das erscheinen von einem guten Dutzend cmd-Windows zu vermeiden. In dem Fall ersetzen wie LoveFS durch eine eigene Bibliothek mit der gleichen API. Man sollte sich vorher das Textencoding-Verhalten angucken.
+
+
+----- entities.lua
+entityTypes["weapon_pod"] = {
+    label = "Weapon pod", 
+    components = {
+        transforms = {
+            componentType = "Transforms",
+            translate = True,
+            rotate = True,
+            offset = False,
+            scale = False,
+        },
+        sprite = {
+            componentType = "Sprite",
+            image = "./media/images/weaponPod.png"
+        },
+        weaponType = {
+            componentType = "MetadataChoice",
+            label = "Weapon type",
+            choices = {
+                {"rifle", "Laser rifle"},
+                {"shotgun", "XM34 laser shotgun"},
+                {"pistol", "Dank ass laser pistol"},
+                {"he", "High explosive (laser) grenade"},
+                {"exodia", "(laser) frying pan"}
+            },
+            value = "rifle",
+            showInDetails = True
+        },
+        respawnTime = {
+            componentType = "MetadataNumber",
+            label = "Respawn time",
+            min = 0.0,
+            value = 6.0
+        },
+        shader = {
+            componentType = "MetadataString",
+            value = "glossystuff",
+            hidden = True
+        }
+    }
+}
+
+entity = {
+    type = "weapon_pod", 
+    components = {
+        transforms = Transforms(entityTypes["weapon_pod"].components.transforms)
+    },
+    shapes = {}
+}
+
+entity.render =
+    for each component:
+        component.renderstart()
+        
+    for each component (reversed)
+        component.renderend()
+
+Transforms.setPosition(self.selected, x, y)
+
+Each component specifies GUI-Elements, CLI-functions, edit modes and global settings/gui elements, uniqueness attributes
+    uniqueness is important because multiple drawables and definitely multiple transforms make picking nearly impossible
+    
+    uniqueness: exclude-list which prevents components from being added if other specified components are already presents
+    attention: also check the newly created component if it clashed with exisiting ones (in case that some needed excludes are missing in components added before)
+    
+    OR (better):
+    single boolean value ("unique") do determine if a component can only be present once
+    boolean value ("pickable") to make sure only one pickable component is present per entity
+    
+
+function setProperties(self, properties, defaults)
+    for k, v in pairs(defaults) do
+        self[k] = properties[k] ~= nil and properties[k] or v
+    end
+end
+
+local Transforms = class()
+function Transforms:init(properties)
+    local defaults = {
+        translate = True,
+        posx = 0, posy = 0,
+        
+        rotate = True,
+        angle = 0,
+        
+        offset = True,
+        offx = 0, offy = 0,
+        
+        scale = True,
+        scalex = 1, scaley = 1
+    }
+    setProperties(self, properties, defaults)
+    
+    self.guiElements = {}
+    if self.translate then
+        table.extend(self.guiElements,{
+            {"X-Pos", "Numberwheel", "posx"},
+            {"Y-Pos", "Numberwheel", "posy"}
+        })
+    end
+        
+    if self.rotate then
+        table.insert(self.guiElements, {"Angle", "Numberwheel", "angle"})
+    end
+    
+    if self.offset then 
+        table.extend(self.guiElements,{
+            {"X-Offset", "Numberwheel", "offx"},
+            {"Y-Offset", "Numberwheel", "offy"}
+        })
+    end
+    
+    if self.scale then 
+        table.extend(self.guiElements,{
+            {"X-Scale", "Numberwheel", "scalex"},
+            {"Y-Scale", "Numberwheel", "scaley"}
+        })
+    end
+    
+    self.unique = True
+end
+
+Transforms.guiElements = {} -- global gui elements
+
+function Transforms.setPosition(entities, x, y) 
+    withComponent(entities, "Transforms", function(component)
+        component.posx, component.posy = x, y
+    end
+end
+
+withComponent(entities, "Transforms", function(component) set the values end) = 
+    for each entity
+        for each component
+            if component.componentType = Transforms:
+                set the values
+
+oder findComponent(entity, type)
+                
+components["Transforms"] = Transforms
+
+
+
+Transforms.editModes = {
+    move = {
+        onMouseDown(self, x, y, button)
+        onMouseMove(self, x, y)
+        onMouseUp(self, x, y, button)
+    }
+}
+
+Transforms.editModes.move:onMouseDown
+
+pickShapes(entities, x, y)
+goes through all the entities' shapes and returns a list of all picked shapes in front to back order
+
+Vertex-Edit-Mode: Drag&Drop auf Vertices bewegt die, Linksklick auf Edges erzeugt neue Vertices, rechtsklick auf Vertices löscht diese
+
+
