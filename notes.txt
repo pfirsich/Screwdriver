@@ -1,6 +1,3 @@
-entities.lua mit Entity-Beschreibungen. Darin Entity-Component mit Component-Inheritance und "transzendenten" components, die sachen können, die selbst implementierte nicht können (Polygone zb.)
-
----------------------------------------------------------
 Somewhere:
 (Button) Show Scene Window
 (Button) Show Console Window
@@ -10,19 +7,20 @@ Somewhere:
     (List) Entity types
     (Button) Create Instance - Binds the Object to the mouse (movemode) upon creation
     
-    (List) Objects -> editor.selected (eine list)
+    (List) Entities -> editor.selected (eine list)
     (Button) Remove Object - Spawns a Dialog
     (Button) Up / (Button) Down
+    (Button) Focus camera
     
-    (Label) Menu
+    (Category) File
     (Button) New file - Fragt nach einem Pfad für den Spielordner. Dieser Ordner kann (sollte) nicht mehr verändert werden. Und fragt anschließend nach dem Pfad zur entities-Datei.
             Es gibt keine Möglichkeit diese Pfade zu ändern, da damit alle relativen Pfade zu allen assets invalid werden würden.
     (Button) Load 
     (Button) Save / (Button) Save As
     (Button) Set custom entities-file - Ist nur ein Pfad, eigene Inklusionen sind selbstversändlich möglich.
-    (Checkbox) Show CLI commands while hovering
     
-    (Category) Core
+    (Category) Core Settings
+    (Checkbox) Show CLI commands while hovering
     (Checkbox) Show Grid
     (Checkbox) Show Names
     (Checkbox) Show Details
@@ -34,6 +32,7 @@ Somewhere:
 
 (Window) Object
     (Category) Core
+    (Input) Name
     (Checkbox) hidden
     
     Every component can specify a category in which the corresponding gui-elements will be placed
@@ -89,7 +88,7 @@ cmd, {keys}, {values}
 moveObjectTo(blaobject, x, y), map.objects[12].properties.TransformTranslate.x, x
 
 Alternativ:
-cmd (for identification only), whole map object
+cmd (for identification only), whole map object 
 So MapStack is only a stack of map objects 
 
 pop(), push() (pushes copy on top of seeked position), seek(delta), tell, print
@@ -117,7 +116,7 @@ Wir wollten LoveFS verwenden. Eventuell kann man in Erwägung ziehen mit dem LuaJ
 ----- entities.lua
 entityTypes["weapon_pod"] = {
     label = "Weapon pod", 
-    components = {
+    components = { -- errata: this is an array now (integer indices) to preserve order
         transforms = {
             componentType = "Transforms",
             translate = True,
@@ -158,8 +157,8 @@ entityTypes["weapon_pod"] = {
 
 entity = {
     type = "weapon_pod", 
-    components = {
-        transforms = Transforms(entityTypes["weapon_pod"].components.transforms)
+    components = { -- array to preserve order
+        Transforms(entityTypes["weapon_pod"].components.transforms)
     },
     shapes = {}
 }
@@ -235,6 +234,8 @@ function Transforms:init(properties)
     
     self.unique = True
 end
+
+Numberwheel, String, Checkbox, Button, Choice   
 
 Transforms.guiElements = {} -- global gui elements
 

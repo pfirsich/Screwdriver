@@ -1,0 +1,16 @@
+* Implement map-Object + mapstack
+* Populate Property-Window
+* Camera Movement with Mouswheel (Press = Drag&Drop move, Up/Down = Zoom)
+* Grid-Actions
+* File actions: load, save
+
+Later/Maybe: 
+* Only show component-info in scene window if component is actually used in the scene
+* Move all file buttons to File-Component?
+* Limit number of lines in console -> config file maybe?
+* Properly passing mousewheel events so scrollbars do what they should do at all times
+* Alle selections erstmal "unwrappen", also {text = , entity = } einfach zu elementen von entity machen, sodass das editor modul nicht so sehr von gui beeinflusst aussieht
+* Falls komplette deepe Kopien von map auf dem Mapstack ein Speicherproblem bergen, nur alle X einträge voll speichern + delta-befehle
+
+Bugs:
+* Up/Down mit multiple selection macht komische sachen, wenn alle ausgewählten schon oben sind und auch so manchmal.
