@@ -1,45 +1,3 @@
-Somewhere:
-(Button) Show Scene Window
-(Button) Show Console Window
-(Button) Show Object Widow
-
-(Window) Scene
-    (List) Entity types
-    (Button) Create Instance - Binds the Object to the mouse (movemode) upon creation
-    
-    (List) Entities -> editor.selected (eine list)
-    (Button) Remove Object - Spawns a Dialog
-    (Button) Up / (Button) Down
-    (Button) Focus camera
-    
-    (Category) File
-    (Button) New file - Fragt nach einem Pfad für den Spielordner. Dieser Ordner kann (sollte) nicht mehr verändert werden. Und fragt anschließend nach dem Pfad zur entities-Datei.
-            Es gibt keine Möglichkeit diese Pfade zu ändern, da damit alle relativen Pfade zu allen assets invalid werden würden.
-    (Button) Load 
-    (Button) Save / (Button) Save As
-    (Button) Set custom entities-file - Ist nur ein Pfad, eigene Inklusionen sind selbstversändlich möglich.
-    
-    (Category) Core Settings
-    (Checkbox) Show CLI commands while hovering
-    (Checkbox) Show Grid
-    (Checkbox) Show Names
-    (Checkbox) Show Details
-    
-    Category für jedes global setting von jedem benutzten component
-    
-(Window) Console
-    output text field + input text field. Every CLI-command will be output here.
-
-(Window) Object
-    (Category) Core
-    (Input) Name
-    (Checkbox) hidden
-    
-    Every component can specify a category in which the corresponding gui-elements will be placed
-    
---- Code specifics
-Every entity specifies a list of components and their default property values
-
 Components:
 TransformTranslate
     Drag&Drop für alle Objekte
@@ -78,27 +36,12 @@ Edit-Modes sind eigentlich nur Maus-Event-Handler
 
 Multiple selection sollte vom CLI unterstützt sein (alle Funktione sind in der Lage eine Liste von Objekten zu verarbeiten), sodass man, falls wirklich nötig, das CLI benutzen kann um effizient mehrere Entities auf einmal zu bearbeiten, aber man macht sich nicht dir Arbeit das GUI und die edit-modes multiple selection unterstützen zu lassen (besonders, da dies nicht trivial ist und auf versch. arten und weisen gelöst werden kann).
 
-shortcuts can be bound by something like bind("lctrl+m,rctrl+m", "editor.changeEditMode(TransformTranslate.editModes.move)"). Something like that?
-
 Big three objects (tables): editor, gui, map
 map is the whole map-state (saved as-is), gui is everything thats not the editor, editor is the rest
 
 Action-Stack (essentially a Stack with named deltas to the map-object):
 cmd, {keys}, {values}
 moveObjectTo(blaobject, x, y), map.objects[12].properties.TransformTranslate.x, x
-
-Alternativ:
-cmd (for identification only), whole map object 
-So MapStack is only a stack of map objects 
-
-pop(), push() (pushes copy on top of seeked position), seek(delta), tell, print
-
-bind("lctrl+z,rctrl+z", "mapStack.seek(-1)")
-bind("lctrl+y,rctrl+y", "mapStack.seek(1)")
-
-Vielleicht ist immer mapStack.top() == map -> Ne, weil seek, dann keinen Sinn ergibt.
-
-mapStack.print() gibt im CLI eine liste von allen cmd's an mit index (absteigend, sodass das letzte index 1 ist)
 
 Vermutlich muss man einfach einen Game-Ordner angeben, damit man nicht alles gedoppelt hat und nicht kompliziert kopieren muss. Entweder der Editor ist dann irgendwo im game-ordner? (shiiiiat). Oder man macht io mit dem Lua-io-Modul und wrappt den ganzen love-shit. Man muss dann auch einen kleinen File-Browser frickeln (shiiiiit).
 Funktioniert auch nicht, weil directory access nicht ohne Probleme funktioniert, wenn man das Lua io-Modul benutzt.
@@ -155,14 +98,6 @@ entityTypes["weapon_pod"] = {
     }
 }
 
-entity = {
-    type = "weapon_pod", 
-    components = { -- array to preserve order
-        Transforms(entityTypes["weapon_pod"].components.transforms)
-    },
-    shapes = {}
-}
-
 entity.render =
     for each component:
         component.renderstart()
@@ -182,13 +117,7 @@ Each component specifies GUI-Elements, CLI-functions, edit modes and global sett
     single boolean value ("unique") do determine if a component can only be present once
     boolean value ("pickable") to make sure only one pickable component is present per entity
     
-
-function setProperties(self, properties, defaults)
-    for k, v in pairs(defaults) do
-        self[k] = properties[k] ~= nil and properties[k] or v
-    end
-end
-
+    
 local Transforms = class()
 function Transforms:init(properties)
     local defaults = {

@@ -569,7 +569,7 @@ function getModule(gui)
                 if x > 0 and x < theme.TreeView.textMarginLeft then
                     self.straightenedTree[index].collapsed = not self.straightenedTree[index].collapsed
                 else
-                    if (gui.backend.keyDown("lshift") or gui.backend.keyDown("rshift")) and self.multiSelect then
+                    if (gui.backend.keyDown("lctrl") or gui.backend.keyDown("rctrl")) and self.multiSelect then
                         self.selected[#self.selected+1] = self.straightenedTree[index]
                     else
                         self.selected = {self.straightenedTree[index]}

@@ -26,6 +26,12 @@ do
 		gui.sceneWindowScrollBar:onChange()
 	end 
 
+	local function collapseRearrangePropertyWindow(self) 
+		collapseSiblings(self)
+		gui.propertyWindowLayout:arrange()
+		gui.propertyWindowScrollBar:onChange()
+	end 
+
 	local function bindCheckboxToVariable(checkbox, tbl, key)
 		checkbox:setParam("checked", tbl[key])
 		checkbox:setParam("onChecked", function(self) 
@@ -227,10 +233,7 @@ do
 		end)
 
 		gui.propertyWindowLayout = kraid.layouts.LineLayout(gui.propertyWindowScroll, {["spacing"] = 5, ["padding"] = 5, ["padding-top"] = 30, ["padding-right"] = 5 + gui.propertyWindowScrollBar.width})
-
-		gui.propertyWindowLayout:newLine()
-		gui.propertyWindowLabel = kraid.widgets.Label{parent = gui.propertyWindowScroll, text = "No entity selected."}
-		gui.propertyWindowLayout:addWidget(gui.propertyWindowLabel)
+		gui.propertyWindowLabel = kraid.widgets.Label{parent = gui.propertyWindowScroll, text = "No entity selected.", position = {5, 30}}
 
 		gui.propertyWindow:setParam("onResize", function(self) 
 			gui.propertyWindowScroll:setParam("width", self.width)
@@ -324,12 +327,12 @@ do
 		if #map.entities ~= #gui.entityList.tree.children then 
 			updateEntityList = true 
 		else 
-			for i = 1, #map.entities do 
-				local coreComp = getComponentByType(map.entities[#map.entities - i + 1], "Core")
+			for i = #map.entities, 1, -1 do 
+				local coreComp = getComponentByType(map.entities[i], "Core")
 				assert(coreComp, "Every entity has to have a 'Core' component!")
 				assert(coreComp.name, "Every 'Core' component should have a name attribute")
 
-				if coreComp.name ~= gui.entityList.tree.children[i].text then 
+				if coreComp.name ~= gui.entityList.tree.children[#map.entities - i + 1].text then 
 					updateEntityList = true 
 					break 
 				end 
@@ -348,33 +351,42 @@ do
 			local newSelection = {}
 			for _, selected in ipairs(gui.entityList.selected) do
 				for _, element in ipairs(entityList) do 
-					if element.entity == selected.entity then 
+					if element.entity.guid == selected.entity.guid then 
 						newSelection[#newSelection+1] = element
 					end 
 				end  
 			end 
 
 			gui.entityList:setParam("tree", {children = entityList})
-			gui.entityList:setParam("selected", newSelection)	
+			gui.entityList:setParam("selected", newSelection)
+		end 
+
+		local function findCategory(parent, name)
+			for i, widget in ipairs(parent.children) do 
+				if widget.type == "Category" and widget.text == name then 
+					return widget
+				end 
+			end 
+			return nil
+		end
+
+		local function createCat(name, windowPrefix, onCollapse)
+			gui[windowPrefix .. "WindowLayout"]:newLine()
+			local cat = kraid.widgets.Category{parent = gui[windowPrefix .. "WindowScroll"], text = name, minWidth = 50, collapsed = true, onCollapse = onCollapse}
+			gui[windowPrefix .. "WindowLayout"]:addWidget(cat)
+
+			cat.layout = kraid.layouts.LineLayout(cat, {["spacing"] = 5, ["padding"] = 10, ["padding-top"] = 40})
+			cat:setParam("onResize", function(self) self.layout:arrange() end)
+
+			return cat
 		end 
 
 		-- update global component gui elements
 		for name, component in pairs(components) do 
-			local cat = nil 
-			for i, widget in ipairs(gui.sceneWindowScroll.children) do 
-				if widget.type == "Category" and widget.text == name then 
-					cat = widget 
-					break
-				end 
-			end 
+			local cat = findCategory(gui.sceneWindowScroll, name)
 
 			if cat == nil then 
-				gui.sceneWindowLayout:newLine()
-				cat = kraid.widgets.Category{parent = gui.sceneWindowScroll, text = name, minWidth = 50, collapsed = true, onCollapse = collapseRearrangeSceneWindow}
-				gui.sceneWindowLayout:addWidget(cat)
-
-				cat.layout = kraid.layouts.LineLayout(cat, {["spacing"] = 5, ["padding"] = 10, ["padding-top"] = 40})
-				cat:setParam("onResize", function(self) self.layout:arrange() end)
+				cat = createCat(name, "scene", collapseRearrangeSceneWindow)
 			end 
 
 			for key, element in pairs(component.static.guiElements) do 
@@ -408,6 +420,21 @@ do
 						end
 					end 
 				end
+			end 
+		end 
+
+		-- update entity properties
+		if #gui.entityList.selected == 0 then 
+			gui.propertyWindowLabel:setParam("visible", true)
+			gui.propertyWindowLabel:setParam("text", "No entity selected.")
+		elseif #gui.entityList.selected > 1 then 
+			gui.propertyWindowLabel:setParam("visible", true)
+			gui.propertyWindowLabel:setParam("text", "More than one entity selected.\nCLI should still work.")
+		else 
+			gui.propertyWindowLabel:setParam("visible", false)
+
+			for _, component in ipairs(gui.entityList.selected[1].entity) do 
+
 			end 
 		end 
 	end

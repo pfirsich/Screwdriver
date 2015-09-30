@@ -1,8 +1,11 @@
-* Implement map-Object + mapstack
 * Populate Property-Window
+* Components: Transforms, Sprite (Textfeld als Filebrowser)
+* Rendering, Picking
+----- Markus joined
+* Grid
 * Camera Movement with Mouswheel (Press = Drag&Drop move, Up/Down = Zoom)
-* Grid-Actions
 * File actions: load, save
+* Filebrowser
 
 Later/Maybe: 
 * Only show component-info in scene window if component is actually used in the scene
@@ -13,4 +16,4 @@ Later/Maybe:
 * Falls komplette deepe Kopien von map auf dem Mapstack ein Speicherproblem bergen, nur alle X einträge voll speichern + delta-befehle
 
 Bugs:
-* Up/Down mit multiple selection macht komische sachen, wenn alle ausgewählten schon oben sind und auch so manchmal.
+* Up/Down mit multiple selection macht funky sachen, wenn alle ausgewählten schon ganz oben sind
