@@ -398,6 +398,10 @@ do
 															speed = params.speed, minValue = params.minValue, maxValue = params.maxValue}
 				numberWheel:setParam("onChange", function(self, value) cliExec(self.target .. " = " .. tostring(value)) end)
 				parent.layout:addWidget(numberWheel)
+			elseif element.type == "Button" then 
+				local button = kraid.widgets.Button{parent = parent, text = element.name, elementId = element.id, minWidth = 30, height = 25}
+				button:setParam("onClicked", widgetExecCliCmd)
+				parent.layout:addWidget(button)
 			end
 			parent.layout:arrange()
 			parent:setParam("inflatedHeight", select(4, parent:getChildrenBBox()) + 10)
@@ -425,8 +429,11 @@ do
 								widget:setParam("text", component.static[element.id])
 								widget.cliCmd = widget.target .. " = <text>"
 							elseif element.type == "Numberwheel" and widget.type == "Numberwheel" then 
-								widget.value = component.static[element.id]
+								widget.value = assert(loadstring("return " .. widget.target))()
+								widget.numberInputLine.text = string.format(widget.format, widget.value)
 								widget.cliCmd = widget.target .. " = <value>"
+							elseif element.type == "Button" and widget.type == "Button" then 
+								widget.cliCmd = 'components["' .. name .. '"].static.' .. element.id .. "()"
 							end 
 						end 
 					end
@@ -527,8 +534,11 @@ do
 								widget:setParam("text", component[element.id])
 								widget.cliCmd = widget.target .. " = <text>"
 							elseif element.type == "Numberwheel" and widget.type == "Numberwheel" then 
-								widget.value = component[element.id]
+								widget.value = assert(loadstring("return " .. widget.target))()
+								widget.numberInputLine.text = string.format(widget.format, widget.value)
 								widget.cliCmd = widget.target .. " = <value>"
+							elseif element.type == "Button" and widget.type == "Button" then 
+								widget.cliCmd = 'getComponentById(getEntityByGUID(gui.selectedEntities[1]), "' .. component.id ..  '"):' .. element.id .. "()"
 							end
 						end 
 					end
