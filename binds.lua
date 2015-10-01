@@ -34,4 +34,6 @@ do
 	shortcut("lctrl+z,rctrl+z", "mapStack:seek(-1)")
 	shortcut("lctrl+y,rctrl+y", "mapStack:seek(1)")
 	shortcut("lctrl+f,rctrl+f", "editor.focusCamera(gui.selectedEntities)")
+	shortcut("pageup", "editor.entityUp(gui.selectedEntities)")
+	shortcut("pagedown", "editor.entityDown(gui.selectedEntities)")
 end

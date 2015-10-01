@@ -96,23 +96,35 @@ function love.mousepressed(x, y, button)
 			camera.zoomLevel = camera.zoomLevel + 1
 		end
 
-		if button == "l" and #editor.hoveredEntities > 0 then 
-			if love.keyboard.isDown("lctrl") then -- select all hovered
-				gui.selectEntities(editor.hoveredEntities)
-			elseif love.keyboard.isDown("lalt") and #gui.selectedEntities == 1 then -- step down selection
-				-- if alt is pressed and only one entity is selected every new click selects an object below it
-				-- if the current selected object is not hovered too, select the topmost hovered object
-				local selectedHoveredIndex = nil
-				for i, guid in ipairs(editor.hoveredEntities) do 
-					if isEntitySelected(getEntityByGUID(guid)) then 
-						selectedHoveredIndex = i 
-						break 
+		if button == "l" then 
+			if #editor.hoveredEntities > 0 then 					
+				if love.keyboard.isDown("lalt") and #gui.selectedEntities == 1 then -- step down selection
+					if love.keyboard.isDown("lctrl") then 
+						print("select all hovered")
+						gui.selectEntities(editor.hoveredEntities)
+					else 
+						-- if alt is pressed and only one entity is selected every new click selects an object below it
+						-- if the current selected object is not hovered too, select the topmost hovered object
+						local selectedHoveredIndex = nil
+						for i, guid in ipairs(editor.hoveredEntities) do 
+							if isEntitySelected(getEntityByGUID(guid)) then 
+								selectedHoveredIndex = i 
+								break 
+							end
+						end 
+						selectedHoveredIndex = math.max(1, (selectedHoveredIndex or #editor.hoveredEntities + 1) - 1)
+						gui.selectEntities({editor.hoveredEntities[selectedHoveredIndex]})
 					end
-				end 
-				selectedHoveredIndex = math.max(1, (selectedHoveredIndex or 2) - 1)
-				gui.selectEntities({editor.hoveredEntities[selectedHoveredIndex]})
-			else -- select topmost
-				gui.selectEntities({editor.hoveredEntities[#editor.hoveredEntities]})
+				else -- select topmost
+					if love.keyboard.isDown("lctrl") then 
+						table.insert(gui.selectedEntities, editor.hoveredEntities[#editor.hoveredEntities])
+						gui.selectEntities(gui.selectedEntities)
+					else 
+						gui.selectEntities({editor.hoveredEntities[#editor.hoveredEntities]})
+					end
+				end
+			else 
+				gui.selectEntities({})
 			end
 		end
 	end
@@ -138,7 +150,6 @@ function love.mousemoved(x, y, dx, dy)
 
 	if gui.base.hovered == nil then 
 		editor.hoveredEntities = pickEntities(camera.screenToWorld(x, y))
-		print("hovered:", #editor.hoveredEntities)
 	else 
 		editor.hoveredEntities = {}
 	end 
@@ -218,6 +229,20 @@ function love.draw()
 						love.graphics.rectangle("line", entity.shapes.bbox[1], entity.shapes.bbox[2], 
 											entity.shapes.bbox[3] - entity.shapes.bbox[1], entity.shapes.bbox[4] - entity.shapes.bbox[2])
 					end
+
+					if components["Core"].static.showNames then 
+						local nameScale = 2.0
+						local name = getComponentByType(entity, "Core").name
+						local width, height = love.graphics.getFont():getWidth(name) * nameScale, love.graphics.getFont():getHeight() * nameScale
+						local x, y = (entity.shapes.bbox[1] + entity.shapes.bbox[3] - width) / 2, (entity.shapes.bbox[2] + entity.shapes.bbox[4] - height) / 2
+						
+						local scale = nameScale / camera.scale
+						local shadowOffset = 2
+						love.graphics.setColor(0, 0, 0, 255)
+						love.graphics.print(name, x + shadowOffset, y + shadowOffset, 0, scale, scale)
+						love.graphics.setColor(255, 255, 255, 255)
+						love.graphics.print(name, x, y, 0, scale, scale)
+					end
 				end
 			end
 			love.graphics.setLineWidth(1)
@@ -238,8 +263,31 @@ function pointInBBox(bbox, x, y)
 	return x > bbox[1] and x < bbox[3] and y > bbox[2] and y < bbox[4]
 end
 
-function pointInPolygon(polygon, x, y)
-	return true
+-- Disclaimer: this algorithm is sexy af
+function pointInPolygon(polygon, x, y) -- from here: http://geomalgorithms.com/a03-_inclusion.html 
+	assert(#polygon % 2 == 0)
+	local function isLeft(fromx, fromy, tox, toy, x, y)
+		local dirx, diry = tox - fromx, toy - fromy
+		local px, py = x - fromx, y - fromy
+		return dirx * py - diry * px -- cross product
+	end
+
+	local windings = 0
+	for i = 1, #polygon, 2 do 
+		local ni = i + 2
+		if ni > #polygon then ni = 1 end 
+
+		if polygon[i+1] <= y then 
+			if polygon[ni+1] > y and isLeft(polygon[i], polygon[i+1], polygon[ni], polygon[ni+1], x, y) > 0 then 
+				windings = windings + 1 
+			end 
+		else
+			if polygon[ni+1] <= y and isLeft(polygon[i], polygon[i+1], polygon[ni], polygon[ni+1], x, y) < 0 then 
+				windings = windings - 1 
+			end
+		end 
+	end 
+	return windings ~= 0
 end
 
 function pickEntities(x, y)

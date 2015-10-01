@@ -27,7 +27,7 @@ do
 	Core.static.guiElements = { -- background color, grid color/spacing
 		{id = "showGrid", name = "Show grid", type = "Checkbox"},
 		{id = "gridSpacing", name = "Grid spacing", type = "Numberwheel", params = {minValue = 1.0}},
-		--{id = "showNames", name = "Show names", type = "Checkbox"},
+		{id = "showNames", name = "Show names", type = "Checkbox"},
 		--{id = "showDetails", name = "Show details", type = "Checkbox"},
 		{id = "showEntityBorders", type = "Checkbox", name = "Show entity borders"},
 	}

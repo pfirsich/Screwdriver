@@ -1,5 +1,3 @@
-* Fix alt selection
-
 * Edit Modes
 ----- Markus joined
 * File actions: load, save
@@ -18,3 +16,4 @@ Later/Maybe:
 
 Bugs:
 * Up/Down mit multiple selection macht funky sachen, wenn alle ausgewählten schon ganz oben sind
+* Alt-Selection kaputt?
