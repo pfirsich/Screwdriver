@@ -6,6 +6,7 @@ require "editor"
 require "misc"
 require "binds"
 require "map"
+require "camera"
 
 function love.resize(w, h)
 	local oldVisible = gui.sceneWindow.visible 
@@ -39,14 +40,34 @@ function love.update()
 	-- updateGUI has to be in front of :update(), because update builds the linearizedTree for TreeView widgets in there and updateGUI updates the selected list continuously
 	updateGUI()
 	gui.base:update()
+
+	if gui.base.hovered and gui.base.hovered.cliCmd then 
+		gui.consoleWindow:setParam("text", "Console - Hovering: '" .. gui.base.hovered.cliCmd .. "'")
+	else 
+		gui.consoleWindow:setParam("text", "Console")
+	end 
 end
 
 function love.mousepressed(x, y, button)
 	gui.base:mousePressed(x, y, button)
+
+	if gui.base.hovered == nil then -- in editor view, not hovering GUI elements
+		if button == "m" then -- drag camera
+			camera.dragged = true
+			camera.dragStartCamera = {camera.position[1], camera.position[2]}
+			camera.dragStartMouse = {x, y}
+		elseif button == "wd" then 
+			camera.zoomLevel = camera.zoomLevel - 1
+		elseif button == "wu" then 
+			camera.zoomLevel = camera.zoomLevel + 1
+		end
+		print(camera.zoomLevel)
+	end
 end
 
 function love.mousereleased(x, y, button)
 	gui.base:mouseReleased(x, y, button)
+	camera.dragged = false
 end
 
 function widgetToString(widget)
@@ -54,15 +75,13 @@ function widgetToString(widget)
 end
 
 function love.mousemoved(x, y, dx, dy)
-	-- these are two different things, because I want every event to be completely symmetric and behave the same no matter where it was called
 	gui.base:pickHovered(x, y)
 	gui.base:mouseMove(x, y, dx, dy)
 
-	if gui.base.hovered and gui.base.hovered.cliCmd then 
-		gui.consoleWindow:setParam("text", "Console - Hovering: '" .. gui.base.hovered.cliCmd .. "'")
-	else 
-		gui.consoleWindow:setParam("text", "Console")
-	end 
+	if camera.dragged then 
+		local gdx, gdy = x - camera.dragStartMouse[1], y - camera.dragStartMouse[2]
+		camera.position = {camera.dragStartCamera[1] - gdx / camera.scale, camera.dragStartCamera[2] - gdy / camera.scale}
+	end
 end
 
 function love.textinput(text)
@@ -94,11 +113,12 @@ function love.keypressed(key, isrepeat)
 end
 
 function love.draw()
+	camera.scale = math.pow(1.07, camera.zoomLevel) 
+	camera.push()
+		love.graphics.rectangle("fill", 0, 0, 100, 100)
+		love.graphics.rectangle("fill", 200, 200, 100, 100)
+	camera.pop()
 	gui.base:draw()
-
-	if gui.base.hovered == nil then
-		-- in editor view, not hovering GUI elements
-	end
 end
 
 -- does not push the changes to the mapstack (mostly used for actions that don't affect the map state)

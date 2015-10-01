@@ -14,6 +14,7 @@ Later/Maybe:
 * Limit number of lines in console -> config file maybe?
 * Properly passing mousewheel events so scrollbars do what they should do at all times
 * Falls komplette deepe Kopien von map auf dem Mapstack ein Speicherproblem bergen, nur alle X einträge voll speichern + delta-befehle
+* J-Query mäßig verschiedene Entites selecten (nach id/type) und operationen anwenden
 
 Bugs:
 * Up/Down mit multiple selection macht funky sachen, wenn alle ausgewählten schon ganz oben sind
