@@ -80,3 +80,22 @@ entityTypes["withoutopt"] = {
 		}
 	}
 }
+
+entityTypes["everything"] = {
+	label = "All components",
+	components = {
+		{
+			id = "core",
+			componentType = "Core",
+		},
+		{	
+			id = "transforms",
+			componentType = "Transforms",
+		},
+		{
+			id = "sprite",
+			componentType = "Sprite",
+			imagePath = "pfirsich.png"
+		}
+	}
+}

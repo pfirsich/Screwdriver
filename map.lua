@@ -27,4 +27,17 @@ do
 			gui.printConsole(tostring(i) .. ": " .. mapStack[i][1])
 		end 
 	end
+
+	function dbg_getMapStackIndex(entity)
+		local indices = {}
+		for i = 1, #mapStack do 
+			for j = 1, #mapStack[i][2].entities do 
+				if mapStack[i][2].entities[j] == entity then 
+					indices[#indices+1] = i
+				end 
+			end 
+		end 
+		assert(#indices == 1)
+		return indices[1]
+	end 
 end 

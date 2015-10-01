@@ -149,6 +149,16 @@ function love.draw()
 	camera.push()
 		love.graphics.rectangle("fill", 0, 0, 100, 100)
 		love.graphics.rectangle("fill", 200, 200, 100, 100)
+
+		for _, entity in ipairs(map.entities) do
+			for i = 1, #entity.components do 
+				if entity.components[i].renderStart then entity.components[i]:renderStart() end
+			end 
+
+			for i = #entity.components, 1, -1 do
+				if entity.components[i].renderEnd then entity.components[i]:renderEnd() end
+			end 
+		end 
 	camera.pop()
 	gui.base:draw()
 end

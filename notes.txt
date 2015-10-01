@@ -65,7 +65,8 @@ entityTypes["weapon_pod"] = {
         },
         sprite = {
             componentType = "Sprite",
-            image = "./media/images/weaponPod.png"
+            image = "./media/images/weaponPod.png",
+            color = {255, 255, 255, 255}
         },
         weaponType = {
             componentType = "MetadataChoice",
@@ -94,13 +95,6 @@ entityTypes["weapon_pod"] = {
     }
 }
 
-entity.render =
-    for each component:
-        component.renderstart()
-        
-    for each component (reversed)
-        component.renderend()
-
 Transforms.setPosition(self.selected, x, y)
 
 Each component specifies GUI-Elements, CLI-functions, edit modes and global settings/gui elements, uniqueness attributes
@@ -112,53 +106,6 @@ Each component specifies GUI-Elements, CLI-functions, edit modes and global sett
     OR (better):
     single boolean value ("unique") do determine if a component can only be present once
     boolean value ("pickable") to make sure only one pickable component is present per entity
-    
-    
-local Transforms = class()
-function Transforms:init(properties)
-    local defaults = {
-        translate = True,
-        posx = 0, posy = 0,
-        
-        rotate = True,
-        angle = 0,
-        
-        offset = True,
-        offx = 0, offy = 0,
-        
-        scale = True,
-        scalex = 1, scaley = 1
-    }
-    setProperties(self, properties, defaults)
-    
-    self.guiElements = {}
-    if self.translate then
-        table.extend(self.guiElements,{
-            {"X-Pos", "Numberwheel", "posx"},
-            {"Y-Pos", "Numberwheel", "posy"}
-        })
-    end
-        
-    if self.rotate then
-        table.insert(self.guiElements, {"Angle", "Numberwheel", "angle"})
-    end
-    
-    if self.offset then 
-        table.extend(self.guiElements,{
-            {"X-Offset", "Numberwheel", "offx"},
-            {"Y-Offset", "Numberwheel", "offy"}
-        })
-    end
-    
-    if self.scale then 
-        table.extend(self.guiElements,{
-            {"X-Scale", "Numberwheel", "scalex"},
-            {"Y-Scale", "Numberwheel", "scaley"}
-        })
-    end
-    
-    self.unique = True
-end
 
 Numberwheel, String, Checkbox, Button, Choice, Color, Texture, Entity?
 

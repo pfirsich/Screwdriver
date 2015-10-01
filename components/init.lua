@@ -7,3 +7,5 @@ function addTable(tbl, add)
 end 
 
 require "components.core"
+require "components.transforms"
+require "components.sprite"
