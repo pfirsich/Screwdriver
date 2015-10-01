@@ -29,8 +29,8 @@ do
 		end 
 	end
 
-	shortcut("lctrl+a,rctrl+a", "gui.entityList.selected = tableCopy(gui.entityList.tree.children)")
-	shortcut("lctrl+d,rctrl+d", "gui.entityList.selected = {}")
+	shortcut("lctrl+a,rctrl+a", "gui.selectEntities(table.map(map.entities, function(entity) return entity.guid end))")
+	shortcut("lctrl+d,rctrl+d", "gui.selectEntities({})")
 	shortcut("lctrl+z,rctrl+z", "mapStack:seek(-1)")
 	shortcut("lctrl+y,rctrl+y", "mapStack:seek(1)")
 end

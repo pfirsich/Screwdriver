@@ -11,22 +11,25 @@ do
 			{id = "hidden", name = "Hidden", type = "Checkbox"},
 		}
 
-		self.__unique = true
-		self.__pickable = false
 		self.__hidden = false
 		self.__showInDetails = false
 	end
+
+	Core.static.unique = true
+	Core.static.pickable = false
 
 	Core.static.showGrid = true
 	Core.static.gridSpacing = 200
 	Core.static.showNames = true 
 	Core.static.showDetails = true
+	Core.static.showEntityBorders = true
 
 	Core.static.guiElements = { -- background color, grid color/spacing
 		{id = "showGrid", name = "Show grid", type = "Checkbox"},
 		{id = "gridSpacing", name = "Grid spacing", type = "Numberwheel", params = {minValue = 1.0}},
 		{id = "showNames", name = "Show names", type = "Checkbox"},
 		{id = "showDetails", name = "Show details", type = "Checkbox"},
+		{id = "showEntityBorders", type = "Checkbox", name = "Show entity borders"},
 	}
 
 	components["Core"] = Core
@@ -50,11 +53,12 @@ do
 			})
 		end 
 
-		self.__unique = true
-		self.__pickable = false
 		self.__hidden = false
 		self.__showInDetails = false
 	end 
+
+	WithOptional.static.unique = true 
+	WithOptional.static.pickable = false
 
 	WithOptional.static.guiElements = {}
 

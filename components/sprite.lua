@@ -12,10 +12,15 @@ do
             {id = "loadImage", type = "Button", name = "Load Image"}
         }
 
-        self.__unique = true
-        self.__pickable = false
         self.__hidden = false
         self.__showInDetails = false
+    end
+
+    function Sprite:getShapes()
+        if self.__image then 
+            local w, h = self.__image:getWidth(), self.__image:getHeight()
+            return {{0, 0,   0, h,   w, h,   w, 0}}
+        end
     end
 
     function Sprite:loadImage()
@@ -30,13 +35,6 @@ do
         if self.__image then 
             love.graphics.setColor(unpack(self.color))
             love.graphics.draw(self.__image)
-
-            love.graphics.setLineWidth(3)
-            love.graphics.setColor(0, 255, 0, 255)
-            if Sprite.static.showImageBorders then 
-                love.graphics.rectangle("line", 0, 0, self.__image:getWidth(), self.__image:getHeight())
-            end 
-            love.graphics.setLineWidth(1)
         end
     end
 
@@ -44,11 +42,10 @@ do
         love.graphics.setColor(255, 255, 255, 255)
     end 
 
-    Sprite.static.showImageBorders = true
+    Sprite.static.unique = true
+    Sprite.static.pickable = true
 
-    Sprite.static.guiElements = {
-        {id = "showImageBorders", type = "Checkbox", name = "Show image borders"}
-    }
+    Sprite.static.guiElements = {}
 
     components["Sprite"] = Sprite
 end 

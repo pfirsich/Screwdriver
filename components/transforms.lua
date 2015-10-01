@@ -34,10 +34,8 @@ do
                 {name = "Y-Scale", type = "Numberwheel", id = "scale[2]", params = {speed = 0.5}},
                 {name = "Anchor X- and Y-Scale", type = "Checkbox", id = "anchorXYScale"}
             })
-        end
+        end 
 
-        self.__unique = true
-        self.__pickable = false
         self.__hidden = false
         self.__showInDetails = false
     end
@@ -65,6 +63,9 @@ do
     function Transforms:renderEnd()
         love.graphics.pop()
     end 
+
+    Transforms.static.unique = true
+    Transforms.static.pickable = false
 
     Transforms.static.guiElements = {}
 

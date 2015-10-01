@@ -1,7 +1,6 @@
-* Picking
-	* Move show edges-bla to Core and use entity.shapes (the color is modified on hovering)
 * Edit Modes
 ----- Markus joined
+* Color picker + Color fürs Sprite
 * File actions: load, save
 * Filebrowser
 

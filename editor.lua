@@ -12,11 +12,26 @@ do
 		}
 		entityCounter = entityCounter + 1
 
+		local created = {}
 		for _, component in ipairs(entityTypes[type].components) do 
+			if components[component.componentType].static.unique and created[component.componentType] then 
+				error("Component '" .. component.componentType .. "' can not be added to an entity more than once.")
+			end 
+
+			if components[component.componentType].static.pickable and entity.pickableComponent ~= nil then 
+				error("Only one pickable component can be added to an entity.")
+			end 
+
 			if component.componentType == "Core" then 
 				component.name = type
 			end
+
 			local componentObject = components[component.componentType](component)
+			created[component.componentType] = true
+			if components[component.componentType].static.pickable then 
+				entity.pickableComponent = componentObject
+			end
+
 			table.insert(entity.components, componentObject) 
 		end 
 

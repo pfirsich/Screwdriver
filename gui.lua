@@ -109,6 +109,18 @@ do
 			dialogQuestionWindow.cmd = cmd
 		end 
 
+		function gui.selectEntities(guidList)
+			local selection = {}
+			for _, guid in ipairs(guidList) do 
+				for _, element in ipairs(gui.entityList.tree.children) do 
+					if element.entity.guid == guid then 
+						table.insert(selection, element)
+					end 
+				end
+			end 
+			gui.entityList:setParam("selected", selection)
+		end 
+
 		-- Scene Window
 		gui.sceneWindow = kraid.widgets.Window{parent = gui.base, text = "Scene", width = 280, minWidth = 80} -- width has to be passed so close button is at the right position from the start
 		gui.sceneWindow.summon = function(self)
@@ -320,24 +332,16 @@ do
 
 		-- update entity list
 		local entityList = {}
-		for i = #map.entities, 1, -1 do 
+		for i = #map.entities, 1, -1 do
 			local coreComp = getComponentByType(map.entities[i], "Core")
 			assert(coreComp, "Every entity has to have a 'Core' component!")
 			assert(coreComp.name, "Every 'Core' component should have a name attribute")
 			table.insert(entityList, {text = coreComp.name .. " (guid: " .. tostring(map.entities[i].guid) .. ")", entity = map.entities[i]})
 		end
 
-		local newSelection = {}
-		for _, selected in ipairs(gui.entityList.selected) do
-			for _, element in ipairs(entityList) do 
-				if element.entity.guid == selected.entity.guid then 
-					newSelection[#newSelection+1] = element
-				end 
-			end  
-		end 
-
+		local selectedGUIDs = table.map(gui.entityList.selected, function(selected) return selected.entity.guid end)
 		gui.entityList:setParam("tree", {children = entityList})
-		gui.entityList:setParam("selected", newSelection)
+		gui.selectEntities(selectedGUIDs)
 
 		gui.selectedEntities = {}
 		for i, elem in ipairs(gui.entityList.selected) do
@@ -460,10 +464,11 @@ do
 			local uncollapsed = nil
 			for i = #gui.propertyWindowScroll.children, 1, -1 do 
 				local category = gui.propertyWindowScroll.children[i]
-				if category.collapsed == false then uncollapsed = category.text end
 
 				local delete = true
 				if category.type == "Category" then 
+					if category.collapsed == false then uncollapsed = category.text end
+
 					local comp = nil
 					for _, component in ipairs(entity.components) do 
 						if component.componentType == category.text then
@@ -472,7 +477,7 @@ do
 						end
 					end 
 
-					if comp then
+					if comp and not comp.__hidden then
 						local function setSize(set) 
 							local n = 0
 							for k, v in pairs(set) do n = n + 1 end 
@@ -512,35 +517,37 @@ do
 
 			-- create and update categories/gui elements
 			for _, component in ipairs(entity.components) do 
-				local cat = findCategory(gui.propertyWindowScroll, component.componentType)
-				if cat == nil then 
-					cat = createCat(component.componentType, "property", collapseRearrangePropertyWindow)
-					if component.componentType == uncollapsed then cat:setParam("collapsed", false) end
-				end
+				if not component.__hidden then 
+					local cat = findCategory(gui.propertyWindowScroll, component.componentType)
+					if cat == nil then 
+						cat = createCat(component.componentType, "property", collapseRearrangePropertyWindow)
+						if component.componentType == uncollapsed then cat:setParam("collapsed", false) end
+					end
 
-				for _, element in ipairs(component.__guiElements) do 
-					local widgets = getElementWidgets(cat, element.id)
+					for _, element in ipairs(component.__guiElements) do 
+						local widgets = getElementWidgets(cat, element.id)
 
-					if #widgets == 0 then -- create widgets
-						createElementWidgets(cat, component, element, 
-							'getComponentById(getEntityByGUID(gui.selectedEntities[1]), "' .. component.id ..  '").' .. element.id)
-						gui.propertyWindowLayout:arrange()
-					else -- update values 
-						for _, widget in ipairs(widgets) do 
-							if element.type == "Checkbox" and widget.type == "Checkbox" then 
-								widget.checked = component[element.id]
-								widget.cliCmd = widget.target .. " = " .. tostring(not widget.checked)
-							elseif element.type == "String" and widget.type == "LineInput" then 
-								widget:setParam("text", component[element.id])
-								widget.cliCmd = widget.target .. " = <text>"
-							elseif element.type == "Numberwheel" and widget.type == "Numberwheel" then 
-								widget.value = assert(loadstring("return " .. widget.target))()
-								widget.numberInputLine.text = string.format(widget.format, widget.value)
-								widget.cliCmd = widget.target .. " = <value>"
-							elseif element.type == "Button" and widget.type == "Button" then 
-								widget.cliCmd = 'getComponentById(getEntityByGUID(gui.selectedEntities[1]), "' .. component.id ..  '"):' .. element.id .. "()"
-							end
-						end 
+						if #widgets == 0 then -- create widgets
+							createElementWidgets(cat, component, element, 
+								'getComponentById(getEntityByGUID(gui.selectedEntities[1]), "' .. component.id ..  '").' .. element.id)
+							gui.propertyWindowLayout:arrange()
+						else -- update values 
+							for _, widget in ipairs(widgets) do 
+								if element.type == "Checkbox" and widget.type == "Checkbox" then 
+									widget.checked = component[element.id]
+									widget.cliCmd = widget.target .. " = " .. tostring(not widget.checked)
+								elseif element.type == "String" and widget.type == "LineInput" then 
+									widget:setParam("text", component[element.id])
+									widget.cliCmd = widget.target .. " = <text>"
+								elseif element.type == "Numberwheel" and widget.type == "Numberwheel" then 
+									widget.value = assert(loadstring("return " .. widget.target))()
+									widget.numberInputLine.text = string.format(widget.format, widget.value)
+									widget.cliCmd = widget.target .. " = <value>"
+								elseif element.type == "Button" and widget.type == "Button" then 
+									widget.cliCmd = 'getComponentById(getEntityByGUID(gui.selectedEntities[1]), "' .. component.id ..  '"):' .. element.id .. "()"
+								end
+							end 
+						end
 					end
 				end
 			end 

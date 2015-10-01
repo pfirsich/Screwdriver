@@ -30,7 +30,15 @@ function table.iextend(to, from)
     for i = 1, #from do 
         table.insert(to, from[i])
     end 
-end 
+end
+
+function table.map(tbl, func)
+    local ret = {}
+    for k, v in pairs(tbl) do 
+        ret[k] = func(v)
+    end 
+    return ret
+end  
 
 function foreach(tbl, func)
     for k, v in pairs(tbl) do 
