@@ -21,11 +21,40 @@ do
 	Core.static.showNames = true 
 	Core.static.showDetails = true
 
-	Core.static.guiElements = {
+	Core.static.guiElements = { -- background color, grid color/spacing
 		{id = "showGrid", name = "Show grid", type = "Checkbox"},
 		{id = "showNames", name = "Show names", type = "Checkbox"},
 		{id = "showDetails", name = "Show details", type = "Checkbox"},
 	}
 
 	components["Core"] = Core
+
+
+	local WithOptional = class()
+
+	function WithOptional:init(properties)
+		self.mandatory = false
+		self.hasOptional = false
+		self.optional = true 
+		addTable(self, properties)
+
+		self.__guiElements = {
+			{id = "mandatory", name = "Mandatory", type = "Checkbox"},
+		}
+
+		if self.hasOptional then 
+			table.iextend(self.__guiElements, {
+				{id = "optional", name = "Optional", type = "Checkbox"}
+			})
+		end 
+
+		self.__unique = true
+		self.__pickable = false
+		self.__hidden = false
+		self.__showInDetails = false
+	end 
+
+	WithOptional.static.guiElements = {}
+
+	components["WithOptional"] = WithOptional
 end

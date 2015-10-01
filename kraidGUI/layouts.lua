@@ -29,6 +29,22 @@ do
             table.insert(self.lines[#self.lines].widgets, {object = widget, parameters = params or {}})
         end
 
+        function LineLayout:removeWidget(widget, removeEmptyLine)
+            removeEmptyLine = removeEmptyLine ~= nil and removeEmptyLine or true
+            for lineInd = #self.lines, 1, -1 do 
+                for widInd = #self.lines[lineInd].widgets, 1, -1 do 
+                    if widget == self.lines[lineInd].widgets[widInd].object then 
+                        table.remove(self.lines[lineInd].widgets, widInd)
+                        if #self.lines[lineInd].widgets == 0 and removeEmptyLine then 
+                            table.remove(self.lines, lineInd)
+                        end 
+                        return true
+                    end 
+                end 
+            end 
+            return false -- not found
+        end 
+
         function LineLayout:arrange()
             local parameterStack = gui.internal.Stack()
             parameterStack:push(self.defaultParameters)

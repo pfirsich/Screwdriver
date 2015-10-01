@@ -25,6 +25,12 @@ function tableDeepCopy(tbl)
     return ret
 end
 
+function table.iextend(to, from)
+    for i = 1, #from do 
+        table.insert(to, from[i])
+    end 
+end 
+
 function foreach(tbl, func)
     for k, v in pairs(tbl) do 
         func(v)

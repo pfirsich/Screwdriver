@@ -50,3 +50,33 @@ entityTypes["dummy"] = {
 		}
 	}
 }
+
+entityTypes["withopt"] = {
+	label = "Test dummy with optional",
+	components = {
+		{
+			id = "core",
+			componentType = "Core",
+		},
+		{	
+			id = "optional",
+			componentType = "WithOptional",
+			hasOptional = true,
+		}
+	}
+}
+
+entityTypes["withoutopt"] = {
+	label = "Test dummy without optional",
+	components = {
+		{
+			id = "core",
+			componentType = "Core",
+		},
+		{	
+			id = "optional",
+			componentType = "WithOptional",
+			hasOptional = false,
+		}
+	}
+}

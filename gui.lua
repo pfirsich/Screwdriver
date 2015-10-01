@@ -380,7 +380,7 @@ do
 			parent.layout:newLine()
 			if element.type == "Checkbox" then 
 				local checkbox = kraid.widgets.Checkbox{parent = parent, elementId = element.id, target = target, cliCmd = ""}
-				checkbox:setParam("onChecked", function(self) cliExec(self.target) end)
+				checkbox:setParam("onChecked", function(self) cliExec(self.cliCmd) end)
 				parent.layout:addWidget(checkbox)
 				local label = kraid.widgets.Label{parent = parent, text = element.name, elementId = element.id}
 				parent.layout:addWidget(label)
@@ -397,28 +397,30 @@ do
 
 		-- update global component gui elements
 		for name, component in pairs(components) do 
-			local cat = findCategory(gui.sceneWindowScroll, name)
-			if cat == nil then 
-				cat = createCat(name, "scene", collapseRearrangeSceneWindow)
-			end 
+			if #component.static.guiElements > 0 then 
+				local cat = findCategory(gui.sceneWindowScroll, name)
+				if cat == nil then 
+					cat = createCat(name, "scene", collapseRearrangeSceneWindow)
+				end 
 
-			for _, element in ipairs(component.static.guiElements) do 
-				local widgets = getElementWidgets(cat, element.id)
+				for _, element in ipairs(component.static.guiElements) do 
+					local widgets = getElementWidgets(cat, element.id)
 
-				if #widgets == 0 then -- create widgets
-					createElementWidgets(cat, component, element, 'components["' .. name .. '"].static.' .. element.id)
-				else -- update values 
-					for _, widget in ipairs(widgets) do 
-						if element.type == "Checkbox" and widget.type == "Checkbox" then 
-							widget.checked = component.static[element.id] -- not using setParam, so onChecked will not be called (infinite recursion)
-							widget.cliCmd = widget.target .. " = " .. tostring(not widget.checked)
-						elseif element.type == "String" and widget.type == "LineInput" then 
-							widget:setParam("text", component.static[element.id])
-							widget.cliCmd = widget.target .. " = <text>"
-						end
-					end 
-				end
-			end 
+					if #widgets == 0 then -- create widgets
+						createElementWidgets(cat, component, element, 'components["' .. name .. '"].static.' .. element.id)
+					else -- update values 
+						for _, widget in ipairs(widgets) do 
+							if element.type == "Checkbox" and widget.type == "Checkbox" then 
+								widget.checked = component.static[element.id] -- not using setParam, so onChecked will not be called (infinite recursion)
+								widget.cliCmd = widget.target .. " = " .. tostring(not widget.checked)
+							elseif element.type == "String" and widget.type == "LineInput" then 
+								widget:setParam("text", component.static[element.id])
+								widget.cliCmd = widget.target .. " = <text>"
+							end
+						end 
+					end
+				end 
+			end
 		end 
 
 		-- update entity properties
@@ -437,8 +439,11 @@ do
 			local entity = gui.entityList.selected[1].entity
 
 			-- delete all categories for which a corresponding component is not present in the selected entity or which guiElements do not match
+			local uncollapsed = nil
 			for i = #gui.propertyWindowScroll.children, 1, -1 do 
 				local category = gui.propertyWindowScroll.children[i]
+				if category.collapsed == false then uncollapsed = category.text end
+
 				local delete = true
 				if category.type == "Category" then 
 					local comp = nil
@@ -450,36 +455,49 @@ do
 					end 
 
 					if comp then
-						local elementIndex = 1
-						if category.children[1].elementId == comp.__guiElements[elementIndex].id then 
-							delete = false
-							for _, widget in ipairs(category.children) do 
-								if widget.elementId ~= comp.__guiElements[elementIndex].id then 
-									elementIndex = elementIndex + 1
-									if elementIndex > #comp.__guiElements or widget.elementId ~= comp.__guiElements[elementIndex].id then 
-										print(elementIndex)
-										print(widget.elementId)
-										delete = true 
-										break 
-									end
-								end 
-							end
+						local function setSize(set) 
+							local n = 0
+							for k, v in pairs(set) do n = n + 1 end 
+							return n
+						end 
 
-							if #comp.__guiElements ~= elementIndex then 
-								delete = true
+						local widgetElementIds = {}
+						for _, widget in ipairs(category.children) do 
+							widgetElementIds[widget.elementId] = true 
+						end
+
+						local elementIds = {}
+						for _, element in ipairs(comp.__guiElements) do 
+							elementIds[element.id] = true
+						end 
+
+						if setSize(elementIds) == setSize(widgetElementIds) then 
+							delete = false 
+							-- check if both sets are equal
+							for k, v in pairs(widgetElementIds) do 
+								if elementIds[k] == nil then 
+									delete = true 
+									print("id mismatch")
+									break
+								end 
 							end 
 						end
 					end
 					
-					if delete then print("DELETE!") end
-					if delete then table.remove(gui.propertyWindowScroll, i) end
+					if delete then 
+						print("DELETE!")
+						gui.propertyWindowLayout:removeWidget(category)
+						table.remove(gui.propertyWindowScroll.children, i)
+					end
 				end
 			end 
 
+			-- create and update categories/gui elements
 			for _, component in ipairs(entity.components) do 
 				local cat = findCategory(gui.propertyWindowScroll, component.componentType)
 				if cat == nil then 
 					cat = createCat(component.componentType, "property", collapseRearrangePropertyWindow)
+					if component.componentType == uncollapsed then cat:setParam("collapsed", false) end
 				end
 
 				for _, element in ipairs(component.__guiElements) do 

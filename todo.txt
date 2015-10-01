@@ -1,9 +1,10 @@
-* Components: Transforms, Sprite (Textfeld als Filebrowser)
-* (Done?) Implement hiding of unused categories -- maybe delete every category that is not needed/does not have the same guiElements
-* Rendering, Picking
------ Markus joined
-* Grid
 * Camera Movement with Mouswheel (Press = Drag&Drop move, Up/Down = Zoom)
+* Grid -- smoothstepped sin + stepped at origin
+-- BA
+* Components: Transforms, Sprite (Textfeld als Filebrowser)
+* Rendering
+* Picking, Edit Modes
+----- Markus joined
 * File actions: load, save
 * Filebrowser
 
