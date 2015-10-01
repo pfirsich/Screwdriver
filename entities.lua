@@ -25,6 +25,22 @@ function getEntityByGUID(guid)
 	return nil
 end 
 
+function foreachEntity(func)
+	for i = 1, #map.entities do 
+		if map.entities[i].guid == guid then func(map.entities[i]) end 
+	end
+end 
+
+function foreachSelected(func)
+	for i = #map.entities, 1, -1 do
+		for _, guid in ipairs(gui.selectedEntities) do 
+			if map.entities[i].guid == guid then 
+				func(map.entities[i])
+			end 
+		end 
+	end
+end
+
 entityTypes["dummy"] = {
 	label = "Test entity type",
 	components = {
