@@ -1,8 +1,12 @@
+* Fix alt selection
+
 * Edit Modes
 ----- Markus joined
-* Color picker + Color fürs Sprite
 * File actions: load, save
+* Color picker + Color fürs Sprite
 * Filebrowser
+* Polygone!
+* Show Details
 
 Later/Maybe: 
 * Only show component-info in scene window if component is actually used in the scene

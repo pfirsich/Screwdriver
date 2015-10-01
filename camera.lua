@@ -1,7 +1,9 @@
  do
-    camera = {position = {0, 0}, zoomLevel = 0, scale = 1.0}
+    camera = {position = {0, 0}, zoomLevel = 0, scale = 1.0, zoomBase = 1.07}
 
     function camera.push(scale)
+        camera.scale = math.pow(camera.zoomBase, camera.zoomLevel)
+
         love.graphics.push()
         -- Center Screen
         love.graphics.translate(love.window.getWidth()/2, love.window.getHeight()/2)
@@ -12,6 +14,10 @@
         -- FIXME: flickering on edges caused by pixel positions not being whole numbers after scaling (see math.floor in translate). ?
         love.graphics.scale(camera.scale, camera.scale)
     end
+
+    function camera.setScale(scale)
+        camera.zoomLevel = math.log(scale) / math.log(camera.zoomBase)
+    end 
 
     function camera.screenToWorld(x, y)
         -- Relative to Center

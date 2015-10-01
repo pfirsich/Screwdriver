@@ -65,7 +65,17 @@ do
 	end
 
 	function editor.focusCamera(selected) 
-		gui.printConsole("<to be implemented>")
+		local totalBBox = {math.huge, math.huge, -math.huge, -math.huge}
+		for _, guid in ipairs(selected) do 
+			local entityBBox = getEntityByGUID(guid).shapes.bbox
+			totalBBox[1] = math.min(totalBBox[1], entityBBox[1])
+			totalBBox[2] = math.min(totalBBox[2], entityBBox[2])
+			totalBBox[3] = math.max(totalBBox[3], entityBBox[3])
+			totalBBox[4] = math.max(totalBBox[4], entityBBox[4])
+		end 
+		camera.position = {(totalBBox[1] + totalBBox[3])/2, (totalBBox[2] + totalBBox[4])/2}
+		local winW, winH = love.window.getWidth(), love.window.getHeight()
+		camera.setScale(math.min(winW / (totalBBox[3] - totalBBox[1]), winH / (totalBBox[4] - totalBBox[2])) * 0.5)
 	end
 
 	function editor.removeEntities(selected) 

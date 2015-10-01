@@ -173,8 +173,6 @@ function love.keypressed(key, isrepeat)
 end
 
 function love.draw()
-	camera.scale = math.pow(1.07, camera.zoomLevel) 
-
 	if components["Core"].static.showGrid then 
 		love.graphics.setShader(gridShader)
 		gridShader:send("cameraScale", camera.scale)
@@ -202,7 +200,7 @@ function love.draw()
 		end 
 
 		if components["Core"].static.showEntityBorders then 
-			love.graphics.setLineWidth(3)
+			love.graphics.setLineWidth(3.0/camera.scale)
 			for _, entity in ipairs(map.entities) do
 				if entity.pickableComponent then 
 					for _, shape in ipairs(entity.shapes) do 

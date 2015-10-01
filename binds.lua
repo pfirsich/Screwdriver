@@ -33,4 +33,5 @@ do
 	shortcut("lctrl+d,rctrl+d", "gui.selectEntities({})")
 	shortcut("lctrl+z,rctrl+z", "mapStack:seek(-1)")
 	shortcut("lctrl+y,rctrl+y", "mapStack:seek(1)")
+	shortcut("lctrl+f,rctrl+f", "editor.focusCamera(gui.selectedEntities)")
 end
