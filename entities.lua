@@ -16,6 +16,13 @@ function getComponentById(entity, id)
 		end
 	end 
 	return nil
+end
+
+function getEntityByGUID(guid) 
+	for i = 1, #map.entities do 
+		if map.entities[i].guid == guid then return map.entities[i] end 
+	end
+	return nil
 end 
 
 entityTypes["dummy"] = {

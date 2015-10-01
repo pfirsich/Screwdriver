@@ -14,7 +14,7 @@ do
 
 		for _, component in ipairs(entityTypes[type].components) do 
 			if component.componentType == "Core" then 
-				component.name = type .. " " .. tostring(entity.guid)
+				component.name = type
 			end
 			local componentObject = components[component.componentType](component)
 			table.insert(entity.components, componentObject) 
@@ -25,8 +25,8 @@ do
 
 	function editor.entityUp(selected)
 		for i = #map.entities, 1, -1 do
-			for _, element in ipairs(selected) do 
-				if map.entities[i].guid == element.entity.guid then 
+			for _, guid in ipairs(selected) do 
+				if map.entities[i].guid == guid then 
 					if i < #map.entities then 
 						map.entities[i], map.entities[i+1] = map.entities[i+1], map.entities[i]
 						break
@@ -38,8 +38,8 @@ do
 
 	function editor.entityDown(selected)
 		for i = 1, #map.entities do
-			for _, element in ipairs(selected) do 
-				if map.entities[i].guid == element.entity.guid then 
+			for _, guid in ipairs(selected) do 
+				if map.entities[i].guid == guid then 
 					if i > 1 then 
 						map.entities[i], map.entities[i-1] = map.entities[i-1], map.entities[i]
 						break
@@ -57,9 +57,9 @@ do
 		if #selected == 0 then 
 			gui.printConsole("none selected")
 		else 
-			for _, element in ipairs(selected) do 
+			for _, guid in ipairs(selected) do 
 				for index, entity in ipairs(map.entities) do 
-					if entity.guid == element.entity.guid then 
+					if entity.guid == guid then 
 						table.remove(map.entities, index)
 					end 
 				end 

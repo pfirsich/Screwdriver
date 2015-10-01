@@ -1,5 +1,5 @@
-* Populate Property-Window
 * Components: Transforms, Sprite (Textfeld als Filebrowser)
+* (Done?) Implement hiding of unused categories -- maybe delete every category that is not needed/does not have the same guiElements
 * Rendering, Picking
 ----- Markus joined
 * Grid
@@ -12,7 +12,6 @@ Later/Maybe:
 * Move all file buttons to File-Component?
 * Limit number of lines in console -> config file maybe?
 * Properly passing mousewheel events so scrollbars do what they should do at all times
-* Alle selections erstmal "unwrappen", also {text = , entity = } einfach zu elementen von entity machen, sodass das editor modul nicht so sehr von gui beeinflusst aussieht
 * Falls komplette deepe Kopien von map auf dem Mapstack ein Speicherproblem bergen, nur alle X einträge voll speichern + delta-befehle
 
 Bugs:

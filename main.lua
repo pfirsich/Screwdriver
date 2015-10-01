@@ -36,11 +36,9 @@ function love.load()
 end
 
 function love.update()
-	gui.base:update()
+	-- updateGUI has to be in front of :update(), because update builds the linearizedTree for TreeView widgets in there and updateGUI updates the selected list continuously
 	updateGUI()
-
-	gui.selectedEntityType = #gui.entityTypesList.selected > 0 and gui.entityTypesList.selected[1].entityType or nil
-	gui.selectedEntities = gui.entityList.selected
+	gui.base:update()
 end
 
 function love.mousepressed(x, y, button)
@@ -99,38 +97,39 @@ function love.draw()
 	gui.base:draw()
 
 	if gui.base.hovered == nil then
-		love.graphics.print("IN EDITOR VIEW", 0, 0)		
+		-- in editor view, not hovering GUI elements
 	end
 end
 
 -- does not push the changes to the mapstack (mostly used for actions that don't affect the map state)
 function cliExec_nostack(cmd) 
 	gui.consoleOutput:addLine(">> " .. cmd)
-	local ret, err = loadstring(cmd)
-	if ret == nil then 
+	local f, err = loadstring(cmd)
+	if f == nil then 
 		gui.consoleOutput:addLine("ERROR: " .. err)
 	else 
-		return ret() -- If this results in an error, the program WILL crash! No fix in sight.
+		return f() -- If this results in an error, the program WILL crash! No fix in sight.
 	end
 end
 
 function cliExec(cmd)
 	gui.consoleOutput:addLine(">> " .. cmd)
-	local ret, err = loadstring(cmd)
-	if ret == nil then 
+	local f, err = loadstring(cmd)
+	if f == nil then 
 		gui.consoleOutput:addLine("ERROR: " .. err)
 	else 
 		mapStack:push(cmd)
-		return ret()
+		local ret = f()
+		return ret
 	end
 end 
 
 function exec(file)
 	gui.consoleOutput:addLine(">> FILE: " .. file)
-	local ret, err = loadfile(file)
-	if ret == nil then 
+	local f, err = loadfile(file)
+	if f == nil then 
 		gui.consoleOutput:addLine("ERROR: " .. err)
 	else 
-		return ret()
+		return f()
 	end
 end

@@ -25,6 +25,11 @@ function tableDeepCopy(tbl)
     return ret
 end
 
+function foreach(tbl, func)
+    for k, v in pairs(tbl) do 
+        func(v)
+    end 
+end
 
 function printTable(t) -- from here: https://coronalabs.com/blog/2014/09/02/tutorial-printing-table-contents/  
     local print_r_cache={}

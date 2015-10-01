@@ -39,10 +39,6 @@ Multiple selection sollte vom CLI unterstützt sein (alle Funktione sind in der L
 Big three objects (tables): editor, gui, map
 map is the whole map-state (saved as-is), gui is everything thats not the editor, editor is the rest
 
-Action-Stack (essentially a Stack with named deltas to the map-object):
-cmd, {keys}, {values}
-moveObjectTo(blaobject, x, y), map.objects[12].properties.TransformTranslate.x, x
-
 Vermutlich muss man einfach einen Game-Ordner angeben, damit man nicht alles gedoppelt hat und nicht kompliziert kopieren muss. Entweder der Editor ist dann irgendwo im game-ordner? (shiiiiat). Oder man macht io mit dem Lua-io-Modul und wrappt den ganzen love-shit. Man muss dann auch einen kleinen File-Browser frickeln (shiiiiit).
 Funktioniert auch nicht, weil directory access nicht ohne Probleme funktioniert, wenn man das Lua io-Modul benutzt.
 Dafür wird gebraucht:

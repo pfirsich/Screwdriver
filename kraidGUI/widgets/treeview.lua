@@ -42,7 +42,7 @@ function getModule(gui)
         self:linearizeTree(self.linearizedTree)
     end
 
-    function TreeView:setTree(tree)
+    function TreeView:setTree(tree) 
         self.tree = tree
         self:updateTree()
     end
