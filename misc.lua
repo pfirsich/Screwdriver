@@ -22,6 +22,7 @@ function tableDeepCopy(tbl)
             ret[k] = tbl[k]
         end
     end
+    setmetatable(ret, getmetatable(tbl))
     return ret
 end
 
