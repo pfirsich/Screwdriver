@@ -390,6 +390,14 @@ do
 				local input = kraid.widgets.LineInput{parent = parent, elementId = element.id, target = target, cliCmd = "", minWidth = 20}
 				input:setParam("onChange", function(self) cliExec(self.target .. ' = "' .. self.text .. '"') end)
 				parent.layout:addWidget(input)
+			elseif element.type == "Numberwheel" then 
+				local label = kraid.widgets.Label{parent = parent, text = element.name, elementId = element.id}
+				parent.layout:addWidget(label)
+				local params = element.params or {speed = 10.0}
+				local numberWheel = kraid.widgets.Numberwheel{parent = parent, elementId = element.id, target = target, cliCmd = "", 
+															speed = params.speed, minValue = params.minValue, maxValue = params.maxValue}
+				numberWheel:setParam("onChange", function(self, value) cliExec(self.target .. " = " .. tostring(value)) end)
+				parent.layout:addWidget(numberWheel)
 			end
 			parent.layout:arrange()
 			parent:setParam("inflatedHeight", select(4, parent:getChildrenBBox()) + 10)
@@ -416,7 +424,10 @@ do
 							elseif element.type == "String" and widget.type == "LineInput" then 
 								widget:setParam("text", component.static[element.id])
 								widget.cliCmd = widget.target .. " = <text>"
-							end
+							elseif element.type == "Numberwheel" and widget.type == "Numberwheel" then 
+								widget.value = component.static[element.id]
+								widget.cliCmd = widget.target .. " = <value>"
+							end 
 						end 
 					end
 				end 
@@ -515,6 +526,9 @@ do
 							elseif element.type == "String" and widget.type == "LineInput" then 
 								widget:setParam("text", component[element.id])
 								widget.cliCmd = widget.target .. " = <text>"
+							elseif element.type == "Numberwheel" and widget.type == "Numberwheel" then 
+								widget.value = component[element.id]
+								widget.cliCmd = widget.target .. " = <value>"
 							end
 						end 
 					end

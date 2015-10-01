@@ -160,7 +160,7 @@ function Transforms:init(properties)
     self.unique = True
 end
 
-Numberwheel, String, Checkbox, Button, Choice   
+Numberwheel, String, Checkbox, Button, Choice, Color, Texture, Entity?
 
 Transforms.guiElements = {} -- global gui elements
 

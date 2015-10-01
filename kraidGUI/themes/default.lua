@@ -277,7 +277,7 @@ function getModule(gui)
     theme.Numberwheel.borderThickness = 2
     theme.Numberwheel.wheelBorderThickness = 2
     theme.Numberwheel.smallRadius = 5
-    theme.Numberwheel.blownUpRadius = 100
+    theme.Numberwheel.blownUpRadius = 20
     theme.Numberwheel.wheelMarginLeft = theme.Numberwheel.smallRadius + 5
     theme.Numberwheel.textMarginLeft = theme.Numberwheel.smallRadius + theme.Numberwheel.wheelMarginLeft + 5
     theme.Numberwheel.guidelineCount = 6
@@ -307,7 +307,6 @@ function getModule(gui)
 
         if self.blownUp then
             local rel = {self.theme.Numberwheel.wheelMarginLeft - x, self.height/2 - y}
-            print(rel[1], rel[2])
             local angle = math.atan2(rel[2], rel[1])
             -- finite difference approximation and linearization (only lowest order)
             local dphi = 0
@@ -315,10 +314,12 @@ function getModule(gui)
             dphi = dphi + (math.atan2(rel[2] + epsilon, rel[1]) - angle)/epsilon * dy
             dphi = dphi + (math.atan2(rel[2], rel[1] + epsilon) - angle)/epsilon * dx
 
-            -- NOTE: Check here if radius < 1.0 so outside the wheel nothing happens? It's actually quite useful, albeit unintuitive.
             local radius = math.sqrt(rel[1]*rel[1] + rel[2]*rel[2]) / self.theme.Numberwheel.blownUpRadius
-            -- negative sign because I think clockwise increase seems more intuitive
-            self:setParam("value", self.value - dphi * (type(self.speed) == "function" and self.speed(radius) or self.speed) * radius)
+
+            if radius > 1.0 then 
+                -- negative sign because I think clockwise increase seems more intuitive
+                self:setParam("value", self.value - dphi * (type(self.speed) == "function" and self.speed(radius) or self.speed))
+            end
         end
     end
 
@@ -335,22 +336,13 @@ function getModule(gui)
         gui.backend.drawRectangle(0, 0, self.width, self.height, self.theme.Numberwheel.borderThickness)
 
         local radius = self.blownUp and self.theme.Numberwheel.blownUpRadius or self.theme.Numberwheel.smallRadius
-        local color = {unpack((hovered(self) or hovered(self.numberInputLine)) and self.theme.colors.markedHighlight or self.theme.colors.marked)} -- copy
+        local color = {unpack(self.theme.colors.marked)} -- copy
         color[4] = self.blownUp and self.theme.Numberwheel.wheelAlpha or 255
         gui.backend.setColor(color)
         gui.backend.drawCircle(self.theme.Numberwheel.wheelMarginLeft, self.height/2, radius, 32)
 
         gui.backend.setColor(self.theme.colors.border)
         gui.backend.drawCircle(self.theme.Numberwheel.wheelMarginLeft, self.height/2, radius, 32, self.theme.Numberwheel.wheelBorderThickness)
-
-        if self.blownUp then
-            for i = 1, self.theme.Numberwheel.guidelineCount do
-                local speed = function(x) return type(self.speed) == "function" and self.speed(x) or self.speed * x end
-                local radius = speed(1.0 / self.theme.Numberwheel.guidelineCount * (i - 1)) / speed(1.0)
-                gui.backend.drawCircle(self.theme.Numberwheel.wheelMarginLeft, self.height/2,
-                                        radius * self.theme.Numberwheel.blownUpRadius, 32, self.theme.Numberwheel.guidelineThickness)
-            end
-        end
 
         gui.internal.withCanvas(self.numberInputLine, function()
             gui.internal.callThemeFunction(self.numberInputLine, "draw")

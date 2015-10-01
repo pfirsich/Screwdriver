@@ -37,10 +37,10 @@ function love.load()
 	gridShader = love.graphics.newShader([[
 		uniform float cameraScale;
 		uniform vec2 cameraPos;
+		uniform float spacing = 100.0;
 
 		const float thickness = 1.0;
-		const float smoothness = 2.0;
-		const float spacing = 100.0;
+		//const float smoothness = 2.0;
 
 		float gridFunc(float coord, float thickness) {
 			return 1.0 - step(1.0/spacing*thickness, coord);
@@ -84,7 +84,6 @@ function love.mousepressed(x, y, button)
 		elseif button == "wu" then 
 			camera.zoomLevel = camera.zoomLevel + 1
 		end
-		print(camera.zoomLevel)
 	end
 end
 
@@ -142,6 +141,7 @@ function love.draw()
 		love.graphics.setShader(gridShader)
 		gridShader:send("cameraScale", camera.scale)
 		gridShader:send("cameraPos", {camera.position[1] - love.window.getWidth()/2/camera.scale, camera.position[2] + love.window.getHeight()/2/camera.scale})
+		gridShader:send("spacing", components["Core"].static.gridSpacing)
 		love.graphics.rectangle("fill", 0, 0, love.window.getWidth(), love.window.getHeight())
 		love.graphics.setShader()
 	end

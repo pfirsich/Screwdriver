@@ -18,11 +18,13 @@ do
 	end
 
 	Core.static.showGrid = true
+	Core.static.gridSpacing = 200
 	Core.static.showNames = true 
 	Core.static.showDetails = true
 
 	Core.static.guiElements = { -- background color, grid color/spacing
 		{id = "showGrid", name = "Show grid", type = "Checkbox"},
+		{id = "gridSpacing", name = "Grid spacing", type = "Numberwheel", params = {minValue = 1.0}},
 		{id = "showNames", name = "Show names", type = "Checkbox"},
 		{id = "showDetails", name = "Show details", type = "Checkbox"},
 	}
