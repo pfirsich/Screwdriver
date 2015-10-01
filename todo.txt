@@ -1,6 +1,3 @@
-* Camera Movement with Mouswheel (Press = Drag&Drop move, Up/Down = Zoom)
-* Grid -- smoothstepped sin + stepped at origin
--- BA
 * Components: Transforms, Sprite (Textfeld als Filebrowser)
 * Rendering
 * Picking, Edit Modes

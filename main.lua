@@ -33,6 +33,29 @@ function love.load()
 	updateGUI()
 	love.resize(love.window.getWidth(), love.window.getHeight())
 
+	-- take into account camera.scale, camera.position and make lines through origin thicker
+	gridShader = love.graphics.newShader([[
+		uniform float cameraScale;
+		uniform vec2 cameraPos;
+
+		const float thickness = 1.0;
+		const float smoothness = 2.0;
+		const float spacing = 100.0;
+
+		float gridFunc(float coord, float thickness) {
+			return 1.0 - step(1.0/spacing*thickness, coord);
+			//return smoothstep(highEdge - 1.0/spacing*smoothness, highEdge, coord);
+		}
+
+		vec4 effect(vec4 color, Image texture, vec2 textureCoords, vec2 screenCoords) {
+			vec2 realCoords = (screenCoords + cameraPos * cameraScale * vec2(1.0, -1.0)) / spacing / cameraScale;
+			float gridVal = gridFunc(fract(realCoords.x), thickness/cameraScale) + gridFunc(fract(realCoords.y), thickness/cameraScale);
+			float originMarkerFactor = 1.5;
+			gridVal += gridFunc(abs(realCoords.x), thickness*originMarkerFactor/cameraScale) + gridFunc(abs(realCoords.y), thickness*originMarkerFactor/cameraScale);
+		    return mix(vec4(0.0), vec4(0.7), vec4(clamp(gridVal, 0.0, 1.0)));
+		}
+	]])
+
 	love.keyboard.setKeyRepeat(true)
 end
 
@@ -114,6 +137,15 @@ end
 
 function love.draw()
 	camera.scale = math.pow(1.07, camera.zoomLevel) 
+
+	if components["Core"].static.showGrid then 
+		love.graphics.setShader(gridShader)
+		gridShader:send("cameraScale", camera.scale)
+		gridShader:send("cameraPos", {camera.position[1] - love.window.getWidth()/2/camera.scale, camera.position[2] + love.window.getHeight()/2/camera.scale})
+		love.graphics.rectangle("fill", 0, 0, love.window.getWidth(), love.window.getHeight())
+		love.graphics.setShader()
+	end
+
 	camera.push()
 		love.graphics.rectangle("fill", 0, 0, 100, 100)
 		love.graphics.rectangle("fill", 200, 200, 100, 100)
