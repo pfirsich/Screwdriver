@@ -1,9 +1,10 @@
 ----- Markus joined
 * File actions: load, save
+	* newImage abstrahieren und später auf io-Implementation umsteigen
 * Color picker + Color fürs Sprite
-* Filebrowser
 * Polygone!
 * Show Details
+* Filebrowser
 
 Later/Maybe: 
 * Up/Down key in console
@@ -15,5 +16,7 @@ Later/Maybe:
 * J-Query mäßig verschiedene Entites selecten (nach id/type) und operationen anwenden
 
 Bugs:
+* "Bug": Numberwheels benutzen (oder Textfelder) pusht super oft auf den Stack und ist braucht deshalb hunderte strg+z um ganz undo-d zu werden
 * Up/Down mit multiple selection macht funky sachen, wenn alle ausgewählten schon ganz oben sind
 * Alt-Selection kaputt?
+* editModes kacken ein bisschen ab, wenn man position, scale oder rotation des Transform-Components auf nil setzt

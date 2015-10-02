@@ -225,7 +225,7 @@ function love.draw()
 
 						love.graphics.setColor(255, 0, 0, 255)
 						for i = 1, #shape, 2 do 
-							love.graphics.circle("fill", shape[i], shape[i+1], 10.0/camera.scale, 12)
+							--love.graphics.circle("fill", shape[i], shape[i+1], 10.0/camera.scale, 12)
 						end 
 					end 
 

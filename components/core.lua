@@ -12,7 +12,7 @@ do
 			{id = "hidden", name = "Hidden", type = "Checkbox"},
 		}
 
-		self.__hidden = false
+		self.__hidden = false -- This is a way to hide components in the GUI (for custom userdata, which has to be part of the entity, but doesn't need to be edited in the editor)
 		self.__showInDetails = false
 	end
 

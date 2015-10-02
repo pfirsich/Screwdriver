@@ -1,15 +1,3 @@
-Components:
-TransformTranslate
-    Drag&Drop für alle Objekte
-TransformRotate
-    Drag&Drop für Rotation (es sollte Marker fürs Zentrum geben)
-TransformOffset
-    Drag&Drop für Offset + marker fürs Zentrum (Mausbewegungen müssen vorher auch transmorfiert werden)
-TransformScale
-    siehe oben
-Ein Transform-Component mit drei booleans
-Sprite
-    global gui element - show image borders
 TexturedPolygon
     gloabl gui elements - show vertices and edges
     all polygons should have flags for textures (so they can only be edges+vertices (for game logic stuff))
@@ -41,63 +29,6 @@ Dafür wird gebraucht:
     getWorkingDirectory
 =======>
 Wir wollten LoveFS verwenden. Eventuell kann man in Erwägung ziehen mit dem LuaJIT-FFI die WinAPI-dlls direkt zu laden und die entsprechenden Funktionen direkt aufzurufen, um das erscheinen von einem guten Dutzend cmd-Windows zu vermeiden. In dem Fall ersetzen wie LoveFS durch eine eigene Bibliothek mit der gleichen API. Man sollte sich vorher das Textencoding-Verhalten angucken.
-
-
------ entities.lua
-entityTypes["weapon_pod"] = {
-    label = "Weapon pod", 
-    components = { -- errata: this is an array now (integer indices) to preserve order
-        transforms = {
-            componentType = "Transforms",
-            translate = True,
-            rotate = True,
-            offset = False,
-            scale = False,
-        },
-        sprite = {
-            componentType = "Sprite",
-            image = "./media/images/weaponPod.png",
-            color = {255, 255, 255, 255}
-        },
-        weaponType = {
-            componentType = "MetadataChoice",
-            label = "Weapon type",
-            choices = {
-                {"rifle", "Laser rifle"},
-                {"shotgun", "XM34 laser shotgun"},
-                {"pistol", "Dank ass laser pistol"},
-                {"he", "High explosive (laser) grenade"},
-                {"exodia", "(laser) frying pan"}
-            },
-            value = "rifle",
-            showInDetails = True
-        },
-        respawnTime = {
-            componentType = "MetadataNumber",
-            label = "Respawn time",
-            min = 0.0,
-            value = 6.0
-        },
-        shader = {
-            componentType = "MetadataString",
-            value = "glossystuff",
-            hidden = True
-        }
-    }
-}
-
-Alt selection sollte auch in Edit modes möglich sein? effiziente Helfer finden?
-Multiple selection in edit modes?
-
-Transforms.editModes = {
-    move = {
-        onMouseDown(self, x, y, button)
-        onMouseMove(self, x, y)
-        onMouseUp(self, x, y, button)
-    }
-}
-
-Transforms.editModes.move:onMouseDown
 
 Vertex-Edit-Mode: Drag&Drop auf Vertices bewegt die, Linksklick auf Edges erzeugt neue Vertices, rechtsklick auf Vertices löscht diese
 

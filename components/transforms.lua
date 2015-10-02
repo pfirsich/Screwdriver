@@ -30,7 +30,7 @@ do
             table.iextend(self.__guiElements,{
                 {name = "X-Offset", type = "Numberwheel", id = "offset[1]"},
                 {name = "Y-Offset", type = "Numberwheel", id = "offset[2]"},
-                {name = "Offset entities", type = "Button", id = 'editor.editMode = components["Transforms"].static.editModes.offset'}
+                --{name = "Offset entities", type = "Button", id = 'editor.editMode = components["Transforms"].static.editModes.offset'}
             })
         end
         
@@ -145,6 +145,19 @@ do
     end
 
     -- Scale mode
+    function Transforms.static.editModes.scale.getRelativeRotatedDistance(mx, my)
+        local mode = Transforms.static.editModes.scale
+        local wx, wy = camera.screenToWorld(mx, my)
+        local relX, relY = wx - mode.transforms.position[1], wy - mode.transforms.position[2]
+
+        local sinphi = math.sin(-mode.transforms.rotation)
+        local cosphi = math.cos(-mode.transforms.rotation)
+        local distX = cosphi * relX - sinphi * relY
+        local distY = sinphi * relX + cosphi * relY
+
+        return distX, distY
+    end
+
     function Transforms.static.editModes.scale.onMouseDown(x, y, button)
         local mode = Transforms.static.editModes.scale
         if button == "l" then 
@@ -152,14 +165,7 @@ do
             mode.entity = getEntityByGUID(gui.selectedEntities[1])
             if mode.entity then 
                 mode.transforms = getComponentByType(mode.entity, "Transforms")
-                local wx, wy = camera.screenToWorld(x, y)
-                local relX, relY = wx - mode.transforms.position[1], wy - mode.transforms.position[2]
-
-                local sinphi = math.sin(-mode.transforms.rotation)
-                local cosphi = math.cos(-mode.transforms.rotation)
-                mode.startDistX = cosphi * relX - sinphi * relY
-                mode.startDistY = sinphi * relX + cosphi * relY
-
+                mode.startDistX, mode.startDistY = Transforms.static.editModes.scale.getRelativeRotatedDistance(x, y)
                 mode.startScale = {unpack(mode.transforms.scale)}
             end 
         end
@@ -168,13 +174,7 @@ do
     function Transforms.static.editModes.scale.onMouseMove(x, y, dx, dy)
         local mode = Transforms.static.editModes.scale
         if mode.transforms then 
-            local wx, wy = camera.screenToWorld(x, y)
-            local relX, relY = wx - mode.transforms.position[1], wy - mode.transforms.position[2]
-
-            local sinphi = math.sin(-mode.transforms.rotation)
-            local cosphi = math.cos(-mode.transforms.rotation)
-            local distX = cosphi * relX - sinphi * relY
-            local distY = sinphi * relX + cosphi * relY
+            local distX, distY = Transforms.static.editModes.scale.getRelativeRotatedDistance(x, y)
 
             local facX, facY = distX / mode.startDistX, distY / mode.startDistY
             if mode.transforms.keepAspect then
