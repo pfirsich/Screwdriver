@@ -10,7 +10,7 @@ do
 
         self.__guiElements = {
             {id = "imagePath", type = "String", name = "Image path"},
-            {id = "loadImage", type = "Button", name = "Load Image"}
+            {id = "%COMPONENT%:loadImage()", type = "Button", name = "Load Image"}
         }
 
         self.__hidden = false

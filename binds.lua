@@ -34,6 +34,11 @@ do
 	shortcut("lctrl+z,rctrl+z", "mapStack:seek(-1)")
 	shortcut("lctrl+y,rctrl+y", "mapStack:seek(1)")
 	shortcut("lctrl+f,rctrl+f", "editor.focusCamera(gui.selectedEntities)")
-	shortcut("pageup", "editor.entityUp(gui.selectedEntities)")
-	shortcut("pagedown", "editor.entityDown(gui.selectedEntities)")
+	shortcut("lctrl+ ,rctrl+ ", "editor.editMode = editor.defaultEditMode")
+	shortcut("lctrl+t,rctrl+t", 'editor.editMode = components["Transforms"].static.editModes.move')
+	shortcut("lctrl+r,rctrl+r", 'editor.editMode = components["Transforms"].static.editModes.rotate')
+	shortcut("lctrl+s,rctrl+s", 'editor.editMode = components["Transforms"].static.editModes.scale')
+
+	shortcut("pageup", "editor.entityUp(gui.selectedEntities)", true)
+	shortcut("pagedown", "editor.entityDown(gui.selectedEntities)", true)
 end

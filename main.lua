@@ -98,8 +98,9 @@ function love.mousepressed(x, y, button)
 
 		if button == "l" then 
 			if #editor.hoveredEntities > 0 then 					
+				local ctrl = love.keyboard.isDown("lctrl") and editor.editMode == editor.defaultEditMode
 				if love.keyboard.isDown("lalt") and #gui.selectedEntities == 1 then -- step down selection
-					if love.keyboard.isDown("lctrl") then 
+					if ctrl then 
 						print("select all hovered")
 						gui.selectEntities(editor.hoveredEntities)
 					else 
@@ -116,13 +117,14 @@ function love.mousepressed(x, y, button)
 						gui.selectEntities({editor.hoveredEntities[selectedHoveredIndex]})
 					end
 				else -- select topmost
-					if love.keyboard.isDown("lctrl") then 
+					if ctrl then 
 						table.insert(gui.selectedEntities, editor.hoveredEntities[#editor.hoveredEntities])
 						gui.selectEntities(gui.selectedEntities)
 					else 
 						gui.selectEntities({editor.hoveredEntities[#editor.hoveredEntities]})
 					end
 				end
+				if editor.editMode.onMouseDown then editor.editMode.onMouseDown(x, y, button) end
 			else 
 				gui.selectEntities({})
 			end
@@ -132,6 +134,7 @@ end
 
 function love.mousereleased(x, y, button)
 	gui.base:mouseReleased(x, y, button)
+	if editor.editMode.onMouseUp then editor.editMode.onMouseUp(x, y, button) end
 	camera.dragged = false
 end
 
@@ -153,6 +156,8 @@ function love.mousemoved(x, y, dx, dy)
 	else 
 		editor.hoveredEntities = {}
 	end 
+
+	if editor.editMode.onMouseMove then editor.editMode.onMouseMove(x, y, dx, dy) end
 end
 
 function love.textinput(text)
@@ -249,6 +254,16 @@ function love.draw()
 			love.graphics.setColor(255, 255, 255, 255)
 		end 
 	camera.pop()
+
+	local modeDescription = "Mode: " .. editor.editMode.description
+	local winW, winH = love.window.getDimensions()
+	local textW, textH = love.graphics.getFont():getWidth(modeDescription), love.graphics.getFont():getHeight()
+	local shadowOffset = 2
+	love.graphics.setColor(0, 0, 0, 255)
+	love.graphics.print(modeDescription, (winW - textW)/2 + shadowOffset, 20 + shadowOffset)
+	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.print(modeDescription, (winW - textW)/2, 20)
+
 	gui.base:draw()
 end
 
@@ -320,25 +335,29 @@ function transformPoint(transforms, x, y)
 	return nx + transforms.position[1], ny + transforms.position[2]
 end 
 
-function updateShapes()
-	for _, entity in ipairs(map.entities) do 
-		if entity.pickableComponent then 
-			entity.shapes = entity.pickableComponent:getShapes()
+function updateShape(entity)
+	if entity.pickableComponent then 
+		entity.shapes = entity.pickableComponent:getShapes()
 
-			local transforms = getComponentByType(entity, "Transforms")
-			local minX, minY, maxX, maxY = math.huge, math.huge, -math.huge, -math.huge
-			if transforms then 
-				for _, shape in ipairs(entity.shapes) do 
-					for i = 1, #shape, 2 do 
-						shape[i], shape[i+1] = transformPoint(transforms, shape[i], shape[i+1])
-						minX, minY = math.min(minX, shape[i]), math.min(minY, shape[i+1])
-						maxX, maxY = math.max(maxX, shape[i]), math.max(maxY, shape[i+1])
-					end 
+		local transforms = getComponentByType(entity, "Transforms")
+		local minX, minY, maxX, maxY = math.huge, math.huge, -math.huge, -math.huge
+		if transforms then 
+			for _, shape in ipairs(entity.shapes) do 
+				for i = 1, #shape, 2 do 
+					shape[i], shape[i+1] = transformPoint(transforms, shape[i], shape[i+1])
+					minX, minY = math.min(minX, shape[i]), math.min(minY, shape[i+1])
+					maxX, maxY = math.max(maxX, shape[i]), math.max(maxY, shape[i+1])
 				end 
 			end 
+		end 
 
-			entity.shapes.bbox = {minX, minY, maxX, maxY}
-		end
+		entity.shapes.bbox = {minX, minY, maxX, maxY}
+	end
+end
+
+function updateShapes()
+	for _, entity in ipairs(map.entities) do 
+		updateShape(entity)
 	end
 end
 

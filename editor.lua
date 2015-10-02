@@ -1,5 +1,8 @@
 do
 	editor = {}
+	editor.defaultEditMode = {description = "Default mode"}
+	editor.editMode = editor.defaultEditMode
+	editor.hoveredEntities = {}
 
 	local entityCounter = 1
 

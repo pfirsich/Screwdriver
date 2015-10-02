@@ -118,6 +118,7 @@ do
 					end 
 				end
 			end 
+			gui.selectedEntities = guidList
 			gui.entityList:setParam("selected", selection)
 		end 
 
@@ -438,8 +439,8 @@ do
 								widget.value = assert(loadstring("return " .. widget.target))()
 								widget.numberInputLine.text = string.format(widget.format, widget.value)
 								widget.cliCmd = widget.target .. " = <value>"
-							elseif element.type == "Button" and widget.type == "Button" then 
-								widget.cliCmd = 'components["' .. name .. '"].static.' .. element.id .. "()"
+							elseif element.type == "Button" and widget.type == "Button" then
+								widget.cliCmd = element.id -- for global elements e.g. components["Sprite"].static can always be accessed
 							end 
 						end 
 					end
@@ -546,7 +547,9 @@ do
 									widget.numberInputLine.text = string.format(widget.format, widget.value)
 									widget.cliCmd = widget.target .. " = <value>"
 								elseif element.type == "Button" and widget.type == "Button" then 
-									widget.cliCmd = 'getComponentById(getEntityByGUID(gui.selectedEntities[1]), "' .. component.id ..  '"):' .. element.id .. "()"
+									local entityString = "getEntityByGUID(gui.selectedEntities[1])"
+									local componentString = 'getComponentById(' .. entityString .. ', "' .. component.id ..  '")'
+									widget.cliCmd = element.id:gsub("%%COMPONENT%%", componentString):gsub("%%ENTITY%%", entityString)
 								end
 							end 
 						end
