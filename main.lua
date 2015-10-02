@@ -236,17 +236,16 @@ function love.draw()
 					end
 
 					if components["Core"].static.showNames then 
-						local nameScale = 2.0
+						local nameScale = 1.5 / camera.scale
 						local name = getComponentByType(entity, "Core").name
 						local width, height = love.graphics.getFont():getWidth(name) * nameScale, love.graphics.getFont():getHeight() * nameScale
 						local x, y = (entity.shapes.bbox[1] + entity.shapes.bbox[3] - width) / 2, (entity.shapes.bbox[2] + entity.shapes.bbox[4] - height) / 2
 						
-						local scale = nameScale / camera.scale
 						local shadowOffset = 2
 						love.graphics.setColor(0, 0, 0, 255)
-						love.graphics.print(name, x + shadowOffset, y + shadowOffset, 0, scale, scale)
+						love.graphics.print(name, x + shadowOffset, y + shadowOffset, 0, nameScale, nameScale)
 						love.graphics.setColor(255, 255, 255, 255)
-						love.graphics.print(name, x, y, 0, scale, scale)
+						love.graphics.print(name, x, y, 0, nameScale, nameScale)
 					end
 				end
 			end
