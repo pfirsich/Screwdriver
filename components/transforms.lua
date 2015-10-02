@@ -79,17 +79,18 @@ do
     Transforms.static.editModes = {
         move = {description = "Move entities"},
         rotate = {description = "Rotate entities"},
-        offset = {description = "Offset entities"},
+        --offset = {description = "Offset entities"}, -- do i even want this?
         scale = {description = "Scale entities"}
     }
 
+    -- Move mode
     function Transforms.static.editModes.move.onMouseDown(x, y, button)
         local mode = Transforms.static.editModes.move
         if button == "l" then 
-            mapStack:push()
+            mapStack:push() -- has to be executed before getEntityByGUID, so it has the current entity!
             mode.entity = getEntityByGUID(gui.selectedEntities[1])
             if mode.entity then 
-                Transforms.static.editModes.move.transforms = getComponentByType(mode.entity, "Transforms")
+                mode.transforms = getComponentByType(mode.entity, "Transforms")
             end 
         end
     end
@@ -105,7 +106,91 @@ do
     function Transforms.static.editModes.move.onMouseUp(x, y, button)
         local mode = Transforms.static.editModes.move
         if button == "l" and mode.transforms then 
-            --cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "Transforms").position = {' .. table.concat(mode.transforms.position, ", ") ..'}')
+            mode.transforms = nil
+            mode.entity = nil
+        end
+    end
+
+    -- Rotate mode
+    function Transforms.static.editModes.rotate.onMouseDown(x, y, button)
+        local mode = Transforms.static.editModes.rotate
+        if button == "l" then 
+            mapStack:push() -- has to be executed before getEntityByGUID, so it has the current entity!
+            mode.entity = getEntityByGUID(gui.selectedEntities[1])
+            if mode.entity then 
+                mode.transforms = getComponentByType(mode.entity, "Transforms")
+                local wx, wy = camera.screenToWorld(x, y)
+                mode.mouseAngleStart = math.atan2(wy - mode.transforms.position[2], wx - mode.transforms.position[1])
+                mode.trafoRotStart = mode.transforms.rotation
+            end 
+        end
+    end
+
+    function Transforms.static.editModes.rotate.onMouseMove(x, y, dx, dy)
+        local mode = Transforms.static.editModes.rotate
+        if mode.transforms then 
+            local wx, wy = camera.screenToWorld(x, y)
+            local angle = math.atan2(wy - mode.transforms.position[2], wx - mode.transforms.position[1])
+            mode.transforms.rotation = mode.trafoRotStart + angle - mode.mouseAngleStart
+            updateShape(mode.entity)
+        end 
+    end 
+
+    function Transforms.static.editModes.rotate.onMouseUp(x, y, button)
+        local mode = Transforms.static.editModes.rotate
+        if button == "l" and mode.transforms then 
+            mode.transforms = nil
+            mode.entity = nil
+        end
+    end
+
+    -- Scale mode
+    function Transforms.static.editModes.scale.onMouseDown(x, y, button)
+        local mode = Transforms.static.editModes.scale
+        if button == "l" then 
+            mapStack:push() -- has to be executed before getEntityByGUID, so it has the current entity!
+            mode.entity = getEntityByGUID(gui.selectedEntities[1])
+            if mode.entity then 
+                mode.transforms = getComponentByType(mode.entity, "Transforms")
+                local wx, wy = camera.screenToWorld(x, y)
+                local relX, relY = wx - mode.transforms.position[1], wy - mode.transforms.position[2]
+
+                local sinphi = math.sin(-mode.transforms.rotation)
+                local cosphi = math.cos(-mode.transforms.rotation)
+                mode.startDistX = cosphi * relX - sinphi * relY
+                mode.startDistY = sinphi * relX + cosphi * relY
+
+                mode.startScale = {unpack(mode.transforms.scale)}
+            end 
+        end
+    end
+
+    function Transforms.static.editModes.scale.onMouseMove(x, y, dx, dy)
+        local mode = Transforms.static.editModes.scale
+        if mode.transforms then 
+            local wx, wy = camera.screenToWorld(x, y)
+            local relX, relY = wx - mode.transforms.position[1], wy - mode.transforms.position[2]
+
+            local sinphi = math.sin(-mode.transforms.rotation)
+            local cosphi = math.cos(-mode.transforms.rotation)
+            local distX = cosphi * relX - sinphi * relY
+            local distY = sinphi * relX + cosphi * relY
+
+            local facX, facY = distX / mode.startDistX, distY / mode.startDistY
+            if mode.transforms.keepAspect then
+                facX = math.max(facX, facY)
+                facY = facX
+            end 
+
+            mode.transforms.scale = {mode.startScale[1] * facX, mode.startScale[2] * facY}
+
+            updateShape(mode.entity)
+        end 
+    end 
+
+    function Transforms.static.editModes.scale.onMouseUp(x, y, button)
+        local mode = Transforms.static.editModes.scale
+        if button == "l" and mode.transforms then 
             mode.transforms = nil
             mode.entity = nil
         end

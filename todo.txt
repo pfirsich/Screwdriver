@@ -1,4 +1,3 @@
-* Edit Modes
 ----- Markus joined
 * File actions: load, save
 * Color picker + Color fürs Sprite
@@ -7,6 +6,7 @@
 * Show Details
 
 Later/Maybe: 
+* Up/Down key in console
 * Only show component-info in scene window if component is actually used in the scene
 * Move all file buttons to File-Component?
 * Limit number of lines in console -> config file maybe?
