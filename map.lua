@@ -8,6 +8,7 @@ do
 
 	-- pushes a copy of the current map object above the cursor
 	function mapStack:push(label)
+		editor.unsavedChanges = true
 		self.cursor = self.cursor + 1
 		self[self.cursor] = {label, tableDeepCopy(map)}
 		for i = self.cursor + 1, #self do 

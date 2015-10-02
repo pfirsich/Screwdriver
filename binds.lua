@@ -37,7 +37,9 @@ do
 	shortcut("lctrl+ ,rctrl+ ", "editor.editMode = editor.defaultEditMode")
 	shortcut("lctrl+t,rctrl+t", 'editor.editMode = components["Transforms"].static.editModes.move')
 	shortcut("lctrl+r,rctrl+r", 'editor.editMode = components["Transforms"].static.editModes.rotate')
-	shortcut("lctrl+s,rctrl+s", 'editor.editMode = components["Transforms"].static.editModes.scale')
+	shortcut("lctrl+e,rctrl+e", 'editor.editMode = components["Transforms"].static.editModes.scale')
+
+	shortcut("lctrl+s,rctrl+s", 'editor.saveMap()')
 
 	shortcut("pageup", "editor.entityUp(gui.selectedEntities)", true)
 	shortcut("pagedown", "editor.entityDown(gui.selectedEntities)", true)

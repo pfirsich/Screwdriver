@@ -5,6 +5,7 @@ FannedPolygon
 FancyPolygon
     Sollten wir als erstes in doof implementieren
 Alle Polygons kriegen TextureTransforms! Die auch einfach Drag&drop aber für die Textur sind. Als globales boolean kann man auch die ganze Textur im Hintergrund rendern, wenn man will.
+
 MetadataBoolean
     label - gui label
     name - non-editor name (easier parsable)

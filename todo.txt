@@ -7,9 +7,10 @@
 	* Wie starten die? Preset-Buttons, Textur-Buttons (auch Trafos), Trafos, Funktionen für Modis?
 * Show Details
 * Filebrowser
-	Vielleicht als eigener Modus und nicht als Fenster oder so. Macht einiges einfacher und gibt einem mehr gelegenheit Textur-Previews und so zu zeigen
+	Vielleicht als eigener Modus und nicht als Fenster oder so. Macht einiges einfacher und gibt einem mehr gelegenheit Textur-Previews und so zu zeigen. Nachteil: Code sieht scheiße aus.
 
 Later/Maybe: 
+* Nochmal genau überlegen was in editor und was in map gehört oder was global ist.
 * Up/Down key in console (history)
 * Only show component-info in scene window if component is actually used in the scene
 * Move all file buttons to File-Component?
@@ -20,6 +21,21 @@ Later/Maybe:
 
 Bugs:
 * "Bug": Numberwheels benutzen (oder Textfelder) pusht super oft auf den Stack und ist braucht deshalb hunderte strg+z um ganz undo-d zu werden
+	* LineEdits nur cliExec-en lassen, wenn man enter drückt!
 * Up/Down mit multiple selection macht funky sachen, wenn alle ausgewählten schon ganz oben sind
 * Alt-Selection kaputt?
 * editModes kacken ein bisschen ab, wenn man position, scale oder rotation des Transform-Components auf nil setzt
+
+Currently:
+mapStack:push() - pushes a copy of the topmost map object and sets the global map to this copy
+Then do things
+Cons: It's not easy to work with intermediate results. e.g.: numberwheel that changes values, but is not finished changing yet.
+It's not possible to just wait for it to finish and then apply the changes, because you want to see it in real time.
+A possible fix is to push whenever you change anything, but this can result in a lot of spamming.
+Otherwise the stack has to be pushed manually every time changes are happening and cliExec can not be used throughout for all changes to the map.
+
+Alternative:
+have the map object be a "working copy" and mapStack has any official copies of the map.
+And anytime changes should be made or are completed, just execute cliExec, which pushes a copy of the top element of the mapStack onto itself and applies the changes there
+Cons: Rewrite :D
+It may also be possible that the topmost mapStack element and the map-object diverge and even after applying the latest change, which would manifest itself in hard to find, reproduce and fix bugs.

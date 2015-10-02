@@ -79,7 +79,6 @@ do
 		end 
 
 		-- Text input
-		-- %INPUT% will be replaced with the entered text in cmd
 		local dialogQuestionStringWindow = kraid.widgets.Window{parent = gui.base, width = 400, height = 120, visible = false, resizable = false}
 		local dialogQuestionStringLabel = kraid.widgets.Label{parent = dialogQuestionStringWindow, position = {5, 35}}
 		local dialogQuestionStringInput = kraid.widgets.LineInput{parent = dialogQuestionStringWindow, position = {5, 55}}
@@ -196,13 +195,16 @@ do
 		gui.sceneFileCategoryLayout:addWidget(gui.setCustomEntitiesFile)
 
 		gui.sceneFileCategoryLayout:newLine()
-		gui.loadFileButton = kraid.widgets.Button{parent = gui.sceneFileCategory, height = 30, minWidth = 50, text = "Load map file"}
+		gui.loadFileButton = kraid.widgets.Button{parent = gui.sceneFileCategory, height = 30, minWidth = 50, text = "Load map file", onClicked = widgetExecCliCmd,
+							cliCmd = 'editor.loadMap()'}
 		gui.sceneFileCategoryLayout:addWidget(gui.loadFileButton)
 
 		gui.sceneFileCategoryLayout:newLine()
-		gui.saveButton = kraid.widgets.Button{parent = gui.sceneFileCategory, height = 30, minWidth = 50, text = "Save"}
+		gui.saveButton = kraid.widgets.Button{parent = gui.sceneFileCategory, height = 30, minWidth = 50, text = "Save", onClicked = widgetExecCliCmd, 
+							cliCmd = 'editor.saveMap()'}
 		gui.sceneFileCategoryLayout:addWidget(gui.saveButton)
-		gui.saveAsButton = kraid.widgets.Button{parent = gui.sceneFileCategory, height = 30, minWidth = 50, text = "Save As"}
+		gui.saveAsButton = kraid.widgets.Button{parent = gui.sceneFileCategory, height = 30, minWidth = 50, text = "Save As", onClicked = widgetExecCliCmd,
+							cliCmd = 'editor.saveMapAs()'}
 		gui.sceneFileCategoryLayout:addWidget(gui.saveAsButton)
 
 		gui.sceneFileCategoryLayout:arrange()
@@ -260,7 +262,7 @@ do
 			self:setParam("position", {0, love.window.getHeight() - self.height})
 		end 
 
-		gui.consoleOutput = kraid.widgets.Label{parent = gui.consoleWindow, text = "This \n is a test \n boy", position = {0, 25}}
+		gui.consoleOutput = kraid.widgets.Label{parent = gui.consoleWindow, text = "", position = {0, 25}}
 
 		gui.consoleInput = kraid.widgets.LineInput{parent = gui.consoleWindow}
 		gui.consoleWindowScrollBar = kraid.widgets.Scrollbar{parent = gui.consoleWindow, vertical = true, value = 1.0}

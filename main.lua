@@ -7,12 +7,13 @@ require "misc"
 require "binds"
 require "map"
 require "camera"
+require "lfs"
 
 function love.resize(w, h)
 	local oldVisible = gui.sceneWindow.visible 
 	gui.sceneWindow:summon()
 	gui.sceneWindow:setParam("visible", oldVisible)
-	
+
 	oldVisible = gui.propertyWindow.visible 
 	gui.propertyWindow:summon()
 	gui.propertyWindow:setParam("visible", oldVisible)
@@ -33,7 +34,6 @@ function love.load()
 	updateGUI()
 	love.resize(love.window.getWidth(), love.window.getHeight())
 
-	-- take into account camera.scale, camera.position and make lines through origin thicker
 	gridShader = love.graphics.newShader([[
 		uniform float cameraScale;
 		uniform vec2 cameraPos;
@@ -80,6 +80,10 @@ function love.update()
 	else 
 		gui.consoleWindow:setParam("text", "Console")
 	end 
+
+	print("current:", editor.currentMapFile)
+	local title = editor.currentMapFile and editor.currentMapFile .. " - Screwdriver" or "Screwdriver"
+	love.window.setTitle((editor.unsavedChanges and "*" or "") .. title)
 end
 
 function love.mousepressed(x, y, button)
@@ -113,7 +117,13 @@ function love.mousepressed(x, y, button)
 								break 
 							end
 						end 
-						selectedHoveredIndex = math.max(1, (selectedHoveredIndex or #editor.hoveredEntities + 1) - 1)
+
+						if selectedHoveredIndex == nil then 
+							selectedHoveredIndex = #editor.hoveredEntities
+						else 
+							selectedHoveredIndex = selectedHoveredIndex - 1
+							if selectedHoveredIndex < 1 then selectedHoveredIndex = #editor.hoveredEntities end
+						end 
 						gui.selectEntities({editor.hoveredEntities[selectedHoveredIndex]})
 					end
 				else -- select topmost

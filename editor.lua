@@ -98,5 +98,30 @@ do
 		end 
 	end
 
-	
+	-- it's not pretty that these functions call functtions from the gui module, but it's handy to have these as easily bindable functions
+	function editor.saveMapFile(path)
+		editor.currentMapFile = path
+		editor.unsavedChanges = false
+	end
+
+	function editor.loadMapFile(path)
+		editor.currentMapFile = path
+		editor.unsavedChanges = false
+	end 
+
+	function editor.saveMap() 
+		if editor.currentMapFile then 
+			editor.saveMapFile(editor.currentMapFile)
+		else
+			editor.saveMapAs() 
+		end 
+	end 
+
+	function editor.saveMapAs()
+		gui.dialogQuestionString("Save map", lfs.currentdir() .. "\\", 'editor.saveMapFile("%INPUT%")')
+	end
+
+	function editor.loadMap()
+		gui.dialogQuestionString("Load map", lfs.currentdir() .. "\\", 'editor.loadMapFile("%INPUT%")')
+	end
 end
