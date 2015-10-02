@@ -2,6 +2,7 @@
 * File actions: load, save
 	* newImage abstrahieren und später auf io-Implementation umsteigen
 * Color picker + Color fürs Sprite
+	* Drei Numberwheels untereinander + ein rectangle mit gepickter Farbe?
 * Polygone!
 * Show Details
 * Filebrowser
