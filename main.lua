@@ -205,14 +205,16 @@ function love.draw()
 				if guid == entity.guid then hovered = true end 
 			end 
 
-			for i = 1, #entity.components do 
-				if entity.components[i].color then entity.components[i].color[4] = hovered and 200 or 255 end
-				if entity.components[i].renderStart then entity.components[i]:renderStart() end
-			end 
+			if not getComponentByType(entity, "Core").hidden then 
+				for i = 1, #entity.components do 
+					if entity.components[i].color then entity.components[i].color[4] = hovered and 200 or 255 end
+					if entity.components[i].renderStart then entity.components[i]:renderStart() end
+				end 
 
-			for i = #entity.components, 1, -1 do
-				if entity.components[i].renderEnd then entity.components[i]:renderEnd() end
-			end 
+				for i = #entity.components, 1, -1 do
+					if entity.components[i].renderEnd then entity.components[i]:renderEnd() end
+				end 
+			end
 		end 
 
 		if components["Core"].static.showEntityBorders then 
@@ -228,30 +230,37 @@ function love.draw()
 							--love.graphics.circle("fill", shape[i], shape[i+1], 10.0/camera.scale, 12)
 						end 
 					end 
-
-					if isEntitySelected(entity) then 
-						love.graphics.setColor(255, 255, 0, 255)
-						love.graphics.rectangle("line", entity.shapes.bbox[1], entity.shapes.bbox[2], 
-											entity.shapes.bbox[3] - entity.shapes.bbox[1], entity.shapes.bbox[4] - entity.shapes.bbox[2])
-					end
-
-					if components["Core"].static.showNames then 
-						local nameScale = 1.5 / camera.scale
-						local name = getComponentByType(entity, "Core").name
-						local width, height = love.graphics.getFont():getWidth(name) * nameScale, love.graphics.getFont():getHeight() * nameScale
-						local x, y = (entity.shapes.bbox[1] + entity.shapes.bbox[3] - width) / 2, (entity.shapes.bbox[2] + entity.shapes.bbox[4] - height) / 2
-						
-						local shadowOffset = 2
-						love.graphics.setColor(0, 0, 0, 255)
-						love.graphics.print(name, x + shadowOffset, y + shadowOffset, 0, nameScale, nameScale)
-						love.graphics.setColor(255, 255, 255, 255)
-						love.graphics.print(name, x, y, 0, nameScale, nameScale)
-					end
 				end
 			end
 			love.graphics.setLineWidth(1)
-			love.graphics.setColor(255, 255, 255, 255)
 		end 
+
+		love.graphics.setColor(255, 255, 0, 255)
+		love.graphics.setLineWidth(3.0/camera.scale)
+		for _, guid in ipairs(gui.selectedEntities) do 
+			local entity = getEntityByGUID(guid) 
+			if entity then 
+				love.graphics.rectangle("line", entity.shapes.bbox[1], entity.shapes.bbox[2], 
+										entity.shapes.bbox[3] - entity.shapes.bbox[1], entity.shapes.bbox[4] - entity.shapes.bbox[2])
+			end 
+		end 
+		love.graphics.setLineWidth(1)
+
+		love.graphics.setColor(255, 255, 255, 255)
+		if components["Core"].static.showNames then
+			for _, entity in ipairs(map.entities) do
+				local nameScale = 1.5 / camera.scale
+				local name = getComponentByType(entity, "Core").name
+				local width, height = love.graphics.getFont():getWidth(name) * nameScale, love.graphics.getFont():getHeight() * nameScale
+				local x, y = (entity.shapes.bbox[1] + entity.shapes.bbox[3] - width) / 2, (entity.shapes.bbox[2] + entity.shapes.bbox[4] - height) / 2
+				
+				local shadowOffset = 2
+				love.graphics.setColor(0, 0, 0, 255)
+				love.graphics.print(name, x + shadowOffset, y + shadowOffset, 0, nameScale, nameScale)
+				love.graphics.setColor(255, 255, 255, 255)
+				love.graphics.print(name, x, y, 0, nameScale, nameScale)
+			end 
+		end
 	camera.pop()
 
 	local modeDescription = "Mode: " .. editor.editMode.description

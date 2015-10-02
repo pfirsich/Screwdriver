@@ -337,7 +337,8 @@ do
 			local coreComp = getComponentByType(map.entities[i], "Core")
 			assert(coreComp, "Every entity has to have a 'Core' component!")
 			assert(coreComp.name, "Every 'Core' component should have a name attribute")
-			table.insert(entityList, {text = coreComp.name .. " (guid: " .. tostring(map.entities[i].guid) .. ")", entity = map.entities[i]})
+			local name = coreComp.name .. " (guid: " .. tostring(map.entities[i].guid) .. ") " .. (coreComp.hidden and "(hidden)" or "")
+			table.insert(entityList, {text = name, entity = map.entities[i]})
 		end
 
 		local selectedGUIDs = table.map(gui.entityList.selected, function(selected) return selected.entity.guid end)

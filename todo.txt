@@ -1,14 +1,16 @@
-* Über pusherei-Bug reden
+* Über pusherei-undo-Problem reden
 * File actions: load, save
 	* newImage abstrahieren und später auf io-Implementation umsteigen
 * Color picker + Color fürs Sprite
 	* Drei Numberwheels untereinander + ein rectangle mit gepickter Farbe?
 * Polygone!
+	* Wie starten die? Preset-Buttons, Textur-Buttons (auch Trafos), Trafos, Funktionen für Modis?
 * Show Details
 * Filebrowser
+	Vielleicht als eigener Modus und nicht als Fenster oder so. Macht einiges einfacher und gibt einem mehr gelegenheit Textur-Previews und so zu zeigen
 
 Later/Maybe: 
-* Up/Down key in console
+* Up/Down key in console (history)
 * Only show component-info in scene window if component is actually used in the scene
 * Move all file buttons to File-Component?
 * Limit number of lines in console -> config file maybe?
