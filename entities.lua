@@ -41,6 +41,17 @@ function foreachSelected(func)
 	end
 end
 
+function setComponentProperty(entities, componentType, key, value)
+	for _, entity in ipairs(map.entities) do 
+		for _, guid in ipairs(entities) do 
+			if entity.guid == guid then 
+				local comp = getComponentByType(entity, componentType)
+				if comp then comp[key] = value end 
+			end 
+		end 
+	end 
+end
+
 entityTypes["dummy"] = {
 	label = "Test entity type",
 	components = {
