@@ -12,6 +12,7 @@ do
 		}
 		entityCounter = entityCounter + 1
 
+		-- component uniqueness and only one pickable component is a requirement to make picking a lot less problematic (multiple draws/transforms would be a pain)
 		local created = {}
 		for _, component in ipairs(entityTypes[type].components) do 
 			if components[component.componentType].static.unique and created[component.componentType] then 

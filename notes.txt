@@ -29,15 +29,6 @@ MetadataChoice
 vllt. MetadataEntity? Um Entites zu verbinden - mit Linien malen? (auch an/aus-bar)
     GUI: Dropdown wäre geil.
     Es geht aber auch mit nem Edit-Mode <-----
-    
-Edit Modes:
-ALT-Selection, muss auch in Edit modes verwendbar sein können (API/effiziente helfer dafür finden)
-Edit-Modes sind eigentlich nur Maus-Event-Handler
-
-Multiple selection sollte vom CLI unterstützt sein (alle Funktione sind in der Lage eine Liste von Objekten zu verarbeiten), sodass man, falls wirklich nötig, das CLI benutzen kann um effizient mehrere Entities auf einmal zu bearbeiten, aber man macht sich nicht dir Arbeit das GUI und die edit-modes multiple selection unterstützen zu lassen (besonders, da dies nicht trivial ist und auf versch. arten und weisen gelöst werden kann).
-
-Big three objects (tables): editor, gui, map
-map is the whole map-state (saved as-is), gui is everything thats not the editor, editor is the rest
 
 Vermutlich muss man einfach einen Game-Ordner angeben, damit man nicht alles gedoppelt hat und nicht kompliziert kopieren muss. Entweder der Editor ist dann irgendwo im game-ordner? (shiiiiat). Oder man macht io mit dem Lua-io-Modul und wrappt den ganzen love-shit. Man muss dann auch einen kleinen File-Browser frickeln (shiiiiit).
 Funktioniert auch nicht, weil directory access nicht ohne Probleme funktioniert, wenn man das Lua io-Modul benutzt.
@@ -95,39 +86,8 @@ entityTypes["weapon_pod"] = {
     }
 }
 
-Transforms.setPosition(self.selected, x, y)
-
-Each component specifies GUI-Elements, CLI-functions, edit modes and global settings/gui elements, uniqueness attributes
-    uniqueness is important because multiple drawables and definitely multiple transforms make picking nearly impossible
-    
-    uniqueness: exclude-list which prevents components from being added if other specified components are already presents
-    attention: also check the newly created component if it clashed with exisiting ones (in case that some needed excludes are missing in components added before)
-    
-    OR (better):
-    single boolean value ("unique") do determine if a component can only be present once
-    boolean value ("pickable") to make sure only one pickable component is present per entity
-
-Numberwheel, String, Checkbox, Button, Choice, Color, Texture, Entity?
-
-Transforms.guiElements = {} -- global gui elements
-
-function Transforms.setPosition(entities, x, y) 
-    withComponent(entities, "Transforms", function(component)
-        component.posx, component.posy = x, y
-    end
-end
-
-withComponent(entities, "Transforms", function(component) set the values end) = 
-    for each entity
-        for each component
-            if component.componentType = Transforms:
-                set the values
-
-oder findComponent(entity, type)
-                
-components["Transforms"] = Transforms
-
-
+Alt selection sollte auch in Edit modes möglich sein? effiziente Helfer finden?
+Multiple selection in edit modes?
 
 Transforms.editModes = {
     move = {
@@ -138,9 +98,6 @@ Transforms.editModes = {
 }
 
 Transforms.editModes.move:onMouseDown
-
-pickShapes(entities, x, y)
-goes through all the entities' shapes and returns a list of all picked shapes in front to back order
 
 Vertex-Edit-Mode: Drag&Drop auf Vertices bewegt die, Linksklick auf Edges erzeugt neue Vertices, rechtsklick auf Vertices löscht diese
 

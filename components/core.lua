@@ -1,5 +1,6 @@
 do
 	local Core = class()
+	components["Core"] = Core
 
 	function Core:init(properties)
 		self.hidden = false
@@ -32,10 +33,10 @@ do
 		{id = "showEntityBorders", type = "Checkbox", name = "Show entity borders"},
 	}
 
-	components["Core"] = Core
 
 
 	local WithOptional = class()
+	components["WithOptional"] = WithOptional
 
 	function WithOptional:init(properties)
 		self.mandatory = false
@@ -62,5 +63,4 @@ do
 
 	WithOptional.static.guiElements = {}
 
-	components["WithOptional"] = WithOptional
 end

@@ -5,7 +5,8 @@
 function class(base)
     local cls = {}
     cls.__index = cls
-    cls.static = base and gui.internal.tableDeepCopy(base.static) or {}
+    -- static is copied because static variables should not be used from the base class
+    cls.static = base and tableDeepCopy(base.static) or {}
 
     return setmetatable(cls, {
         __index = base,

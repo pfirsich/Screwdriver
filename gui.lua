@@ -381,6 +381,8 @@ do
 		end
 
 		local function createElementWidgets(parent, component, element, target)
+			-- TODO: Choice, Color, File, Texture (maybe File?), Entity?
+
 			parent.layout:newLine()
 			if element.type == "Checkbox" then 
 				local checkbox = kraid.widgets.Checkbox{parent = parent, elementId = element.id, target = target, cliCmd = ""}

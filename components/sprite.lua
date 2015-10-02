@@ -1,5 +1,6 @@
 do
     local Sprite = class()
+    components["Sprite"] = Sprite
 
     function Sprite:init(properties)
         self.imagePath = "" -- find test image!
@@ -47,5 +48,4 @@ do
 
     Sprite.static.guiElements = {}
 
-    components["Sprite"] = Sprite
 end 

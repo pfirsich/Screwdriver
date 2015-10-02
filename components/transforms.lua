@@ -1,12 +1,13 @@
 do
     local Transforms = class()
+    components["Transforms"] = Transforms
 
     function Transforms:init(properties)
         self.position = {0, 0}
         self.rotation = 0
         self.offset = {0, 0}
         self.scale = {1, 1}
-        self.anchorXYScale = true
+        self.keepAspect = true
         addTable(self, properties)
 
         self.__guiElements = {}
@@ -32,7 +33,7 @@ do
             table.iextend(self.__guiElements,{
                 {name = "X-Scale", type = "Numberwheel", id = "scale[1]", params = {speed = 0.5}},
                 {name = "Y-Scale", type = "Numberwheel", id = "scale[2]", params = {speed = 0.5}},
-                {name = "Anchor X- and Y-Scale", type = "Checkbox", id = "anchorXYScale"}
+                {name = "Keep aspect ratio", type = "Checkbox", id = "keepAspect"}
             })
         end 
 
@@ -41,7 +42,7 @@ do
     end
 
     function Transforms:renderStart()
-        if self.anchorXYScale then  -- this might not be at the right place
+        if self.keepAspect then  -- this might not be at the right place
             if self.scale[1] ~= self.__lastScale then 
                 self.scale[2] = self.scale[1]
                 self.__lastScale = self.scale[1]
@@ -69,5 +70,19 @@ do
 
     Transforms.static.guiElements = {}
 
-    components["Transforms"] = Transforms
+    Transforms.static.editModes = {
+        move = {},
+        rotate = {},
+        offset = {},
+        scale = {}
+    }
+
+    function Transforms.static.editModes.move.onMouseDown()
+    end
+
+    function Transforms.static.editModes.move.onMouseMove()
+    end 
+
+    function Transforms.static.editModes.move.onMouseUp()
+    end
 end 
