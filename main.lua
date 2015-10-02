@@ -58,16 +58,18 @@ function love.load()
 
 	love.keyboard.setKeyRepeat(true)
 
+	editor.loadMapFile("test.map")
+
 	-- startup
-	editor.createEntity("everything")
-	editor.createEntity("everything")
-	editor.createEntity("everything")
-	editor.createEntity("everything")
-	map.entities[1].components[2].position[1] =  400
-	map.entities[2].components[2].position[1] = -400
-	map.entities[3].components[2].position[2] =  400
-	map.entities[4].components[2].position[2] = -400
-	updateShapes()
+	-- editor.createEntity("everything")
+	-- editor.createEntity("everything")
+	-- editor.createEntity("everything")
+	-- editor.createEntity("everything")
+	-- map.entities[1].components[2].position[1] =  400
+	-- map.entities[2].components[2].position[1] = -400
+	-- map.entities[3].components[2].position[2] =  400
+	-- map.entities[4].components[2].position[2] = -400
+	-- updateShapes()
 end
 
 function love.update()
@@ -81,7 +83,6 @@ function love.update()
 		gui.consoleWindow:setParam("text", "Console")
 	end 
 
-	print("current:", editor.currentMapFile)
 	local title = editor.currentMapFile and editor.currentMapFile .. " - Screwdriver" or "Screwdriver"
 	love.window.setTitle((editor.unsavedChanges and "*" or "") .. title)
 end
@@ -230,8 +231,8 @@ function love.draw()
 		if components["Core"].static.showEntityBorders then 
 			love.graphics.setLineWidth(3.0/camera.scale)
 			for _, entity in ipairs(map.entities) do
-				if entity.pickableComponent then 
-					for _, shape in ipairs(entity.shapes) do 
+				if entity.__pickableComponent then 
+					for _, shape in ipairs(entity.__shapes) do 
 						love.graphics.setColor(0, 255, 0, 255)
 						love.graphics.polygon("line", shape)
 
@@ -250,8 +251,9 @@ function love.draw()
 		for _, guid in ipairs(gui.selectedEntities) do 
 			local entity = getEntityByGUID(guid) 
 			if entity then 
-				love.graphics.rectangle("line", entity.shapes.bbox[1], entity.shapes.bbox[2], 
-										entity.shapes.bbox[3] - entity.shapes.bbox[1], entity.shapes.bbox[4] - entity.shapes.bbox[2])
+				local x, y = entity.__shapes.bbox[1], entity.__shapes.bbox[2]
+				local w, h = entity.__shapes.bbox[3] - entity.__shapes.bbox[1], entity.__shapes.bbox[4] - entity.__shapes.bbox[2]
+				love.graphics.rectangle("line", x, y, w, h)
 			end 
 		end 
 		love.graphics.setLineWidth(1)
@@ -262,7 +264,8 @@ function love.draw()
 				local nameScale = 1.5 / camera.scale
 				local name = getComponentByType(entity, "Core").name
 				local width, height = love.graphics.getFont():getWidth(name) * nameScale, love.graphics.getFont():getHeight() * nameScale
-				local x, y = (entity.shapes.bbox[1] + entity.shapes.bbox[3] - width) / 2, (entity.shapes.bbox[2] + entity.shapes.bbox[4] - height) / 2
+				local x = (entity.__shapes.bbox[1] + entity.__shapes.bbox[3] - width) / 2
+				local y = (entity.__shapes.bbox[2] + entity.__shapes.bbox[4] - height) / 2
 				
 				local shadowOffset = 2
 				love.graphics.setColor(0, 0, 0, 255)
@@ -326,8 +329,8 @@ end
 function pickEntities(x, y)
 	local picked = {}
 	for _, entity in ipairs(map.entities) do 
-		if #entity.shapes > 0 and pointInBBox(entity.shapes.bbox, x, y) then 
-			for _, shape in ipairs(entity.shapes) do 
+		if #entity.__shapes > 0 and pointInBBox(entity.__shapes.bbox, x, y) then 
+			for _, shape in ipairs(entity.__shapes) do 
 				if pointInPolygon(shape, x, y) then 
 					table.insert(picked, entity.guid)
 					break
@@ -354,13 +357,13 @@ function transformPoint(transforms, x, y)
 end 
 
 function updateShape(entity)
-	if entity.pickableComponent then 
-		entity.shapes = entity.pickableComponent:getShapes()
+	if entity.__pickableComponent then 
+		entity.__shapes = entity.__pickableComponent:getShapes()
 
 		local transforms = getComponentByType(entity, "Transforms")
 		local minX, minY, maxX, maxY = math.huge, math.huge, -math.huge, -math.huge
 		if transforms then 
-			for _, shape in ipairs(entity.shapes) do 
+			for _, shape in ipairs(entity.__shapes) do 
 				for i = 1, #shape, 2 do 
 					shape[i], shape[i+1] = transformPoint(transforms, shape[i], shape[i+1])
 					minX, minY = math.min(minX, shape[i]), math.min(minY, shape[i+1])
@@ -369,7 +372,7 @@ function updateShape(entity)
 			end 
 		end 
 
-		entity.shapes.bbox = {minX, minY, maxX, maxY}
+		entity.__shapes.bbox = {minX, minY, maxX, maxY}
 	end
 end
 

@@ -28,7 +28,6 @@ do
         if love.filesystem.isFile(self.imagePath) then 
             gui.printConsole("Image loaded.")
             self.__image = love.graphics.newImage(self.imagePath)
-            self.lastImagePath = self.imagePath
         end 
     end
 

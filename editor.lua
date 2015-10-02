@@ -9,7 +9,7 @@ do
 	function editor.createEntity(type)
 		local entity = {
 			type = type,
-			shapes = {},
+			__shapes = {}, -- underscore prefix so it won't be saved in the map file
 			guid = entityCounter,
 			components = {},
 		}
@@ -17,12 +17,18 @@ do
 
 		-- component uniqueness and only one pickable component is a requirement to make picking a lot less problematic (multiple draws/transforms would be a pain)
 		local created = {}
+		local ids = {}
 		for _, component in ipairs(entityTypes[type].components) do 
+			if ids[component.id] then 
+				error("Multiple components with the same id: " .. component.id)
+			end 
+			ids[component.id] = true
+
 			if components[component.componentType].static.unique and created[component.componentType] then 
 				error("Component '" .. component.componentType .. "' can not be added to an entity more than once.")
 			end 
 
-			if components[component.componentType].static.pickable and entity.pickableComponent ~= nil then 
+			if components[component.componentType].static.pickable and entity.__pickableComponent ~= nil then 
 				error("Only one pickable component can be added to an entity.")
 			end 
 
@@ -33,13 +39,14 @@ do
 			local componentObject = components[component.componentType](component)
 			created[component.componentType] = true
 			if components[component.componentType].static.pickable then 
-				entity.pickableComponent = componentObject
+				entity.__pickableComponent = componentObject
 			end
 
 			table.insert(entity.components, componentObject) 
 		end 
 
 		table.insert(map.entities, entity)
+		return entity
 	end
 
 	function editor.entityUp(selected)
@@ -72,7 +79,7 @@ do
 		if #selected > 0 then 
 			local totalBBox = {math.huge, math.huge, -math.huge, -math.huge}
 			for _, guid in ipairs(selected) do 
-				local entityBBox = getEntityByGUID(guid).shapes.bbox
+				local entityBBox = getEntityByGUID(guid).__shapes.bbox
 				totalBBox[1] = math.min(totalBBox[1], entityBBox[1])
 				totalBBox[2] = math.min(totalBBox[2], entityBBox[2])
 				totalBBox[3] = math.max(totalBBox[3], entityBBox[3])
@@ -98,15 +105,103 @@ do
 		end 
 	end
 
-	-- it's not pretty that these functions call functtions from the gui module, but it's handy to have these as easily bindable functions
-	function editor.saveMapFile(path)
-		editor.currentMapFile = path
-		editor.unsavedChanges = false
+	-- both paths should be absolute
+	local function makePathRelative(basePath, path)
+		return path
 	end
 
+	-- it's not pretty that these functions call functtions from the gui module, but it's handy to have these as easily bindable functions
+	function editor.saveMapFile(path)
+		path = lfs.currentdir() .. "/" .. path
+		file, err = io.open(path, "w")
+		if file == nil then 
+			gui.dialogNotice("Error!", "Error while opening file: " .. tostring(err))
+		else 
+			local function writeTable(tbl, depth)
+			    for key, value in pairs(tbl) do
+			    	if type(key) ~= "string" or key:sub(1,2) ~= "__" then 
+			    		file:write(string.rep("\t", depth))
+			    		if type(key) ~= "number" then  
+			    			file:write(key .. " = ")
+			    		end
+
+			    		local t = type(value)
+			    		if t == "table" then
+				            file:write("{\n")
+				            writeTable(value, depth + 1)
+				            file:write(string.rep("\t", depth) .. "},\n")
+				        elseif t == "string" then 
+				        	file:write('"' .. value .. '",\n')
+				        elseif t == "boolean" or t == "number" then 
+				        	file:write(tostring(value) .. ",\n")
+				        end
+			    	end 			        
+			    end
+			end 
+
+			file:write("return {\n")
+			writeTable(map, 1)
+			file:write("}\n")
+			file:close()
+			
+			editor.currentMapFile = path
+			editor.unsavedChanges = false
+		end
+	end
+
+	function editor.loadEntityFiles(path)
+		path = lfs.currentdir() .. "/" .. path
+		f, err = loadfile(path)
+		if f == nil then 
+			gui.dialogNotice("Error!", "Error while opening/parsing entity file: " .. tostring(err))
+		else 
+			f()
+			table.insert(map.entityFiles, path)
+		end 
+		table.insert(map.entityFiles, path)
+	end 
+
 	function editor.loadMapFile(path)
-		editor.currentMapFile = path
-		editor.unsavedChanges = false
+		path = lfs.currentdir() .. "/" .. path
+		f, err = loadfile(path)
+		if f == nil then 
+			gui.dialogNotice("Error!", "Error while opening/parsing file: " .. tostring(err))
+		else 
+			local fileTable = f()
+			map = {}
+
+			map.entityFiles = {}
+			entityTypes = {}
+			for _, path in ipairs(fileTable.entityFiles) do 
+				editor.loadEntityFiles(path)
+			end 
+
+			map.entities = {}
+			entityCounter = 0
+			for _, tableEntity in ipairs(fileTable.entities) do 
+				local entity = editor.createEntity(tableEntity.type)
+				for _, fileComponent in ipairs(tableEntity.components) do 
+					local comp = getComponentById(entity, fileComponent.id)
+					if comp == nil then 
+						error("Current entity type description seems to mismatch the one of the saved map for entity of type '" .. entity.type .. "'")
+					else 
+						for propertyKey, v in pairs(comp) do 
+							if type(propertyKey) ~= "string" or propertyKey:sub(1,2) ~= "__" then 
+								comp[propertyKey] = fileComponent[propertyKey]
+							end  
+						end
+					end 
+				end 
+			end 
+
+			mapStack = {cursor = 1}
+			mapStack[1] = {path, map}
+
+			updateShapes()
+
+			editor.currentMapFile = path
+			editor.unsavedChanges = false
+		end
 	end 
 
 	function editor.saveMap() 

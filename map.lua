@@ -1,6 +1,6 @@
 do 
 	map  = {}
-	map.entityFiles = {}
+	map.entityFiles = {"entities.lua"}
 	map.entities = {}
 
 	mapStack = {cursor = 1}
