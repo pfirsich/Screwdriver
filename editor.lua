@@ -191,14 +191,13 @@ do
 					end 
 				end 
 			end 
+			updateShapes()
 
 			mapStack.cursor = 1
 			for i = 1, #mapStack do 
 				mapStack[i] = nil
 			end 
 			mapStack[1] = {label = path, map = tableDeepCopy(map)}
-
-			updateShapes()
 
 			editor.currentMapFile = path
 			editor.unsavedChanges = false

@@ -98,7 +98,6 @@ do
         local mode = Transforms.static.editModes.move
         if mode.transforms then 
             mode.transforms.position = {mode.transforms.position[1] + dx / camera.scale, mode.transforms.position[2] + dy / camera.scale}
-            updateShape(mode.entity)
         end 
     end 
 
@@ -131,7 +130,6 @@ do
             local wx, wy = camera.screenToWorld(x, y)
             local angle = math.atan2(wy - mode.transforms.position[2], wx - mode.transforms.position[1])
             mode.transforms.rotation = mode.trafoRotStart + angle - mode.mouseAngleStart
-            updateShape(mode.entity)
         end 
     end 
 
@@ -182,8 +180,6 @@ do
             end 
 
             mode.transforms.scale = {mode.startScale[1] * facX, mode.startScale[2] * facY}
-
-            updateShape(mode.entity)
         end 
     end 
 

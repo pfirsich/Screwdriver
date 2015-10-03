@@ -1,5 +1,7 @@
 * Mit Markus reden
 	* Numberwheel-Trafo + shapes -> shapes updaten wenn nötig? oder einfach immer. (statt an speziellen momenten). Oder wie?
+		Jeden Frame das single-selected entity update (und halt bei cliExec)
+		Vielleicht hätte man auch setProperty-Funktionen für ein Component-Base hinzufügen können, dass dirty-flags setzt
 	* Pfad-Problem erklären: Sind alle durcheinander, wenn man die beim speichern/laden relativieren will, muss man entweder den ursprünglichen speicherort der ganzen datei kennen (was auch nur ein hack ist), damits überhaupt geht. zusätzlich muss man auch wissen was für strings man transformieren muss. Muss man dann Pfade markieren irgendwie? Oder ne Funktion schreiben die zuverlässig strings als pfade identifiziert? (impossible). Alternativ kann man vom filebrowser einfach immer relative pfade auskacken lassen. Aber zu was? Map dateien forcen!
 		=> Am Anfang den extra-Modus einbauen. Mehr Modi fürs Ding! Special modi (statt allgemeine (inkl. default)), damit alles schöner?
 		Dann kann man alle Pfade relativ zur Map-Datei machen (daher muss man vorraussetzen, dass eine existiert). 
@@ -11,7 +13,7 @@
 * Color picker + Color fürs Sprite
 	* Drei Numberwheels untereinander + ein rectangle mit gepickter Farbe?
 * Polygone!
-	* Wie starten die? Preset-Buttons, Textur-Buttons (auch Trafos), Trafos, Funktionen für Modis?
+	* Wie starten die? Preset-Buttons, Textur-Buttons (auch Trafos), Trafos, Funktionen für Modis? Transforms-Component für Texturen benutzen?
 * Show Details
 
 Later/Maybe: 
@@ -22,7 +24,6 @@ Later/Maybe:
 	vllt. nur Dinge in editor in der cli zulassen und alles andere vorher nillen. Dann auch alles aus global entfernen, was man vllt. benutzen könnte aber nicht sollte und sonst vllt. nach editor verschieben.
 * Up/Down key in console (history)
 * Only show component-info in scene window if component is actually used in the scene
-* Move all file buttons to File-Component?
 * Limit number of lines in console -> config file maybe?
 * Properly passing mousewheel events so scrollbars do what they should do at all times
 * Falls komplette deepe Kopien von map auf dem Mapstack ein Speicherproblem bergen, nur alle X einträge voll speichern + delta-befehle

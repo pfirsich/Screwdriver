@@ -1,3 +1,6 @@
+
+Für mehrere Texturtransforms pro Entity oder mehrere Metadata-Dinger vllt. einen optionalen "category"-Parameter für Components hinzufügen, der angibt in welcher category die zugehörigen GUI elemente erstellt werden. default-fallback ist name des components (wie bereits implementiert)
+
 TexturedPolygon
     gloabl gui elements - show vertices and edges
     all polygons should have flags for textures (so they can only be edges+vertices (for game logic stuff))
@@ -18,18 +21,6 @@ MetadataChoice
 vllt. MetadataEntity? Um Entites zu verbinden - mit Linien malen? (auch an/aus-bar)
     GUI: Dropdown wäre geil.
     Es geht aber auch mit nem Edit-Mode <-----
-
-Vermutlich muss man einfach einen Game-Ordner angeben, damit man nicht alles gedoppelt hat und nicht kompliziert kopieren muss. Entweder der Editor ist dann irgendwo im game-ordner? (shiiiiat). Oder man macht io mit dem Lua-io-Modul und wrappt den ganzen love-shit. Man muss dann auch einen kleinen File-Browser frickeln (shiiiiit).
-Funktioniert auch nicht, weil directory access nicht ohne Probleme funktioniert, wenn man das Lua io-Modul benutzt.
-Dafür wird gebraucht:
-    getDirectoryItems
-    isDirectory, isFile
-    exists
-    newFolder
-    setWorkingDirectory
-    getWorkingDirectory
-=======>
-Wir wollten LoveFS verwenden. Eventuell kann man in Erwägung ziehen mit dem LuaJIT-FFI die WinAPI-dlls direkt zu laden und die entsprechenden Funktionen direkt aufzurufen, um das erscheinen von einem guten Dutzend cmd-Windows zu vermeiden. In dem Fall ersetzen wie LoveFS durch eine eigene Bibliothek mit der gleichen API. Man sollte sich vorher das Textencoding-Verhalten angucken.
 
 Vertex-Edit-Mode: Drag&Drop auf Vertices bewegt die, Linksklick auf Edges erzeugt neue Vertices, rechtsklick auf Vertices löscht diese
 

@@ -78,6 +78,11 @@ function love.update()
 
 	local title = editor.currentMapFile and editor.currentMapFile .. " - Screwdriver" or "Screwdriver"
 	love.window.setTitle((editor.unsavedChanges and "*" or "") .. title)
+
+	-- if a single entity is selected (only way to have an entity be modified by edit modes or the gui), update its shape
+	if #gui.selectedEntities == 1 then 
+		updateShape(getEntityByGUID(gui.selectedEntities[1]))
+	end 
 end
 
 function love.mousepressed(x, y, button)
@@ -404,8 +409,8 @@ function cliExec(cmd)
 		mapStack:push(cmd)
 		map = mapStack[mapStack.cursor].map
 		local ret = f()
+		updateShapes() -- do this first to make sure that the mapStack has the properly updated shapes
 		map = tableDeepCopy(mapStack[mapStack.cursor].map)
-		updateShapes()
 		return ret
 	end
 end 
