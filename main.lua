@@ -65,7 +65,9 @@ function love.load(arg)
 	startupMode.load()
 
 	if arg[2] then 
-		editor.loadMapFile(arg[2])
+		local path, file = paths.splitFile(arg[2])
+		lfs.chdir(path)
+		editor.loadMapFile(file)
 	else
 		startupMode.enter()
 	end
