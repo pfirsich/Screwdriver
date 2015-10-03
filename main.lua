@@ -81,6 +81,7 @@ function love.update()
 end
 
 function love.mousepressed(x, y, button)
+	gui.base:getGrandParent():setSubTree("focused", nil)
 	gui.base:mousePressed(x, y, button)
 
 	if gui.base.hovered == nil then -- in editor view, not hovering GUI elements
@@ -173,6 +174,11 @@ function love.keypressed(key, isrepeat)
 	if gui.base.focused then
 		gui.base.focused:keyPressed(key, isrepeat)
 	end
+		
+	-- only execute shortcuts if nothing is focused or the focused element doesn't process key press events
+	if not gui.base.focused or gui.base.focused.keyPressed == kraid.widgets.Base.keyPressed then 
+		checkAndExecShortcuts()
+	end
 
 	if love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl") then
 		if gui.base.focused and gui.base.focused.type == "LineInput" then
@@ -187,8 +193,6 @@ function love.keypressed(key, isrepeat)
 			end
 		end
 	end
-
-	checkAndExecShortcuts()
 end
 
 function love.draw()
@@ -378,7 +382,7 @@ end
 
 -- does not push the changes to the mapstack (mostly used for actions that don't affect the map state)
 function cliExec_nostack(cmd) 
-	gui.consoleOutput:addLine(">> " .. cmd)
+	gui.consoleOutput:addLine("(not pushed) >> " .. cmd)
 	local f, err = loadstring(cmd)
 	if f == nil then 
 		gui.consoleOutput:addLine("ERROR: " .. err)
