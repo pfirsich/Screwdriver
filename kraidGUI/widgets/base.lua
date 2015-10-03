@@ -170,8 +170,8 @@ function getModule(gui)
     end
 
     function Base:mouseReleased(x, y, button)
-        self:setSubTree("clicked", false) -- not very efficient
         passMouseEvent(self, "mouseReleased", x, y, function(self, x, y, button) self:onMouseUp(x, y, button) end, button)
+        self:setSubTree("clicked", false) -- not very efficient
     end
 
     function Base:mouseMove(x, y, dx, dy)
