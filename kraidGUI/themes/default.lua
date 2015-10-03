@@ -438,6 +438,7 @@ function getModule(gui)
 
     theme.Scrollbar.buttonSize = 20
     theme.Scrollbar.borderSize = 2
+    theme.Scrollbar.scrubberMargin = 1
 
     function theme.Scrollbar.init(self)
         self.buttonMinus = gui.widgets.Button{parent = self, text = "", position = {0, 0}, onClicked = function() self:scrollDown() end}
@@ -485,11 +486,11 @@ function getModule(gui)
         local plusPos = self.vertical and {0, self.height - self.theme.Scrollbar.buttonSize} or {self.width - self.theme.Scrollbar.buttonSize, 0}
         self.buttonPlus:setParam("position", plusPos)
 
-        self.scrubber:setParam(self.vertical and "height" or "width", self.scrubberLength)
-        self.scrubber:setParam(self.vertical and "width" or "height", self.thickness)
+        self.scrubber:setParam(self.vertical and "height" or "width", self.scrubberLength - theme.Scrollbar.scrubberMargin * 2)
+        self.scrubber:setParam(self.vertical and "width" or "height", self.thickness - theme.Scrollbar.scrubberMargin * 2)
 
-        local scrubberPos = self.theme.Scrollbar.buttonSize + self.value * (self.length - self.theme.Scrollbar.buttonSize*2 - self.scrubberLength)
-        self.scrubber:setParam("position", self.vertical and {0, scrubberPos} or {scrubberPos, 0})
+        local scrubberPos = self.theme.Scrollbar.buttonSize + self.value * (self.length - self.theme.Scrollbar.buttonSize*2 - self.scrubberLength) + theme.Scrollbar.scrubberMargin
+        self.scrubber:setParam("position", self.vertical and {theme.Scrollbar.scrubberMargin, scrubberPos} or {scrubberPos, theme.Scrollbar.scrubberMargin})
     end
 
     function theme.Scrollbar.draw(self)
