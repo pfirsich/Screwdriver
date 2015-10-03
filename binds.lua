@@ -25,6 +25,7 @@ do
 				else
 					cliExec_nostack(shortcut[2])
 				end
+				break
 			end 
 		end 
 	end
@@ -38,6 +39,7 @@ do
 					else
 						cliExec_nostack(shortcut[2])
 					end
+					break
 				end
 			end
 		end
@@ -52,9 +54,12 @@ do
 	shortcut("lctrl+t,rctrl+t", 'editor.editMode = components["Transforms"].static.editModes.move')
 	shortcut("lctrl+r,rctrl+r", 'editor.editMode = components["Transforms"].static.editModes.rotate')
 	shortcut("lctrl+e,rctrl+e", 'editor.editMode = components["Transforms"].static.editModes.scale')
-
 	shortcut("lctrl+s,rctrl+s", 'editor.saveMap()')
+	shortcut("f1", 'gui.sceneWindow:summon()')
+	shortcut("f2", 'gui.propertyWindow:summon()')
+	shortcut("f3", 'gui.consoleWindow:summon()')
 
 	shortcut("pageup", "editor.entityUp(gui.selectedEntities)", true)
 	shortcut("pagedown", "editor.entityDown(gui.selectedEntities)", true)
+	shortcut("delete", "editor.removeEntities(gui.selectedEntities)", true)
 end
