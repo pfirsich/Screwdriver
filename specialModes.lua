@@ -229,13 +229,13 @@ function bytesToString(bytes)
 	if bytes > 1024 then -- KB range
 		if bytes > 1024*1024 then -- MB range
 			if bytes > 1024*1024*1024 then -- GB range
-				return string.format("%.2fGB", bytes/1024/1024/1024)
+				return string.format("%.2f GB", bytes/1024/1024/1024)
 			end 
-			return string.format("%.2fMB", bytes/1024/1024)
+			return string.format("%.2f MB", bytes/1024/1024)
 		end 
-		return string.format("%.2fKB", bytes/1024)
+		return string.format("%.2f KB", bytes/1024)
 	end
-	return tostring(bytes) .. "Bytes"
+	return tostring(bytes) .. " Bytes"
 end
 
 function filebrowserMode.mousepressed(x, y, button)
@@ -314,7 +314,7 @@ function filebrowserMode.update()
 end 
 
 function filebrowserMode.drawFolder(ex, ey)
-	love.graphics.setColor(170, 170, 170, 255)
+	love.graphics.setColor(100, 100, 100, 255)
 	love.graphics.rectangle("line", ex, ey, filebrowserMode.previewSize, filebrowserMode.previewSize)
 
 	local leftRightMargin = filebrowserMode.previewSize * 0.2
@@ -323,7 +323,7 @@ function filebrowserMode.drawFolder(ex, ey)
 	local h = w / aspectRatio
 	local x = ex + leftRightMargin
 	local y = ey + filebrowserMode.previewSize / 2 - h/2
-	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.setColor(180, 180, 180, 255)
 	love.graphics.rectangle("line", x, y, w, h)
 
 	local bottomWidth = 0.3 * w
@@ -340,13 +340,13 @@ function filebrowserMode.drawFolder(ex, ey)
 end	
 
 function filebrowserMode.drawFile(ex, ey)
-	love.graphics.setColor(170, 170, 170, 255)
+	love.graphics.setColor(100, 100, 100, 255)
 	love.graphics.rectangle("line", ex, ey, filebrowserMode.previewSize, filebrowserMode.previewSize)
 
 	local width = 0.5 * filebrowserMode.previewSize
 	local height = 1.41 * width
 	local x, y = ex + filebrowserMode.previewSize/2 - width/2, ey + filebrowserMode.previewSize/2 - height/2
-	love.graphics.setColor(255, 255, 255, 255)
+	love.graphics.setColor(180, 180, 180, 255)
 	love.graphics.rectangle("line", x, y, width, height)
 
 	local lines = 5
@@ -359,12 +359,54 @@ function filebrowserMode.drawFile(ex, ey)
 	end 
 end 
 
+function filebrowserMode.drawArrow(ex, ey)
+	love.graphics.setColor(100, 100, 100, 255)
+	love.graphics.rectangle("line", ex, ey, filebrowserMode.previewSize, filebrowserMode.previewSize)
+
+	local unit = filebrowserMode.previewSize
+	local topWidth = 0.3 * unit
+	local bottomWidth = 0.45 * topWidth
+	local headHeight = 0.25 * unit
+	local tailHeight = 0.2 * unit
+	local totalHeight = headHeight + tailHeight
+
+	points = {
+		0, 					-totalHeight/2,
+		-topWidth / 2, 		-totalHeight/2 + headHeight,
+		-bottomWidth / 2, 	-totalHeight/2 + headHeight,
+		-bottomWidth / 2, 	 totalHeight/2,
+		 bottomWidth / 2, 	 totalHeight/2,
+		 bottomWidth / 2, 	-totalHeight/2 + headHeight,
+		 topWidth / 2, 		-totalHeight/2 + headHeight,
+	}
+
+	for i = 1, #points, 2 do 
+		points[i+0] = points[i+0] + unit/2 + ex
+		points[i+1] = points[i+1] + unit/2 + ey
+	end 
+
+	love.graphics.setColor(180, 180, 180, 255)
+	love.graphics.polygon("line", points)
+end
+
 function filebrowserMode.draw()
+	local themeColors = filebrowserMode.guiBase.theme.colors
+	love.graphics.setColor(themeColors.border)
+	love.graphics.rectangle("fill", 0, 0, love.window.getDimensions())
 	local font = love.graphics.getFont()
 	for i, element in ipairs(filebrowserMode.elements) do 
-		love.graphics.setScissor(0, 0, love.window.getWidth(), love.window.getHeight())
 		local y = element.y - filebrowserMode.scroll * filebrowserMode.scrollBar.value
 
+		love.graphics.setColor(themeColors.background)
+		--love.graphics.rectangle("line", element.x, y + filebrowserMode.previewSize, filebrowserMode.previewSize, filebrowserMode.nameHeight)
+		local textX = element.x + filebrowserMode.previewSize/2 - font:getWidth(element.path)/2
+		local textY = y + filebrowserMode.previewSize + filebrowserMode.nameHeight/2 - font:getHeight(element.path)/2
+		love.graphics.setColor(255, 255, 255, 255)
+		love.graphics.setScissor(element.x, y + filebrowserMode.previewSize, filebrowserMode.previewSize, filebrowserMode.nameHeight)
+		love.graphics.print(element.path, textX, textY)
+		love.graphics.setScissor(0, 0, love.window.getWidth(), love.window.getHeight())
+
+		love.graphics.setColor(255, 255, 255, 255)
 		if element.image then 
 			local scalex = filebrowserMode.previewSize / element.image:getWidth()
 			local scaley = filebrowserMode.previewSize / element.image:getHeight()
@@ -374,8 +416,11 @@ function filebrowserMode.draw()
 			love.graphics.draw(element.image, ix, iy, 0, scale, scale)
 		else 
 			if element.attr.mode == "directory" then 
-				love.graphics.setColor(170, 170, 170, 255)
-				filebrowserMode.drawFolder(element.x, y)
+				if element.path == ".." then 
+					filebrowserMode.drawArrow(element.x, y)
+				else 
+					filebrowserMode.drawFolder(element.x, y)
+				end
 			else 
 				filebrowserMode.drawFile(element.x, y)
 			end
@@ -385,14 +430,6 @@ function filebrowserMode.draw()
 			love.graphics.setColor(255, 255, 0, 255)
 			love.graphics.rectangle("line", element.x, y, filebrowserMode.previewSize, filebrowserMode.previewSize + filebrowserMode.nameHeight)
 		end
-
-		love.graphics.setColor(100, 100, 100, 100)
-		love.graphics.rectangle("line", element.x, y + filebrowserMode.previewSize, filebrowserMode.previewSize, filebrowserMode.nameHeight)
-		local textX = element.x + filebrowserMode.previewSize/2 - font:getWidth(element.path)/2
-		local textY = y + filebrowserMode.previewSize + filebrowserMode.nameHeight/2 - font:getHeight(element.path)/2
-		love.graphics.setColor(255, 255, 255, 255)
-		love.graphics.setScissor(element.x, y + filebrowserMode.previewSize, filebrowserMode.previewSize, filebrowserMode.nameHeight)
-		love.graphics.print(element.path, textX, textY)
 	end 
 
 	love.graphics.setScissor(0, 0, love.window.getWidth(), love.window.getHeight())
