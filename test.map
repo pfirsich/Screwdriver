@@ -1,0 +1,171 @@
+return {
+	entityFiles = {
+		"entities.lua",
+	},
+	entities = {
+		{
+			type = "everything",
+			components = {
+				{
+					id = "core",
+					componentType = "Core",
+					hidden = false,
+					name = "everything",
+				},
+				{
+					rotation = 0,
+					position = {
+						400,
+						0,
+					},
+					componentType = "Transforms",
+					keepAspect = true,
+					offset = {
+						0,
+						0,
+					},
+					scale = {
+						1,
+						1,
+					},
+					id = "transforms",
+				},
+				{
+					imagePath = "pfirsich.png",
+					id = "sprite",
+					componentType = "Sprite",
+					color = {
+						255,
+						255,
+						255,
+						255,
+					},
+				},
+			},
+			guid = 1,
+		},
+		{
+			type = "everything",
+			components = {
+				{
+					id = "core",
+					componentType = "Core",
+					hidden = false,
+					name = "everything",
+				},
+				{
+					rotation = 0,
+					position = {
+						-400,
+						0,
+					},
+					componentType = "Transforms",
+					keepAspect = true,
+					offset = {
+						0,
+						0,
+					},
+					scale = {
+						1,
+						1,
+					},
+					id = "transforms",
+				},
+				{
+					imagePath = "pfirsich.png",
+					id = "sprite",
+					componentType = "Sprite",
+					color = {
+						255,
+						255,
+						255,
+						255,
+					},
+				},
+			},
+			guid = 2,
+		},
+		{
+			type = "everything",
+			components = {
+				{
+					id = "core",
+					componentType = "Core",
+					hidden = false,
+					name = "everything",
+				},
+				{
+					rotation = 0,
+					position = {
+						0,
+						400,
+					},
+					componentType = "Transforms",
+					keepAspect = true,
+					offset = {
+						0,
+						0,
+					},
+					scale = {
+						1,
+						1,
+					},
+					id = "transforms",
+				},
+				{
+					imagePath = "pfirsich.png",
+					id = "sprite",
+					componentType = "Sprite",
+					color = {
+						255,
+						255,
+						255,
+						255,
+					},
+				},
+			},
+			guid = 3,
+		},
+		{
+			type = "everything",
+			components = {
+				{
+					id = "core",
+					componentType = "Core",
+					hidden = false,
+					name = "everything",
+				},
+				{
+					rotation = 0,
+					position = {
+						0,
+						-400,
+					},
+					componentType = "Transforms",
+					keepAspect = true,
+					offset = {
+						0,
+						0,
+					},
+					scale = {
+						1,
+						1,
+					},
+					id = "transforms",
+				},
+				{
+					imagePath = "pfirsich.png",
+					id = "sprite",
+					componentType = "Sprite",
+					color = {
+						255,
+						255,
+						255,
+						255,
+					},
+				},
+			},
+			guid = 4,
+		},
+	},
+}

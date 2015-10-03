@@ -150,11 +150,15 @@ do
 		gui.entityTypesList = kraid.widgets.TreeView{parent = gui.sceneWindowScroll, height = 200, minWidth = 50, multiSelect = false}
 		gui.sceneWindowLayout:addWidget(gui.entityTypesList)
 
-		gui.sceneWindowLayout:newLine({["spacing-vertical"] = 20})
+		gui.sceneWindowLayout:newLine()
 		gui.entityCreateInstanceButton = kraid.widgets.Button{parent = gui.sceneWindowScroll, height = 30, minWidth = 50, text = "Create Instance",
 											cliCmd = 'editor.createEntity(gui.selectedEntityType)',
 											onClicked = widgetExecCliCmd}
 		gui.sceneWindowLayout:addWidget(gui.entityCreateInstanceButton)
+
+		gui.sceneWindowLayout:newLine({["spacing-vertical"] = 20})
+		gui.setCustomEntitiesFile = kraid.widgets.Button{parent = gui.sceneWindowScroll, height = 30, minWidth = 50, text = "Add & Load entity file"}
+		gui.sceneWindowLayout:addWidget(gui.setCustomEntitiesFile)
 
 		gui.sceneWindowLayout:newLine()
 		gui.entityListLabel = kraid.widgets.Label{parent = gui.sceneWindowScroll, text = "Entities"}
@@ -189,10 +193,6 @@ do
 		gui.sceneWindowLayout:addWidget(gui.sceneFileCategory)
 
 		gui.sceneFileCategoryLayout = kraid.layouts.LineLayout(gui.sceneFileCategory, {["spacing"] = 5, ["padding"] = 10, ["padding-top"] = 40})
-
-		gui.sceneFileCategoryLayout:newLine()
-		gui.setCustomEntitiesFile = kraid.widgets.Button{parent = gui.sceneFileCategory, height = 30, minWidth = 50, text = "Add & Load entity file"}
-		gui.sceneFileCategoryLayout:addWidget(gui.setCustomEntitiesFile)
 
 		gui.sceneFileCategoryLayout:newLine()
 		gui.loadFileButton = kraid.widgets.Button{parent = gui.sceneFileCategory, height = 30, minWidth = 50, text = "Load map file", onClicked = widgetExecCliCmd,
@@ -283,9 +283,8 @@ do
 
 		gui.printConsole = function(line) gui.consoleOutput:addLine(tostring(line)) end
 
-		local inputKeyPressedCB = gui.consoleInput.keyPressed
 		gui.consoleInput.keyPressed = function(self, key, isrepeat)
-			inputKeyPressedCB(self, key, isrepeat)
+			kraid.widgets.LineInput.keyPressed(self, key, isrepeat)
 
 			if key == "return" then 
 				local ret = cliExec(self.text)

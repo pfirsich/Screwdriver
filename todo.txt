@@ -1,7 +1,13 @@
-* Über pusherei-undo-Problem reden
+* mapStack-revamp
+* Filebrowser
+
+* Fick die Pfade, man macht einfach alle Pfade relativ zur Map-Datei. Das ermöglicht man dadurch, den User beim Programmstart zu forcen entweder eine Map zu laden oder ein neues Projekt anzufangen und Dafür einen Dateinamen einzugeben.
+= schöne Legitimation für globale Edit modes! - default, filebrowser, startup
 
 * File actions: load, save
 	* newImage abstrahieren und später auf io-Implementation umsteigen
+	* Pfade sind noch etwas fucked. Werden nicht relativiert (sowohl beim speichern, als auch beim laden)
+		* Müssen die markiert werden?, damit man weiß, was man zu transformieren hat. Vielleicht kann man die auch reliable erkennen?
 
 * Color picker + Color fürs Sprite
 	* Drei Numberwheels untereinander + ein rectangle mit gepickter Farbe?
@@ -13,7 +19,10 @@
 	Vielleicht als eigener Modus und nicht als Fenster oder so. Macht einiges einfacher und gibt einem mehr gelegenheit Textur-Previews und so zu zeigen. Nachteil: Code sieht scheiße aus.
 
 Later/Maybe: 
+* specialModes in globalModes verwandeln und alles vom normalen editor-mode darein verschieben und schöner machen
+	gui.base wird dann globalModes[currentMode].gui oder gui[currentMode] oder gui.base[currentMode]
 * Nochmal genau überlegen was in editor und was in map gehört oder was global ist.
+	vllt. nur Dinge in editor in der cli zulassen und alles andere vorher nillen. Dann auch alles aus global entfernen, was man vllt. benutzen könnte aber nicht sollte und sonst vllt. nach editor verschieben.
 * Up/Down key in console (history)
 * Only show component-info in scene window if component is actually used in the scene
 * Move all file buttons to File-Component?
@@ -23,10 +32,13 @@ Later/Maybe:
 * J-Query mäßig verschiedene Entites selecten (nach id/type) und operationen anwenden
 
 Bugs:
+* GUI
+	* Mit gedrückter Maus auf einen Button gehen und loslassen wird als klick interpretiert
+	* Breakout-Widgets sind kaka (siehe Numberwheel für's grid spacing)
+* Map-Loading?
 * "Bug": Numberwheels benutzen (oder Textfelder) pusht super oft auf den Stack und ist braucht deshalb hunderte strg+z um ganz undo-d zu werden
 	* LineEdits nur cliExec-en lassen, wenn man enter drückt!
 * Up/Down mit multiple selection macht funky sachen, wenn alle ausgewählten schon ganz oben sind
-* Alt-Selection kaputt?
 * editModes kacken ein bisschen ab, wenn man position, scale oder rotation des Transform-Components auf nil setzt
 
 Currently:

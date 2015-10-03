@@ -112,7 +112,6 @@ do
 
 	-- it's not pretty that these functions call functtions from the gui module, but it's handy to have these as easily bindable functions
 	function editor.saveMapFile(path)
-		path = lfs.currentdir() .. "/" .. path
 		file, err = io.open(path, "w")
 		if file == nil then 
 			gui.dialogNotice("Error!", "Error while opening file: " .. tostring(err))
@@ -162,7 +161,6 @@ do
 	end 
 
 	function editor.loadMapFile(path)
-		path = lfs.currentdir() .. "/" .. path
 		f, err = loadfile(path)
 		if f == nil then 
 			gui.dialogNotice("Error!", "Error while opening/parsing file: " .. tostring(err))
@@ -194,7 +192,10 @@ do
 				end 
 			end 
 
-			mapStack = {cursor = 1}
+			mapStack.cursor = 1
+			for i = 1, #mapStack do 
+				mapStack[i] = nil
+			end 
 			mapStack[1] = {path, map}
 
 			updateShapes()
@@ -213,10 +214,10 @@ do
 	end 
 
 	function editor.saveMapAs()
-		gui.dialogQuestionString("Save map", lfs.currentdir() .. "\\", 'editor.saveMapFile("%INPUT%")')
+		gui.dialogQuestionString("Save map", lfs.currentdir() .. "\\", 'editor.saveMapFile(lfs.currentdir() .. "/%INPUT%")')
 	end
 
 	function editor.loadMap()
-		gui.dialogQuestionString("Load map", lfs.currentdir() .. "\\", 'editor.loadMapFile("%INPUT%")')
+		gui.dialogQuestionString("Load map", lfs.currentdir() .. "\\", 'editor.loadMapFile(lfs.currentdir() .. "/%INPUT%")')
 	end
 end
