@@ -32,7 +32,7 @@ function love.resize(w, h)
 	gui.summonConsoleWindow:setParam("position", {center + buttonW * 0.5, 0})
 end
 
-function love.load() 
+function love.load(arg) 
 	gui = setupGUI()
 	updateGUI()
 	love.resize(love.window.getWidth(), love.window.getHeight())
@@ -64,7 +64,11 @@ function love.load()
 	filebrowserMode.load()
 	startupMode.load()
 
-	startupMode.enter()
+	if arg[2] then 
+		editor.loadMapFile(arg[2])
+	else
+		startupMode.enter()
+	end
 end
 
 function love.update()
