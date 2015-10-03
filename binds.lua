@@ -29,6 +29,20 @@ do
 		end 
 	end
 
+	function simulateShortcut(keys)
+		for _, shortcut in ipairs(shortcuts) do 
+			for str in string.gmatch(shortcut[1], "([^,]+)") do
+				if str == keys then 
+					if shortcut[3] then 
+						cliExec(shortcut[2])
+					else
+						cliExec_nostack(shortcut[2])
+					end
+				end
+			end
+		end
+	end
+
 	shortcut("lctrl+a,rctrl+a", "gui.selectEntities(table.map(map.entities, function(entity) return entity.guid end))")
 	shortcut("lctrl+d,rctrl+d", "gui.selectEntities({})")
 	shortcut("lctrl+z,rctrl+z", "mapStack:seek(-1)")
