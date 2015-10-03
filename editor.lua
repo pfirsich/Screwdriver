@@ -148,7 +148,7 @@ do
 		end
 	end
 
-	function editor.loadEntityFiles(path)
+	function editor.loadEntityFile(path)
 		path = lfs.currentdir() .. "/" .. path
 		f, err = loadfile(path)
 		if f == nil then 
@@ -171,7 +171,7 @@ do
 			map.entityFiles = {}
 			entityTypes = {}
 			for _, path in ipairs(fileTable.entityFiles) do 
-				editor.loadEntityFiles(path)
+				editor.loadEntityFile(path)
 			end 
 
 			map.entities = {}

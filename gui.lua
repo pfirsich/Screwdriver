@@ -157,7 +157,8 @@ do
 		gui.sceneWindowLayout:addWidget(gui.entityCreateInstanceButton)
 
 		gui.sceneWindowLayout:newLine({["spacing-vertical"] = 20})
-		gui.setCustomEntitiesFile = kraid.widgets.Button{parent = gui.sceneWindowScroll, height = 30, minWidth = 50, text = "Add & Load entity file"}
+		gui.setCustomEntitiesFile = kraid.widgets.Button{parent = gui.sceneWindowScroll, height = 30, minWidth = 50, text = "Add & Load entity file",
+											cliCmd = 'gui.dialogQuestionString("Add & Load entity file", lfs.currentdir() .. "/", \'editor.loadEntityFile("%INPUT%")\')', onClicked = widgetExecCliCmd_nostack}
 		gui.sceneWindowLayout:addWidget(gui.setCustomEntitiesFile)
 
 		gui.sceneWindowLayout:newLine()
@@ -195,7 +196,7 @@ do
 		gui.sceneFileCategoryLayout = kraid.layouts.LineLayout(gui.sceneFileCategory, {["spacing"] = 5, ["padding"] = 10, ["padding-top"] = 40})
 
 		gui.sceneFileCategoryLayout:newLine()
-		gui.loadFileButton = kraid.widgets.Button{parent = gui.sceneFileCategory, height = 30, minWidth = 50, text = "Load map file", onClicked = widgetExecCliCmd,
+		gui.loadFileButton = kraid.widgets.Button{parent = gui.sceneFileCategory, height = 30, minWidth = 50, text = "Load map file", onClicked = widgetExecCliCmd_nostack,
 							cliCmd = 'editor.loadMap()'}
 		gui.sceneFileCategoryLayout:addWidget(gui.loadFileButton)
 
