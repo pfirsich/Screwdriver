@@ -184,7 +184,7 @@ do
 
 		gui.sceneWindowLayout:newLine({["spacing-vertical"] = 20})
 		gui.entityRemoveButton = kraid.widgets.Button{parent = gui.sceneWindowScroll, height = 30, minWidth = 50, text = "Remove entity",
-												cliCmd = 'gui.dialogQuestion("Remove?", "Are you sure you want to remove the selected entities?", "editor.removeEntities(gui.selectedEntities)", "")',
+												cliCmd = 'editor.removeEntities(gui.selectedEntities)',
 												onClicked = widgetExecCliCmd}
 		gui.sceneWindowLayout:addWidget(gui.entityRemoveButton)
 
@@ -416,6 +416,11 @@ do
 				numberWheel:setParam("mouseReleased", function(self, x, y, button) 
 					if self.blownUp and button == "l" then cliExec(self.cliCmd) end
 					kraid.widgets.Numberwheel.mouseReleased(self, x, y, button)
+				end)
+
+				numberWheel.numberInputLine:setParam("keyPressed", function(self, key, isrepeat)
+					kraid.widgets.LineInput.keyPressed(self, key, isrepeat)
+					if key == "return" then cliExec(numberWheel.cliCmd) end
 				end)
 				parent.layout:addWidget(numberWheel)
 			elseif element.type == "Button" then 
