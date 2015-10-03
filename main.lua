@@ -147,10 +147,6 @@ function love.mousereleased(x, y, button)
 	camera.dragged = false
 end
 
-function widgetToString(widget)
-	return widget.type .. (widget.text and " (" .. widget.text .. ")" or "")
-end
-
 function love.mousemoved(x, y, dx, dy)
 	gui.base:pickHovered(x, y)
 	gui.base:mouseMove(x, y, dx, dy)
@@ -179,24 +175,11 @@ function love.keypressed(key, isrepeat)
 	if gui.base.focused then
 		gui.base.focused:keyPressed(key, isrepeat)
 	end
+	kraidGUILove.cutCopyPaste(gui.base)
 		
 	-- only execute shortcuts if nothing is focused or the focused element doesn't process key press events
 	if not gui.base.focused or gui.base.focused.keyPressed == kraid.widgets.Base.keyPressed then 
 		checkAndExecShortcuts()
-	end
-
-	if love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl") then
-		if gui.base.focused and gui.base.focused.type == "LineInput" then
-			if key == "x" then
-				love.system.setClipboardText(gui.base.focused:cut())
-			end
-			if key == "c" then
-				love.system.setClipboardText(gui.base.focused:selected())
-			end
-			if key == "v" then
-				gui.base.focused:paste(love.system.getClipboardText())
-			end
-		end
 	end
 end
 

@@ -54,5 +54,21 @@ do
         gui.backend.keyDown = love.keyboard.isDown
     end
 
+    function kraidGUILove.cutCopyPaste(baseWidget)
+        if love.keyboard.isDown("lctrl") or love.keyboard.isDown("rctrl") then
+            if baseWidget.focused and baseWidget.focused.type == "LineInput" then
+                if key == "x" then
+                    love.system.setClipboardText(baseWidget.focused:cut())
+                end
+                if key == "c" then
+                    love.system.setClipboardText(baseWidget.focused:selected())
+                end
+                if key == "v" then
+                    baseWidget.focused:paste(love.system.getClipboardText())
+                end
+            end
+        end
+    end
+
     return kraidGUILove
 end
