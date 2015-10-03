@@ -196,7 +196,7 @@ do
 			for i = 1, #mapStack do 
 				mapStack[i] = nil
 			end 
-			mapStack[1] = {path, map}
+			mapStack[1] = {label = path, map = tableDeepCopy(map)}
 
 			updateShapes()
 

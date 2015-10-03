@@ -1,13 +1,12 @@
-* mapStack-revamp
-* Filebrowser
-
-* Fick die Pfade, man macht einfach alle Pfade relativ zur Map-Datei. Das ermöglicht man dadurch, den User beim Programmstart zu forcen entweder eine Map zu laden oder ein neues Projekt anzufangen und Dafür einen Dateinamen einzugeben.
-= schöne Legitimation für globale Edit modes! - default, filebrowser, startup
-
-* File actions: load, save
-	* newImage abstrahieren und später auf io-Implementation umsteigen
-	* Pfade sind noch etwas fucked. Werden nicht relativiert (sowohl beim speichern, als auch beim laden)
-		* Müssen die markiert werden?, damit man weiß, was man zu transformieren hat. Vielleicht kann man die auch reliable erkennen?
+* Mit Markus reden
+	* Numberwheel-Trafo + shapes -> shapes updaten wenn nötig? oder einfach immer. (statt an speziellen momenten). Oder wie?
+	* Pfad-Problem erklären: Sind alle durcheinander, wenn man die beim speichern/laden relativieren will, muss man entweder den ursprünglichen speicherort der ganzen datei kennen (was auch nur ein hack ist), damits überhaupt geht. zusätzlich muss man auch wissen was für strings man transformieren muss. Muss man dann Pfade markieren irgendwie? Oder ne Funktion schreiben die zuverlässig strings als pfade identifiziert? (impossible). Alternativ kann man vom filebrowser einfach immer relative pfade auskacken lassen. Aber zu was? Map dateien forcen!
+		=> Am Anfang den extra-Modus einbauen. Mehr Modi fürs Ding! Special modi (statt allgemeine (inkl. default)), damit alles schöner?
+		Dann kann man alle Pfade relativ zur Map-Datei machen (daher muss man vorraussetzen, dass eine existiert). 
+* specialModes
+	* default, filebrowser (skalierbare Imagepreviews), startup (zwei buttons) -> filebrowser
+	* with the startup mode initialization (especially in save/load and map.lua) can/should look different
+	* newImage abstrahieren und auf io-Implementation umsteigen
 
 * Color picker + Color fürs Sprite
 	* Drei Numberwheels untereinander + ein rectangle mit gepickter Farbe?
@@ -15,12 +14,10 @@
 	* Wie starten die? Preset-Buttons, Textur-Buttons (auch Trafos), Trafos, Funktionen für Modis?
 * Show Details
 
-* Filebrowser
-	Vielleicht als eigener Modus und nicht als Fenster oder so. Macht einiges einfacher und gibt einem mehr gelegenheit Textur-Previews und so zu zeigen. Nachteil: Code sieht scheiße aus.
-
 Later/Maybe: 
 * specialModes in globalModes verwandeln und alles vom normalen editor-mode darein verschieben und schöner machen
 	gui.base wird dann globalModes[currentMode].gui oder gui[currentMode] oder gui.base[currentMode]
+	Vielleicht aber auch nicht, damit die Funktionsaufrufe im CLI nicht so doof aussehen und alles etwas einfacher ist? -> Markus fragen
 * Nochmal genau überlegen was in editor und was in map gehört oder was global ist.
 	vllt. nur Dinge in editor in der cli zulassen und alles andere vorher nillen. Dann auch alles aus global entfernen, was man vllt. benutzen könnte aber nicht sollte und sonst vllt. nach editor verschieben.
 * Up/Down key in console (history)
@@ -33,24 +30,7 @@ Later/Maybe:
 
 Bugs:
 * GUI
-	* Mit gedrückter Maus auf einen Button gehen und loslassen wird als klick interpretiert
-	* Breakout-Widgets sind kaka (siehe Numberwheel für's grid spacing)
+	* Breakout-Widgets sind kaka (siehe Numberwheel für's grid spacing) (oder close-buttons)
 * Map-Loading?
-* "Bug": Numberwheels benutzen (oder Textfelder) pusht super oft auf den Stack und ist braucht deshalb hunderte strg+z um ganz undo-d zu werden
-	* LineEdits nur cliExec-en lassen, wenn man enter drückt!
 * Up/Down mit multiple selection macht funky sachen, wenn alle ausgewählten schon ganz oben sind
 * editModes kacken ein bisschen ab, wenn man position, scale oder rotation des Transform-Components auf nil setzt
-
-Currently:
-mapStack:push() - pushes a copy of the topmost map object and sets the global map to this copy
-Then do things
-Cons: It's not easy to work with intermediate results. e.g.: numberwheel that changes values, but is not finished changing yet.
-It's not possible to just wait for it to finish and then apply the changes, because you want to see it in real time.
-A possible fix is to push whenever you change anything, but this can result in a lot of spamming.
-Otherwise the stack has to be pushed manually every time changes are happening and cliExec can not be used throughout for all changes to the map.
-
-Alternative:
-have the map object be a "working copy" and mapStack has any official copies of the map.
-And anytime changes should be made or are completed, just execute cliExec, which pushes a copy of the top element of the mapStack onto itself and applies the changes there
-Cons: Rewrite :D
-It may also be possible that the topmost mapStack element and the map-object diverge and even after applying the latest change, which would manifest itself in hard to find, reproduce and fix bugs.

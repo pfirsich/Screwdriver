@@ -397,15 +397,25 @@ do
 				local label = kraid.widgets.Label{parent = parent, text = element.name, elementId = element.id}
 				parent.layout:addWidget(label)
 				local input = kraid.widgets.LineInput{parent = parent, elementId = element.id, target = target, cliCmd = "", minWidth = 20}
-				input:setParam("onChange", function(self) cliExec(self.target .. ' = "' .. self.text .. '"') end)
 				parent.layout:addWidget(input)
+
+				input:setParam("onChange", function(self) assert(loadstring(self.target .. ' = "' .. self.text .. '"'))() end)
+				input:setParam("keyPressed", function(self, key, isrepeat)
+					kraid.widgets.LineInput.keyPressed(self, key, isrepeat)
+					if key == "return" then cliExec(self.cliCmd) end
+				end)
 			elseif element.type == "Numberwheel" then 
 				local label = kraid.widgets.Label{parent = parent, text = element.name, elementId = element.id}
 				parent.layout:addWidget(label)
 				local params = element.params or {speed = 10.0}
 				local numberWheel = kraid.widgets.Numberwheel{parent = parent, elementId = element.id, target = target, cliCmd = "", 
 															speed = params.speed, minValue = params.minValue, maxValue = params.maxValue}
-				numberWheel:setParam("onChange", function(self, value) cliExec(self.target .. " = " .. tostring(value)) end)
+
+				numberWheel:setParam("onChange", function(self, value) assert(loadstring(self.target .. " = " .. tostring(value)))() end)
+				numberWheel:setParam("mouseReleased", function(self, x, y, button) 
+					if self.blownUp and button == "l" then cliExec(self.cliCmd) end
+					kraid.widgets.Numberwheel.mouseReleased(self, x, y, button)
+				end)
 				parent.layout:addWidget(numberWheel)
 			elseif element.type == "Button" then 
 				local button = kraid.widgets.Button{parent = parent, text = element.name, elementId = element.id, minWidth = 30, height = 25}
@@ -436,11 +446,11 @@ do
 								widget.cliCmd = widget.target .. " = " .. tostring(not widget.checked)
 							elseif element.type == "String" and widget.type == "LineInput" then 
 								widget:setParam("text", component.static[element.id])
-								widget.cliCmd = widget.target .. " = <text>"
+								widget.cliCmd = widget.target .. ' = "' .. widget.text .. '"'
 							elseif element.type == "Numberwheel" and widget.type == "Numberwheel" then 
 								widget.value = assert(loadstring("return " .. widget.target))()
 								widget.numberInputLine.text = string.format(widget.format, widget.value)
-								widget.cliCmd = widget.target .. " = <value>"
+								widget.cliCmd = widget.target .. " = " .. tostring(widget.value)
 							elseif element.type == "Button" and widget.type == "Button" then
 								widget.cliCmd = element.id -- for global elements e.g. components["Sprite"].static can always be accessed
 							end 
@@ -543,11 +553,11 @@ do
 									widget.cliCmd = widget.target .. " = " .. tostring(not widget.checked)
 								elseif element.type == "String" and widget.type == "LineInput" then 
 									widget:setParam("text", component[element.id])
-									widget.cliCmd = widget.target .. " = <text>"
+									widget.cliCmd = widget.target .. ' = "' .. widget.text .. '"'
 								elseif element.type == "Numberwheel" and widget.type == "Numberwheel" then 
 									widget.value = assert(loadstring("return " .. widget.target))()
 									widget.numberInputLine.text = string.format(widget.format, widget.value)
-									widget.cliCmd = widget.target .. " = <value>"
+									widget.cliCmd = widget.target .. " = " .. tostring(widget.value)
 								elseif element.type == "Button" and widget.type == "Button" then 
 									local entityString = "getEntityByGUID(gui.selectedEntities[1])"
 									local componentString = 'getComponentById(' .. entityString .. ', "' .. component.id ..  '")'

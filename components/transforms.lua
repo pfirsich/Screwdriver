@@ -87,7 +87,6 @@ do
     function Transforms.static.editModes.move.onMouseDown(x, y, button)
         local mode = Transforms.static.editModes.move
         if button == "l" then 
-            mapStack:push() -- has to be executed before getEntityByGUID, so it has the current entity!
             mode.entity = getEntityByGUID(gui.selectedEntities[1])
             if mode.entity then 
                 mode.transforms = getComponentByType(mode.entity, "Transforms")
@@ -106,6 +105,7 @@ do
     function Transforms.static.editModes.move.onMouseUp(x, y, button)
         local mode = Transforms.static.editModes.move
         if button == "l" and mode.transforms then 
+            cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "Transforms").position = {' .. table.concat(mode.transforms.position, ", ") .. "}")
             mode.transforms = nil
             mode.entity = nil
         end
@@ -115,7 +115,6 @@ do
     function Transforms.static.editModes.rotate.onMouseDown(x, y, button)
         local mode = Transforms.static.editModes.rotate
         if button == "l" then 
-            mapStack:push() -- has to be executed before getEntityByGUID, so it has the current entity!
             mode.entity = getEntityByGUID(gui.selectedEntities[1])
             if mode.entity then 
                 mode.transforms = getComponentByType(mode.entity, "Transforms")
@@ -138,7 +137,8 @@ do
 
     function Transforms.static.editModes.rotate.onMouseUp(x, y, button)
         local mode = Transforms.static.editModes.rotate
-        if button == "l" and mode.transforms then 
+        if button == "l" and mode.transforms then
+            cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "Transforms").rotation = ' .. tostring(mode.transforms.rotation)) 
             mode.transforms = nil
             mode.entity = nil
         end
@@ -161,7 +161,6 @@ do
     function Transforms.static.editModes.scale.onMouseDown(x, y, button)
         local mode = Transforms.static.editModes.scale
         if button == "l" then 
-            mapStack:push() -- has to be executed before getEntityByGUID, so it has the current entity!
             mode.entity = getEntityByGUID(gui.selectedEntities[1])
             if mode.entity then 
                 mode.transforms = getComponentByType(mode.entity, "Transforms")
@@ -191,6 +190,7 @@ do
     function Transforms.static.editModes.scale.onMouseUp(x, y, button)
         local mode = Transforms.static.editModes.scale
         if button == "l" and mode.transforms then 
+            cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "Transforms").scale = {' .. table.concat(mode.transforms.scale, ", ") .. "}")
             mode.transforms = nil
             mode.entity = nil
         end

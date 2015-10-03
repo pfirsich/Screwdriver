@@ -59,17 +59,8 @@ function love.load()
 	love.keyboard.setKeyRepeat(true)
 
 	editor.loadMapFile("test.map")
-
-	-- startup
-	-- editor.createEntity("everything")
-	-- editor.createEntity("everything")
-	-- editor.createEntity("everything")
-	-- editor.createEntity("everything")
-	-- map.entities[1].components[2].position[1] =  400
-	-- map.entities[2].components[2].position[1] = -400
-	-- map.entities[3].components[2].position[2] =  400
-	-- map.entities[4].components[2].position[2] = -400
-	-- updateShapes()
+	simulateShortcut("lctrl+a")
+	simulateShortcut("lctrl+f")
 end
 
 function love.update()
@@ -78,7 +69,9 @@ function love.update()
 	gui.base:update()
 
 	if gui.base.hovered and gui.base.hovered.cliCmd then 
-		gui.consoleWindow:setParam("text", "Console - Hovering: '" .. gui.base.hovered.cliCmd .. "'")
+		local suffix = ""
+		if gui.base.hovered.type == "LineInput" then suffix = " - Press <enter> to apply changes" end
+		gui.consoleWindow:setParam("text", "Console - Hovering: '" .. gui.base.hovered.cliCmd .. "'" .. suffix)
 	else 
 		gui.consoleWindow:setParam("text", "Console")
 	end 
@@ -106,7 +99,6 @@ function love.mousepressed(x, y, button)
 				local ctrl = love.keyboard.isDown("lctrl") and editor.editMode == editor.defaultEditMode
 				if love.keyboard.isDown("lalt") and #gui.selectedEntities == 1 then -- step down selection
 					if ctrl then 
-						print("select all hovered")
 						gui.selectEntities(editor.hoveredEntities)
 					else 
 						-- if alt is pressed and only one entity is selected every new click selects an object below it
@@ -250,7 +242,7 @@ function love.draw()
 		love.graphics.setLineWidth(3.0/camera.scale)
 		for _, guid in ipairs(gui.selectedEntities) do 
 			local entity = getEntityByGUID(guid) 
-			if entity then 
+			if entity and entity.__pickableComponent and entity.__shapes then 
 				local x, y = entity.__shapes.bbox[1], entity.__shapes.bbox[2]
 				local w, h = entity.__shapes.bbox[3] - entity.__shapes.bbox[1], entity.__shapes.bbox[4] - entity.__shapes.bbox[2]
 				love.graphics.rectangle("line", x, y, w, h)
@@ -261,17 +253,19 @@ function love.draw()
 		love.graphics.setColor(255, 255, 255, 255)
 		if components["Core"].static.showNames then
 			for _, entity in ipairs(map.entities) do
-				local nameScale = 1.5 / camera.scale
-				local name = getComponentByType(entity, "Core").name
-				local width, height = love.graphics.getFont():getWidth(name) * nameScale, love.graphics.getFont():getHeight() * nameScale
-				local x = (entity.__shapes.bbox[1] + entity.__shapes.bbox[3] - width) / 2
-				local y = (entity.__shapes.bbox[2] + entity.__shapes.bbox[4] - height) / 2
-				
-				local shadowOffset = 2
-				love.graphics.setColor(0, 0, 0, 255)
-				love.graphics.print(name, x + shadowOffset, y + shadowOffset, 0, nameScale, nameScale)
-				love.graphics.setColor(255, 255, 255, 255)
-				love.graphics.print(name, x, y, 0, nameScale, nameScale)
+				if entity.__pickableComponent then -- TODO: check for __shapes. Check is left out, so the program actually crashes if there are no shapes at this point (because it shouldn't happen) 
+					local nameScale = 1.5 / camera.scale
+					local name = getComponentByType(entity, "Core").name
+					local width, height = love.graphics.getFont():getWidth(name) * nameScale, love.graphics.getFont():getHeight() * nameScale
+					local x = (entity.__shapes.bbox[1] + entity.__shapes.bbox[3] - width) / 2
+					local y = (entity.__shapes.bbox[2] + entity.__shapes.bbox[4] - height) / 2
+					
+					local shadowOffset = 2
+					love.graphics.setColor(0, 0, 0, 255)
+					love.graphics.print(name, x + shadowOffset, y + shadowOffset, 0, nameScale, nameScale)
+					love.graphics.setColor(255, 255, 255, 255)
+					love.graphics.print(name, x, y, 0, nameScale, nameScale)
+				end
 			end 
 		end
 	camera.pop()
@@ -399,8 +393,14 @@ function cliExec(cmd)
 	if f == nil then 
 		gui.consoleOutput:addLine("ERROR: " .. err)
 	else 
+		-- every change to the map object is thrown away and cmd is applied to the topmost element on the mapStack
+		-- then another working copy map is created
+		-- if any divergences occur it will be immediately noticable by changes not showing up
+		editor.unsavedChanges = true
 		mapStack:push(cmd)
+		map = mapStack[mapStack.cursor].map
 		local ret = f()
+		map = tableDeepCopy(mapStack[mapStack.cursor].map)
 		updateShapes()
 		return ret
 	end
