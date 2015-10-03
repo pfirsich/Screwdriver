@@ -1,14 +1,8 @@
-* Mit Markus reden
-	* Numberwheel-Trafo + shapes -> shapes updaten wenn nötig? oder einfach immer. (statt an speziellen momenten). Oder wie?
-		Jeden Frame das single-selected entity update (und halt bei cliExec)
-		Vielleicht hätte man auch setProperty-Funktionen für ein Component-Base hinzufügen können, dass dirty-flags setzt
-	* Pfad-Problem erklären: Sind alle durcheinander, wenn man die beim speichern/laden relativieren will, muss man entweder den ursprünglichen speicherort der ganzen datei kennen (was auch nur ein hack ist), damits überhaupt geht. zusätzlich muss man auch wissen was für strings man transformieren muss. Muss man dann Pfade markieren irgendwie? Oder ne Funktion schreiben die zuverlässig strings als pfade identifiziert? (impossible). Alternativ kann man vom filebrowser einfach immer relative pfade auskacken lassen. Aber zu was? Map dateien forcen!
-		=> Am Anfang den extra-Modus einbauen. Mehr Modi fürs Ding! Special modi (statt allgemeine (inkl. default)), damit alles schöner?
-		Dann kann man alle Pfade relativ zur Map-Datei machen (daher muss man vorraussetzen, dass eine existiert). 
 * specialModes
-	* default, filebrowser (skalierbare Imagepreviews), startup (zwei buttons) -> filebrowser
 	* with the startup mode initialization (especially in save/load and map.lua) can/should look different
+	* Filebrowser muss schlussendlich immer relative Pfade auskacken! (relativ zur Mapdatei)
 	* newImage abstrahieren und auf io-Implementation umsteigen
+	* Command line arguments -> load
 
 * Color picker + Color fürs Sprite
 	* Drei Numberwheels untereinander + ein rectangle mit gepickter Farbe?

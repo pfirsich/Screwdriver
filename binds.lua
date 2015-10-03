@@ -58,6 +58,7 @@ do
 	shortcut("f1", 'gui.sceneWindow:summon()')
 	shortcut("f2", 'gui.propertyWindow:summon()')
 	shortcut("f3", 'gui.consoleWindow:summon()')
+	shortcut("tab", 'toggle(components["Core"].static, "showEntityBorders"); toggle(components["Core"].static, "showNames")') 
 
 	shortcut("pageup", "editor.entityUp(gui.selectedEntities)", true)
 	shortcut("pagedown", "editor.entityDown(gui.selectedEntities)", true)

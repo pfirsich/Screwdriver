@@ -188,31 +188,6 @@ do
 												onClicked = widgetExecCliCmd}
 		gui.sceneWindowLayout:addWidget(gui.entityRemoveButton)
 
-		-- Maybe move this to a component?
-		gui.sceneWindowLayout:newLine()
-		gui.sceneFileCategory = kraid.widgets.Category{parent = gui.sceneWindowScroll, text = "File", minWidth = 50, onCollapse = collapseRearrangeSceneWindow}
-		gui.sceneWindowLayout:addWidget(gui.sceneFileCategory)
-
-		gui.sceneFileCategoryLayout = kraid.layouts.LineLayout(gui.sceneFileCategory, {["spacing"] = 5, ["padding"] = 10, ["padding-top"] = 40})
-
-		gui.sceneFileCategoryLayout:newLine()
-		gui.loadFileButton = kraid.widgets.Button{parent = gui.sceneFileCategory, height = 30, minWidth = 50, text = "Load map file", onClicked = widgetExecCliCmd_nostack,
-							cliCmd = 'editor.loadMap()'}
-		gui.sceneFileCategoryLayout:addWidget(gui.loadFileButton)
-
-		gui.sceneFileCategoryLayout:newLine()
-		gui.saveButton = kraid.widgets.Button{parent = gui.sceneFileCategory, height = 30, minWidth = 50, text = "Save", onClicked = widgetExecCliCmd, 
-							cliCmd = 'editor.saveMap()'}
-		gui.sceneFileCategoryLayout:addWidget(gui.saveButton)
-		gui.saveAsButton = kraid.widgets.Button{parent = gui.sceneFileCategory, height = 30, minWidth = 50, text = "Save As", onClicked = widgetExecCliCmd,
-							cliCmd = 'editor.saveMapAs()'}
-		gui.sceneFileCategoryLayout:addWidget(gui.saveAsButton)
-
-		gui.sceneFileCategoryLayout:arrange()
-		local sceneFileCatBBox = {gui.sceneFileCategory:getChildrenBBox()}
-		gui.sceneFileCategory:setParam("inflatedHeight", sceneFileCatBBox[4] + 10)
-
-		gui.sceneFileCategory:setParam("onResize", function(cat) gui.sceneFileCategoryLayout:arrange() end)
 		gui.sceneWindow:setParam("onResize", function(window) 
 			gui.sceneWindowScroll:setParam("width", window.width)
 			gui.sceneWindowScrollBar:setParam("length", window.height - 25)

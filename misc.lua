@@ -46,6 +46,95 @@ function foreach(tbl, func)
     end 
 end
 
+function toggle(tbl, key)
+    tbl[key] = not tbl[key]
+end
+
+function string.split(str, sep)
+    sep = sep or "%s" -- whitespace
+    local ret = {}
+    for match in string.gmatch(str, "([^" .. sep .. "]+)") do
+        ret[#ret+1] = match
+    end
+    return ret
+end
+
+function string.splitLast(str, sep)
+    local before, after = str:match("(.+)" .. sep .. "([^" .. sep .. "]+)")
+    if before == nil then 
+        return "", str
+    else 
+        return before, after
+    end
+end 
+
+do 
+    local imageMap = {}
+    function getImage(path)
+        local img = imageMap[path]
+        if img == nil then
+            local file = assert(io.open(path, "rb"))
+            local filedata = love.filesystem.newFileData(file:read("*all"), path)
+            file:close()
+            imageMap[path] = love.graphics.newImage(filedata)
+            return imageMap[path]
+        else 
+            return img 
+        end
+    end
+end
+
+paths = {
+    splitFile = function(origPath) -- origPath has to point to a file sensible results!
+        local path, file = string.splitLast(origPath, "/")
+        return path == "" and "." or path, file
+    end, 
+
+    getExt = function(path)
+        local rest, ext = string.splitLast(path, "%.")
+        return ext
+    end, 
+
+    normalize = function(path)
+        local parts = string.split(path:gsub("\\", "/"), "/")
+        local i = 1
+        while i <= #parts do 
+            if parts[i] == ".." then 
+                i = i - 1
+                table.remove(parts, i) -- remove the part before this
+                table.remove(parts, i) -- remove this part
+            elseif parts[i] == "." then 
+                table.remove(parts, i)
+            else
+                i = i + 1
+            end
+        end 
+        return table.concat(parts, "/")
+    end,
+
+    makeRelative = function(basePath, path) -- both have to be absolute and path has to point to a file!
+        baseParts = string.split(paths.normalize(basePath), "/")
+        parts = string.split(paths.normalize(path), "/")
+
+        local partIndex = 1
+        local retParts = {}
+        local matching = true
+        for i = 1, #baseParts do 
+            if i > #parts or parts[i] ~= baseParts[i] then matching = false end 
+            if matching then 
+                partIndex = i
+            else 
+                retParts[#retParts+1] = ".."
+            end
+        end
+
+        for i = partIndex + 1, #parts do 
+            retParts[#retParts+1] = parts[i]
+        end
+        return table.concat(retParts, "/")
+    end
+}
+
 function printTable(t) -- from here: https://coronalabs.com/blog/2014/09/02/tutorial-printing-table-contents/  
     local print_r_cache={}
     local function sub_print_r(t,indent)

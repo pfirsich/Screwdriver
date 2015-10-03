@@ -149,7 +149,8 @@ do
 	end
 
 	function editor.loadEntityFile(path)
-		path = lfs.currentdir() .. "/" .. path
+		print("entiyfile: ", path)
+
 		f, err = loadfile(path)
 		if f == nil then 
 			gui.dialogNotice("Error!", "Error while opening/parsing entity file: " .. tostring(err))
@@ -157,7 +158,6 @@ do
 			f()
 			table.insert(map.entityFiles, path)
 		end 
-		table.insert(map.entityFiles, path)
 	end 
 
 	function editor.loadMapFile(path)
@@ -198,6 +198,9 @@ do
 				mapStack[i] = nil
 			end 
 			mapStack[1] = {label = path, map = tableDeepCopy(map)}
+
+			-- focus whole map
+			editor.focusCamera(table.map(map.entities, function(entity) return entity.guid end))
 
 			editor.currentMapFile = path
 			editor.unsavedChanges = false

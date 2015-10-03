@@ -8,8 +8,11 @@ require "binds"
 require "map"
 require "camera"
 require "lfs"
+require "specialModes"
 
 function love.resize(w, h)
+	if callSpecialMode("resize", w, h) then return end
+
 	local oldVisible = gui.sceneWindow.visible 
 	gui.sceneWindow:summon()
 	gui.sceneWindow:setParam("visible", oldVisible)
@@ -58,12 +61,15 @@ function love.load()
 
 	love.keyboard.setKeyRepeat(true)
 
-	editor.loadMapFile("test.map")
-	simulateShortcut("lctrl+a")
-	simulateShortcut("lctrl+f")
+	filebrowserMode.load()
+	startupMode.load()
+
+	startupMode.enter()
 end
 
 function love.update()
+	if callSpecialMode("update") then return end
+
 	-- updateGUI has to be in front of :update(), because update builds the linearizedTree for TreeView widgets in there and updateGUI updates the selected list continuously
 	updateGUI()
 	gui.base:update()
@@ -86,6 +92,8 @@ function love.update()
 end
 
 function love.mousepressed(x, y, button)
+	if callSpecialMode("mousepressed", x, y, button) then return end
+
 	gui.base:getGrandParent():setSubTree("focused", nil)
 	gui.base:mousePressed(x, y, button)
 
@@ -142,12 +150,16 @@ function love.mousepressed(x, y, button)
 end
 
 function love.mousereleased(x, y, button)
+	if callSpecialMode("mousereleased", x, y, button) then return end
+
 	gui.base:mouseReleased(x, y, button)
 	if editor.editMode.onMouseUp then editor.editMode.onMouseUp(x, y, button) end
 	camera.dragged = false
 end
 
 function love.mousemoved(x, y, dx, dy)
+	if callSpecialMode("mousemoved", x, y, dx, dy) then return end
+
 	gui.base:pickHovered(x, y)
 	gui.base:mouseMove(x, y, dx, dy)
 
@@ -166,16 +178,20 @@ function love.mousemoved(x, y, dx, dy)
 end
 
 function love.textinput(text)
+	if callSpecialMode("textinput", text) then return end
+
 	if gui.base.focused then
 		gui.base.focused:textInput(text)
 	end
 end
 
 function love.keypressed(key, isrepeat)
+	if callSpecialMode("keypressed", key, isrepeat) then return end
+
 	if gui.base.focused then
 		gui.base.focused:keyPressed(key, isrepeat)
 	end
-	kraidGUILove.cutCopyPaste(gui.base)
+	loveBackend.cutCopyPaste(gui.base)
 		
 	-- only execute shortcuts if nothing is focused or the focused element doesn't process key press events
 	if not gui.base.focused or gui.base.focused.keyPressed == kraid.widgets.Base.keyPressed then 
@@ -184,6 +200,8 @@ function love.keypressed(key, isrepeat)
 end
 
 function love.draw()
+	if callSpecialMode("draw") then return end
+
 	if components["Core"].static.showGrid then 
 		love.graphics.setShader(gridShader)
 		gridShader:send("cameraScale", camera.scale)
