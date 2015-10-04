@@ -73,6 +73,13 @@ function love.load(arg)
 	end
 end
 
+function love.quit()
+	if editor.unsavedChanges then 
+		gui.dialogQuestion("Quit?", "This map has unsaved changes. Really quit?", "love.quit = nil; love.event.push('quit')", "")
+		return true
+	end
+end 
+
 function love.update()
 	if callSpecialMode("update") then return end
 
