@@ -32,7 +32,6 @@ do
     function Sprite:getShapes()
         if self.__image then 
             local w, h = self.__image:getWidth(), self.__image:getHeight()
-            --print("reget", w, h)
             return {{0, 0,   0, h,   w, h,   w, 0}}
         end
         return {}

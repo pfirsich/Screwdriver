@@ -375,7 +375,7 @@ end
 
 function updateShape(entity)
 	if entity.__pickableComponent then 
-		entity.__shapes = entity.__pickableComponent:getShapes()
+		entity.__shapes = getComponentById(entity, entity.__pickableComponent):getShapes()
 
 		local transforms = getComponentByType(entity, "Transforms")
 		local minX, minY, maxX, maxY = math.huge, math.huge, -math.huge, -math.huge

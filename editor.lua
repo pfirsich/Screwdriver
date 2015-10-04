@@ -48,7 +48,8 @@ do
 			local componentObject = components[component.componentType](component)
 			created[component.componentType] = true
 			if components[component.componentType].static.pickable then 
-				entity.__pickableComponent = componentObject
+				-- I have to save the id because saving a reference would cause the object to be duplicated when deep-copied (therefore destroying the reference)
+				entity.__pickableComponent = componentObject.id 
 			end
 
 			table.insert(entity.components, componentObject) 
