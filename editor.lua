@@ -169,6 +169,7 @@ do
 		else 
 			f()
 			table.insert(map.entityFiles, path)
+			rebuildGlobalComponentGUIElements()
 		end 
 	end 
 

@@ -333,7 +333,7 @@ do
 		return widgets
 	end
 
-	local function updateElement(parentWidget, element)
+	local function updateElementWidgets(parentWidget, element)
 		local widgets = findElementWidgets(parentWidget, element.id)
 		for _, widget in ipairs(widgets) do 
 			local varString = (widget.target or "") .. '.' .. element.variable
@@ -434,8 +434,50 @@ do
 		parent:setParam("inflatedHeight", select(4, parent:getChildrenBBox()) + 10)
 	end
 
+	function findCategory(parent, name)
+		for i, widget in ipairs(parent.children) do 
+			if widget.type == "Category" and widget.text == name then 
+				return widget
+			end 
+		end 
+		return nil
+	end
+
+	function createCategory(parent, layout, name, onCollapse) 
+		layout:newLine()
+		local cat = kraid.widgets.Category{parent = parent, text = name, minWidth = 50, collapsed = true, onCollapse = onCollapse}
+		layout:addWidget(cat)
+
+		cat.layout = kraid.layouts.LineLayout(cat, {["spacing"] = 5, ["padding"] = 10, ["padding-top"] = 40})
+		cat:setParam("onResize", function(self) self.layout:arrange() end)
+		return cat
+	end
+
+	function rebuildGlobalComponentGUIElements()
+		for i = #gui.sceneWindowScroll.children, 1, -1 do 
+			if gui.sceneWindowScroll.children[i].type == "Category" then 
+				gui.sceneWindowLayout:removeWidget(gui.sceneWindowScroll.children[i])
+				table.remove(gui.sceneWindowScroll.children, i)
+			end
+		end 
+
+		for name, component in pairs(components) do 
+			if #component.static.guiElements > 0 then 
+				local cat = findCategory(gui.sceneWindowScroll, name) 
+
+				if cat == nil then 
+					cat = createCategory(gui.sceneWindowScroll, gui.sceneWindowLayout, name, collapseRearrangeSceneWindow)
+				end 
+
+				for _, element in ipairs(component.static.guiElements) do 
+					element.id = name .. "/" .. (element.variable or "") .. "/" .. (element.cmd or "")
+					createElementWidgets(cat, element, 'components["' .. name .. '"].static')
+				end
+			end 
+		end
+	end
+
 	function rebuildPropertyGUIElements(entity)
-		print("REBUILD")
 		local uncollapsedCategory = nil
 		for _, category in ipairs(gui.propertyWindowScroll.children) do
 			if category.type == "Category" then 
@@ -449,23 +491,12 @@ do
 		for _, component in ipairs(entity.components) do 
 			if not component.__hidden then 
 				for _, element in ipairs(component.__guiElements) do 
-					local cat = nil 
-					for i, widget in ipairs(gui.propertyWindowScroll.children) do 
-						if widget.type == "Category" and widget.text == (element.__category or component.componentType) then 
-							cat = widget
-							break
-						end 
-					end 
+					local name = element.__category or component.componentType
+					local cat = findCategory(gui.propertyWindowScroll, name) 
 
 					if cat == nil then 
-						gui.propertyWindowLayout:newLine()
-						cat = kraid.widgets.Category{parent = gui.propertyWindowScroll, text = component.componentType, minWidth = 50, 
-														collapsed = true, onCollapse = collapseRearrangePropertyWindow}
+						cat = createCategory(gui.propertyWindowScroll, gui.propertyWindowLayout, name, collapseRearrangePropertyWindow)
 						if uncollapsedCategory == cat.text then cat:setParam("collapsed", false) end
-						gui.propertyWindowLayout:addWidget(cat)
-
-						cat.layout = kraid.layouts.LineLayout(cat, {["spacing"] = 5, ["padding"] = 10, ["padding-top"] = 40})
-						cat:setParam("onResize", function(self) self.layout:arrange() end)
 					end 
 
 					element.id = component.id .. "/" .. (element.variable or "") .. "/" .. (element.cmd or "")
@@ -506,7 +537,12 @@ do
 
 		-- Property and scene window + gui elements from component descriptions
 		-- global property gui elements
-		-- rebuild on init and on loadEntityFile
+		for name, component in pairs(components) do 
+			for _, element in ipairs(component.static.guiElements) do 
+				element.id = name .. "/" .. (element.variable or "") .. "/" .. (element.cmd or "")
+				updateElementWidgets(gui.sceneWindowScroll, element)
+			end 
+		end 		
 
 		-- update selected entity properties
 		if #gui.entityList.selected == 0 then 
@@ -528,7 +564,7 @@ do
 					for _, element in ipairs(component.__guiElements) do 
 						-- element.id has to be calculated here again, because it was never commited to the mapstack and could be gone by now
 						element.id = component.id .. "/" .. (element.variable or "") .. "/" .. (element.cmd or "")
-						updateElement(gui.propertyWindowScroll, element)
+						updateElementWidgets(gui.propertyWindowScroll, element)
 					end
 				end
 			end

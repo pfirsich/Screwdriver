@@ -56,47 +56,6 @@ return {
 				{
 					rotation = 0,
 					position = {
-						139.51046046722,
-						240.54606517647,
-					},
-					componentType = "Transforms",
-					keepAspect = true,
-					id = "transforms",
-					scale = {
-						1,
-						1,
-					},
-					offset = {
-						0,
-						0,
-					},
-				},
-				{
-					imagePath = "pfirsich.png",
-					color = {
-						255,
-						255,
-						255,
-						255,
-					},
-					id = "sprite",
-					componentType = "Sprite",
-				},
-			},
-			guid = 1,
-		},
-		{
-			type = "everything",
-			components = {
-				{
-					id = "core",
-					componentType = "Core",
-					hidden = false,
-					name = "everything",
-				},
-				{
-					rotation = 0,
-					position = {
 						-365.9736563042,
 						-304.45633373109,
 					},
@@ -182,16 +141,16 @@ return {
 						901.10575080064,
 						-276.35377422384,
 					},
-					id = "transforms",
 					componentType = "Transforms",
 					keepAspect = true,
-					offset = {
-						0,
-						0,
-					},
+					id = "transforms",
 					scale = {
 						1,
 						1,
+					},
+					offset = {
+						0,
+						0,
 					},
 				},
 				{
@@ -200,13 +159,107 @@ return {
 						255,
 						255,
 						255,
-						200,
+						255,
 					},
 					id = "sprite",
 					componentType = "Sprite",
 				},
 			},
 			guid = 4,
+		},
+		{
+			type = "everything",
+			components = {
+				{
+					id = "core",
+					componentType = "Core",
+					hidden = false,
+					name = "everything",
+				},
+				{
+					rotation = 0,
+					position = {
+						314.14805096344,
+						105.59883615666,
+					},
+					componentType = "Transforms",
+					keepAspect = true,
+					id = "transforms",
+					scale = {
+						1,
+						1,
+					},
+					offset = {
+						0,
+						0,
+					},
+				},
+				{
+					imagePath = "../text.png",
+					color = {
+						255,
+						255,
+						255,
+						255,
+					},
+					id = "sprite",
+					componentType = "Sprite",
+				},
+			},
+			guid = 1,
+		},
+		{
+			type = "everything",
+			components = {
+				{
+					id = "core",
+					componentType = "Core",
+					hidden = false,
+					name = "everything",
+				},
+				{
+					scale = {
+						1,
+						1,
+					},
+					position = {
+						901.10575080064,
+						-276.35377422384,
+					},
+					id = "transforms",
+					componentType = "Transforms",
+					keepAspect = true,
+					offset = {
+						0,
+						0,
+					},
+					rotation = 0,
+				},
+				{
+					imagePath = "pfirsich.png",
+					id = "sprite",
+					componentType = "Sprite",
+					color = {
+						255,
+						255,
+						255,
+						255,
+					},
+				},
+			},
+			guid = 5,
+		},
+		{
+			type = "dummy",
+			components = {
+				{
+					id = "core",
+					componentType = "Core",
+					hidden = false,
+					name = "dummy",
+				},
+			},
+			guid = 6,
 		},
 	},
 }

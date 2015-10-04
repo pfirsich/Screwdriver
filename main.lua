@@ -34,6 +34,7 @@ end
 
 function love.load(arg) 
 	gui = setupGUI()
+	rebuildGlobalComponentGUIElements()
 	updateGUI()
 	love.resize(love.window.getWidth(), love.window.getHeight())
 

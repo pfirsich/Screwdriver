@@ -1,7 +1,3 @@
-* Global component property gui elements wieder implementieren
-	Neues Base widget am Ende einfügen, damit alle Kinder Categories sind (und vor allem, damit man einfacher löschen kann)
-	Vielleicht stattdessen aber auch einfach nur categories löschen
-
 * Color picker + Color fürs Sprite
 	* Drei Numberwheels untereinander + ein rectangle mit gepickter Farbe?
 	* Background color in Core.static
@@ -27,6 +23,7 @@ Later/Maybe:
 
 Bugs:
 * GUI
+	* Unicode characters breaken alles
 	* Breakout-Widgets sind kaka (siehe Numberwheel für's grid spacing) (oder close-buttons)
 	* Numberwheel-Textfelder sind fuckig. (man kann nicht löschen oder effektiv zahlen ändern)
 	* Checkboxes verstehen nicht, dass man weiter hovert, wenn man die gerade gecheckt/unchecked hat
