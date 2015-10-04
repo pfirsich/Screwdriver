@@ -13,33 +13,33 @@ do
         self.__guiElements = {}
         if self.position ~= nil then
             table.iextend(self.__guiElements,{
-                {name = "X-Pos", type = "Numberwheel", id = "position[1]"},
-                {name = "Y-Pos", type = "Numberwheel", id = "position[2]"},
-                {name = "Move entities", type = "Button", id = 'editor.editMode = components["Transforms"].static.editModes.move'}
+                {variable = "position[1]", type = "Numberwheel", label = "X-Pos", cmd = ""},
+                {variable = "position[2]", type = "Numberwheel", label = "Y-Pos", cmd = ""},
+                {variable = "", type = "Button", label = "Move entities", cmd = 'editor.editMode = components["Transforms"].static.editModes.move'}
             })
         end
             
         if self.rotation ~= nil then
             table.iextend(self.__guiElements,{
-                {name = "Angle", type = "Numberwheel", id = "rotation", params = {speed = 1.0}},
-                {name = "Rotate entities", type = "Button", id = 'editor.editMode = components["Transforms"].static.editModes.rotate'}
+                {variable = "rotation", type = "Numberwheel", label = "Angle", cmd = "", params = {speed = 1.0}},
+                {variable = "", type = "Button", label = "Rotate entities", cmd = 'editor.editMode = components["Transforms"].static.editModes.rotate'}
             })
         end
         
         if self.offset ~= nil then 
             table.iextend(self.__guiElements,{
-                {name = "X-Offset", type = "Numberwheel", id = "offset[1]"},
-                {name = "Y-Offset", type = "Numberwheel", id = "offset[2]"},
+                {variable = "offset[1]", type = "Numberwheel", label = "X-Offset", cmd = ""},
+                {variable = "offset[2]", type = "Numberwheel", label = "Y-Offset", cmd = ""},
                 --{name = "Offset entities", type = "Button", id = 'editor.editMode = components["Transforms"].static.editModes.offset'}
             })
         end
         
         if self.scale ~= nil then 
             table.iextend(self.__guiElements,{
-                {name = "X-Scale", type = "Numberwheel", id = "scale[1]", params = {speed = 0.5}},
-                {name = "Y-Scale", type = "Numberwheel", id = "scale[2]", params = {speed = 0.5}},
-                {name = "Keep aspect ratio", type = "Checkbox", id = "keepAspect"},
-                {name = "Scale entities", type = "Button", id = 'editor.editMode = components["Transforms"].static.editModes.scale'}
+                {variable = "scale[1]", type = "Numberwheel", label = "X-Scale", cmd = "", params = {speed = 0.5}},
+                {variable = "scale[2]", type = "Numberwheel", label = "Y-Scale", cmd = "", params = {speed = 0.5}},
+                {variable = "keepAspect", type = "Checkbox", label = "Keep aspect ratio", cmd = ""},
+                {variable = "", type = "Button", label = "Scale entities", cmd = 'editor.editMode = components["Transforms"].static.editModes.scale'}
             })
         end 
 

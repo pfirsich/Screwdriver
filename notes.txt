@@ -1,6 +1,4 @@
 
-Für mehrere Texturtransforms pro Entity oder mehrere Metadata-Dinger vllt. einen optionalen "category"-Parameter für Components hinzufügen, der angibt in welcher category die zugehörigen GUI elemente erstellt werden. default-fallback ist name des components (wie bereits implementiert)
-
 TexturedPolygon
     gloabl gui elements - show vertices and edges
     all polygons should have flags for textures (so they can only be edges+vertices (for game logic stuff))

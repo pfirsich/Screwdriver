@@ -6,8 +6,6 @@ function addTable(tbl, add)
 	end 
 end 
 
--- TODO: Metadata-Components: MetadataString, MetadataNumber, MetadataChoice 
-
 require "components.core"
 require "components.transforms"
 require "components.sprite"

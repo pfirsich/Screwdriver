@@ -110,15 +110,29 @@ do
 
 		function gui.selectEntities(guidList)
 			local selection = {}
+			-- i dont just assign guidList to gui.selectedEntities, because guidList could contain GUIDs not currently in use
+			local selectedGUIDs = {}
 			for _, guid in ipairs(guidList) do 
 				for _, element in ipairs(gui.entityList.tree.children) do 
 					if element.entity.guid == guid then 
 						table.insert(selection, element)
+						table.insert(selectedGUIDs, guid)
 					end 
 				end
 			end 
-			gui.selectedEntities = guidList
 			gui.entityList:setParam("selected", selection)
+
+			local selectionChanged = not gui.selectedEntities or #gui.selectedEntities ~= #selectedGUIDs
+			if not selectionChanged then 
+				for i = 1, #gui.selectedEntities do 
+					if gui.selectedEntities[i] ~= selectedGUIDs[i] then selectionChanged = true end
+				end 
+			end 
+			gui.selectedEntities = selectedGUIDs
+
+			if selectionChanged and #gui.entityList.selected == 1 then 
+				rebuildPropertyGUIElements(gui.entityList.selected[1].entity)
+			end 
 		end 
 
 		-- Scene Window
@@ -300,6 +314,158 @@ do
 		return gui
 	end
 
+	local function findElementWidgets(parent, id)
+		local widgets = {}
+		for _, category in ipairs(parent.children) do
+			if category.type == "Category" then 
+				for _, widget in ipairs(category.children) do 
+					if widget.elementId == id then 
+						table.insert(widgets, widget)
+					end
+				end 
+			end 
+		end 
+		return widgets
+	end
+
+	local function updateElement(parentWidget, element)
+		local widgets = findElementWidgets(parentWidget, element.id)
+		for _, widget in ipairs(widgets) do 
+			local varString = (widget.target or "") .. '.' .. element.variable
+			if element.type == "Checkbox" then
+				if widget.type == "Checkbox" then 
+					widget.checked = eval("return " .. varString)
+					widget.cliCmd = varString .. " = " .. tostring(not widget.checked)
+				end
+			elseif element.type == "String" then 
+				if widget.type == "LineInput" then 
+					local newText = eval("return " .. varString)
+					-- only set text if it has changed to avoid resetting the cursor
+					if newText ~= widget.text then widget:setParam("text", newText) end 
+					widget.cliCmd = varString .. ' = "' .. widget.text .. '"'
+				end
+			elseif element.type == "Numberwheel" then 
+				if widget.type == "Numberwheel" then 
+					widget.value = eval("return " .. varString)
+					widget.numberInputLine.text = string.format(widget.format, widget.value)
+					widget.cliCmd = varString .. " = " .. tostring(widget.value)
+				end
+			elseif element.type == "File" then 
+				if widget.type == "Label" then 
+					widget.text = element.label .. ": " .. eval("return " .. varString)
+				end 
+			end
+		end
+	end
+
+	local function createElementWidgets(parent, element, target)
+		parent.layout:newLine()
+		if element.type == "Checkbox" then 
+			local checkbox = kraid.widgets.Checkbox{parent = parent, target = target, elementId = element.id, onChecked = widgetExecCliCmd}
+			parent.layout:addWidget(checkbox)
+			local label = kraid.widgets.Label{parent = parent, text = element.label, elementId = element.id}
+			parent.layout:addWidget(label)
+		elseif element.type == "String" then
+			local label = kraid.widgets.Label{parent = parent, text = element.label, elementId = element.id}
+			parent.layout:addWidget(label)
+			local input = kraid.widgets.LineInput{parent = parent, elementId = element.id, target = target, cliCmd = "", minWidth = 20}
+			parent.layout:addWidget(input)
+
+			input:setParam("onChange", function(self) eval(self.target .. "." .. element.variable .. ' = "' .. self.text .. '"') end)
+			input:setParam("keyPressed", function(self, key, isrepeat)
+				kraid.widgets.LineInput.keyPressed(self, key, isrepeat)
+				if key == "return" then cliExec(self.cliCmd) end
+			end)
+		elseif element.type == "Numberwheel" then 
+			local label = kraid.widgets.Label{parent = parent, text = element.label, elementId = element.id}
+			parent.layout:addWidget(label)
+			local params = element.params or {speed = 10.0}
+			local numberWheel = kraid.widgets.Numberwheel{parent = parent, elementId = element.id, target = target, cliCmd = "", 
+														speed = params.speed, minValue = params.minValue, maxValue = params.maxValue}
+
+			numberWheel:setParam("onChange", function(self, value) eval(self.target .. "." .. element.variable .. " = " .. tostring(value)) end)
+			numberWheel:setParam("mouseReleased", function(self, x, y, button) 
+				if self.blownUp and button == "l" then cliExec(self.cliCmd) end
+				kraid.widgets.Numberwheel.mouseReleased(self, x, y, button)
+			end)
+
+			numberWheel.numberInputLine:setParam("keyPressed", function(self, key, isrepeat)
+				kraid.widgets.LineInput.keyPressed(self, key, isrepeat)
+				if key == "return" then cliExec(numberWheel.cliCmd) end
+			end)
+			parent.layout:addWidget(numberWheel)
+		elseif element.type == "Button" then 
+			local button = kraid.widgets.Button{parent = parent, text = element.label, elementId = element.id, minWidth = 30, height = 25, onClicked = widgetExecCliCmd}
+			button.cliCmd = element.cmd 
+			if element.cmd:sub(1,1) == "." or element.cmd:sub(1,1) == ":" then 
+				button.cliCmd = target .. element.cmd
+			else 
+				button.cliCmd = element.cmd
+			end 
+			parent.layout:addWidget(button)
+		elseif element.type == "File" then 
+			local label = kraid.widgets.Label{parent = parent, target = target, elementId = element.id, minWidth = 40}
+			parent.layout:addWidget(label)
+
+			local cmd = target .. '.' .. element.variable .. ' = <path>'
+			local button = kraid.widgets.Button{parent = parent, text = "..", elementId = element.id, width = 20, height = 20, cliCmd = cmd, 
+				onClicked = function(self)
+					filebrowserMode.enter(function(path)
+						cliExec(self.cliCmd:gsub("<path>", '"' .. path .. '"'))
+						exitSpecialMode() 
+					end)
+				end}
+			parent.layout:addWidget(button)
+		else
+		    error("Unsupported gui element type '" .. element.type .. "'")
+		end
+		parent.layout:arrange()
+		parent:setParam("inflatedHeight", select(4, parent:getChildrenBBox()) + 10)
+	end
+
+	function rebuildPropertyGUIElements(entity)
+		print("REBUILD")
+		local uncollapsedCategory = nil
+		for _, category in ipairs(gui.propertyWindowScroll.children) do
+			if category.type == "Category" then 
+				if not category.collapsed then uncollapsedCategory = category.text; break end
+			end 
+		end 
+
+		gui.propertyWindowScroll.children = {}
+		gui.propertyWindowLayout.lines = {}
+
+		for _, component in ipairs(entity.components) do 
+			if not component.__hidden then 
+				for _, element in ipairs(component.__guiElements) do 
+					element.id = component.id .. "/" .. (element.variable or "") .. "/" .. (element.cmd or "")
+
+					local cat = nil 
+					for i, widget in ipairs(gui.propertyWindowScroll.children) do 
+						if widget.type == "Category" and widget.text == (element.__category or component.componentType) then 
+							cat = widget
+							break
+						end 
+					end 
+
+					if cat == nil then 
+						gui.propertyWindowLayout:newLine()
+						cat = kraid.widgets.Category{parent = gui.propertyWindowScroll, text = component.componentType, minWidth = 50, 
+														collapsed = true, onCollapse = collapseRearrangePropertyWindow}
+						if uncollapsedCategory == cat.text then cat:setParam("collapsed", false) end
+						gui.propertyWindowLayout:addWidget(cat)
+
+						cat.layout = kraid.layouts.LineLayout(cat, {["spacing"] = 5, ["padding"] = 10, ["padding-top"] = 40})
+						cat:setParam("onResize", function(self) self.layout:arrange() end)
+					end 
+
+					createElementWidgets(cat, element, 'getComponentById(getEntityByGUID(gui.selectedEntities[1]), "' .. component.id ..  '")')
+				end
+				gui.propertyWindowLayout:arrange()
+			end 
+		end 
+	end
+
 	function updateGUI()
 		-- update entity types list
 		local entityTypesList = {}
@@ -328,141 +494,11 @@ do
 		gui.entityList:setParam("tree", {children = entityList})
 		gui.selectEntities(selectedGUIDs)
 
-		gui.selectedEntities = {}
-		for i, elem in ipairs(gui.entityList.selected) do
-			gui.selectedEntities[i] = elem.entity.guid
-		end 
+		-- Property and scene window + gui elements from component descriptions
+		-- global property gui elements
+		-- rebuild on init and on loadEntityFile
 
-		-- shared functions for updating component properties
-		local function findCategory(parent, name)
-			for i, widget in ipairs(parent.children) do 
-				if widget.type == "Category" and widget.text == name then 
-					return widget
-				end 
-			end 
-			return nil
-		end
-
-		local function createCat(name, windowPrefix, onCollapse)
-			gui[windowPrefix .. "WindowLayout"]:newLine()
-			local cat = kraid.widgets.Category{parent = gui[windowPrefix .. "WindowScroll"], text = name, minWidth = 50, collapsed = true, onCollapse = onCollapse}
-			gui[windowPrefix .. "WindowLayout"]:addWidget(cat)
-
-			cat.layout = kraid.layouts.LineLayout(cat, {["spacing"] = 5, ["padding"] = 10, ["padding-top"] = 40})
-			cat:setParam("onResize", function(self) self.layout:arrange() end)
-
-			return cat
-		end 
-
-		local function getElementWidgets(parent, elementId)
-			local widgets = {}
-			for _, widget in ipairs(parent.children) do 
-				--print("widget.elementId, search", "'" .. widget.elementId .. "'", "'" .. elementId .. "'")
-				if widget.elementId == elementId then 
-					widgets[#widgets+1] = widget
-				end
-			end 
-			return widgets
-		end
-
-		local function createElementWidgets(parent, component, element, target)
-			-- TODO: Choice, Color, File, Texture (maybe File?), Entity?
-
-			parent.layout:newLine()
-			if element.type == "Checkbox" then 
-				local checkbox = kraid.widgets.Checkbox{parent = parent, elementId = element.id, target = target, cliCmd = ""}
-				checkbox:setParam("onChecked", function(self) cliExec(self.cliCmd) end)
-				parent.layout:addWidget(checkbox)
-				local label = kraid.widgets.Label{parent = parent, text = element.name, elementId = element.id}
-				parent.layout:addWidget(label)
-			elseif element.type == "String" then
-				local label = kraid.widgets.Label{parent = parent, text = element.name, elementId = element.id}
-				parent.layout:addWidget(label)
-				local input = kraid.widgets.LineInput{parent = parent, elementId = element.id, target = target, cliCmd = "", minWidth = 20}
-				parent.layout:addWidget(input)
-
-				input:setParam("onChange", function(self) assert(loadstring(self.target .. ' = "' .. self.text .. '"'))() end)
-				input:setParam("keyPressed", function(self, key, isrepeat)
-					kraid.widgets.LineInput.keyPressed(self, key, isrepeat)
-					if key == "return" then cliExec(self.cliCmd) end
-				end)
-			elseif element.type == "Numberwheel" then 
-				local label = kraid.widgets.Label{parent = parent, text = element.name, elementId = element.id}
-				parent.layout:addWidget(label)
-				local params = element.params or {speed = 10.0}
-				local numberWheel = kraid.widgets.Numberwheel{parent = parent, elementId = element.id, target = target, cliCmd = "", 
-															speed = params.speed, minValue = params.minValue, maxValue = params.maxValue}
-
-				numberWheel:setParam("onChange", function(self, value) assert(loadstring(self.target .. " = " .. tostring(value)))() end)
-				numberWheel:setParam("mouseReleased", function(self, x, y, button) 
-					if self.blownUp and button == "l" then cliExec(self.cliCmd) end
-					kraid.widgets.Numberwheel.mouseReleased(self, x, y, button)
-				end)
-
-				numberWheel.numberInputLine:setParam("keyPressed", function(self, key, isrepeat)
-					kraid.widgets.LineInput.keyPressed(self, key, isrepeat)
-					if key == "return" then cliExec(numberWheel.cliCmd) end
-				end)
-				parent.layout:addWidget(numberWheel)
-			elseif element.type == "Button" then 
-				local button = kraid.widgets.Button{parent = parent, text = element.name, elementId = element.id, minWidth = 30, height = 25}
-				button:setParam("onClicked", widgetExecCliCmd)
-				parent.layout:addWidget(button)
-			elseif element.type == "File" then 
-				local label = kraid.widgets.Label{parent = parent, text = "No file.", elementId = element.id, minWidth = 40}
-				parent.layout:addWidget(label)
-				local cmd = 'getComponentById(getEntityByGUID(gui.selectedEntities[1]), "' .. component.id ..  '"):' .. element.id .. '("<path>")'
-				local button = kraid.widgets.Button{parent = parent, text = "..", elementId = element.id, width = 20, height = 20, cliCmd = cmd, 
-					onClicked = function(self)
-						filebrowserMode.enter(function(path)
-							cliExec(self.cliCmd:gsub("<path>", path))
-							exitSpecialMode() 
-						end)
-					end}
-				parent.layout:addWidget(button)
-			else
-			    error("Unsupported gui element type '" .. element.type .. "'")
-			end
-			parent.layout:arrange()
-			parent:setParam("inflatedHeight", select(4, parent:getChildrenBBox()) + 10)
-		end 
-
-		-- update global component gui elements
-		for name, component in pairs(components) do 
-			if #component.static.guiElements > 0 then 
-				local cat = findCategory(gui.sceneWindowScroll, name)
-				if cat == nil then 
-					cat = createCat(name, "scene", collapseRearrangeSceneWindow)
-				end 
-
-				for _, element in ipairs(component.static.guiElements) do 
-					local widgets = getElementWidgets(cat, element.id)
-
-					if #widgets == 0 then -- create widgets
-						createElementWidgets(cat, component, element, 'components["' .. name .. '"].static.' .. element.id)
-					else -- update values 
-						for _, widget in ipairs(widgets) do 
-							if element.type == "Checkbox" and widget.type == "Checkbox" then 
-								widget.checked = component.static[element.id] -- not using setParam, so onChecked will not be called (infinite recursion)
-								widget.cliCmd = widget.target .. " = " .. tostring(not widget.checked)
-							elseif element.type == "String" and widget.type == "LineInput" then 
-								local newText = component.static[element.id]
-								if newText ~= widget.text then widget:setParam("text", newText) end
-								widget.cliCmd = widget.target .. ' = "' .. widget.text .. '"'
-							elseif element.type == "Numberwheel" and widget.type == "Numberwheel" then 
-								widget.value = assert(loadstring("return " .. widget.target))()
-								widget.numberInputLine.text = string.format(widget.format, widget.value)
-								widget.cliCmd = widget.target .. " = " .. tostring(widget.value)
-							elseif element.type == "Button" and widget.type == "Button" then
-								widget.cliCmd = element.id -- for global elements e.g. components["Sprite"].static can always be accessed
-							end 
-						end 
-					end
-				end 
-			end
-		end 
-
-		-- update entity properties
+		-- update selected entity properties
 		if #gui.entityList.selected == 0 then 
 			gui.propertyWindowLabel:setParam("visible", true)
 			gui.propertyWindowLabel:setParam("text", "No entity selected.")
@@ -477,100 +513,13 @@ do
 
 			local entity = gui.entityList.selected[1].entity
 
-			-- delete all categories for which a corresponding component is not present in the selected entity or which guiElements do not match
-			local uncollapsed = nil
-			for i = #gui.propertyWindowScroll.children, 1, -1 do 
-				local category = gui.propertyWindowScroll.children[i]
-
-				local delete = true
-				if category.type == "Category" then 
-					if category.collapsed == false then uncollapsed = category.text end
-
-					local comp = nil
-					for _, component in ipairs(entity.components) do 
-						if component.componentType == category.text then
-							comp = component 
-							break
-						end
-					end 
-
-					if comp and not comp.__hidden then
-						local function setSize(set) 
-							local n = 0
-							for k, v in pairs(set) do n = n + 1 end 
-							return n
-						end 
-
-						local widgetElementIds = {}
-						for _, widget in ipairs(category.children) do 
-							widgetElementIds[widget.elementId] = true 
-						end
-
-						local elementIds = {}
-						for _, element in ipairs(comp.__guiElements) do 
-							elementIds[element.id] = true
-						end 
-
-						if setSize(elementIds) == setSize(widgetElementIds) then 
-							delete = false 
-							-- check if both sets are equal
-							for k, v in pairs(widgetElementIds) do 
-								if elementIds[k] == nil then 
-									delete = true 
-									print("id mismatch")
-									break
-								end 
-							end 
-						end
-					end
-					
-					if delete then 
-						print("DELETE!")
-						gui.propertyWindowLayout:removeWidget(category)
-						table.remove(gui.propertyWindowScroll.children, i)
-					end
-				end
-			end 
-
-			-- create and update categories/gui elements
 			for _, component in ipairs(entity.components) do 
 				if not component.__hidden then 
-					local cat = findCategory(gui.propertyWindowScroll, component.componentType)
-					if cat == nil then 
-						cat = createCat(component.componentType, "property", collapseRearrangePropertyWindow)
-						if component.componentType == uncollapsed then cat:setParam("collapsed", false) end
-					end
-
 					for _, element in ipairs(component.__guiElements) do 
-						local widgets = getElementWidgets(cat, element.id)
-
-						if #widgets == 0 then -- create widgets
-							createElementWidgets(cat, component, element, 
-								'getComponentById(getEntityByGUID(gui.selectedEntities[1]), "' .. component.id ..  '").' .. element.id)
-							gui.propertyWindowLayout:arrange()
-						else -- update values 
-							for _, widget in ipairs(widgets) do 
-								if element.type == "Checkbox" and widget.type == "Checkbox" then 
-									widget.checked = component[element.id]
-									widget.cliCmd = widget.target .. " = " .. tostring(not widget.checked)
-								elseif element.type == "String" and widget.type == "LineInput" then 
-									local newText = component[element.id]
-									if newText ~= widget.text then widget:setParam("text", newText) end
-									widget.cliCmd = widget.target .. ' = "' .. widget.text .. '"'
-								elseif element.type == "Numberwheel" and widget.type == "Numberwheel" then 
-									widget.value = assert(loadstring("return " .. widget.target))()
-									widget.numberInputLine.text = string.format(widget.format, widget.value)
-									widget.cliCmd = widget.target .. " = " .. tostring(widget.value)
-								elseif element.type == "Button" and widget.type == "Button" then 
-									local entityString = "getEntityByGUID(gui.selectedEntities[1])"
-									local componentString = 'getComponentById(' .. entityString .. ', "' .. component.id ..  '")'
-									widget.cliCmd = element.id:gsub("%%COMPONENT%%", componentString):gsub("%%ENTITY%%", entityString)
-								end
-							end 
-						end
+						updateElement(gui.propertyWindowScroll, element)
 					end
 				end
-			end 
-		end 
-	end
-end
+			end
+		end -- selected entity properties
+	end -- setupGUI
+end -- do 

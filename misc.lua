@@ -50,6 +50,14 @@ function toggle(tbl, key)
     tbl[key] = not tbl[key]
 end
 
+function eval(str) 
+    f, err = loadstring(str)
+    if f == nil then 
+        error(err .. " - String: '" .. str .. "'")
+    end 
+    return f()
+end
+
 function string.split(str, sep)
     sep = sep or "%s" -- whitespace
     local ret = {}
@@ -138,6 +146,13 @@ paths = {
         return table.concat(retParts, "/")
     end
 }
+
+function printTableShallow(name, t)
+    print("--- " .. name .. "(" .. tostring(t) .. "):")
+    for k, v in pairs(t) do 
+        print("\t" .. k .. " = " .. tostring(v))
+    end
+end
 
 function printTable(t) -- from here: https://coronalabs.com/blog/2014/09/02/tutorial-printing-table-contents/  
     local print_r_cache={}

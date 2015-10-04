@@ -8,8 +8,8 @@ do
 		addTable(self, properties)
 
 		self.__guiElements = {
-			{id = "name", name = "Name", type = "String"},
-			{id = "hidden", name = "Hidden", type = "Checkbox"},
+			{variable = "name", type = "String", label = "Name", callback = ""},
+			{variable = "hidden", type = "Checkbox", label = "Hidden", callback = ""},
 		}
 
 		self.__hidden = false -- This is a way to hide components in the GUI (for custom userdata, which has to be part of the entity, but doesn't need to be edited in the editor)
@@ -25,12 +25,12 @@ do
 	Core.static.showDetails = true
 	Core.static.showEntityBorders = true
 
-	Core.static.guiElements = { -- background color, grid color/spacing
-		{id = "showGrid", name = "Show grid", type = "Checkbox"},
-		{id = "gridSpacing", name = "Grid spacing", type = "Numberwheel", params = {minValue = 1.0}},
-		{id = "showNames", name = "Show names", type = "Checkbox"},
+	Core.static.guiElements = { -- background color
 		--{id = "showDetails", name = "Show details", type = "Checkbox"},
-		{id = "showEntityBorders", type = "Checkbox", name = "Show entity borders"},
+		{variable = "showGrid", type = "Checkbox", label = "Show grid"},
+		{variable = "gridSpacing", type = "Numberwheel", label = "Grid spacing", params = {minValue = 1.0}},
+		{variable = "showNames", type = "Checkbox", label = "Show names"},
+		{variable = "showEntityBorders", type = "Checkbox", label = "Show entity borders"},
 	}
 
 
@@ -45,12 +45,12 @@ do
 		addTable(self, properties)
 
 		self.__guiElements = {
-			{id = "mandatory", name = "Mandatory", type = "Checkbox"},
+			{variable = "mandatory", type = "Checkbox", label = "Mandatory"}
 		}
 
 		if self.hasOptional then 
 			table.iextend(self.__guiElements, {
-				{id = "optional", name = "Optional", type = "Checkbox"}
+				{variable = "optional", type = "Checkbox", label = "Optional"}
 			})
 		end 
 
