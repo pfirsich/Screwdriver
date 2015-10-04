@@ -44,7 +44,7 @@ do
 				end
 				addTable(component, componentProperties[i]) 
 			end 
-			
+
 			local componentObject = components[component.componentType](component)
 			created[component.componentType] = true
 			if components[component.componentType].static.pickable then 
