@@ -426,7 +426,8 @@ do
 								widget.checked = component.static[element.id] -- not using setParam, so onChecked will not be called (infinite recursion)
 								widget.cliCmd = widget.target .. " = " .. tostring(not widget.checked)
 							elseif element.type == "String" and widget.type == "LineInput" then 
-								widget:setParam("text", component.static[element.id])
+								local newText = component.static[element.id]
+								if newText ~= widget.text then widget:setParam("text", newText) end
 								widget.cliCmd = widget.target .. ' = "' .. widget.text .. '"'
 							elseif element.type == "Numberwheel" and widget.type == "Numberwheel" then 
 								widget.value = assert(loadstring("return " .. widget.target))()
@@ -533,7 +534,8 @@ do
 									widget.checked = component[element.id]
 									widget.cliCmd = widget.target .. " = " .. tostring(not widget.checked)
 								elseif element.type == "String" and widget.type == "LineInput" then 
-									widget:setParam("text", component[element.id])
+									local newText = component[element.id]
+									if newText ~= widget.text then widget:setParam("text", newText) end
 									widget.cliCmd = widget.target .. ' = "' .. widget.text .. '"'
 								elseif element.type == "Numberwheel" and widget.type == "Numberwheel" then 
 									widget.value = assert(loadstring("return " .. widget.target))()
