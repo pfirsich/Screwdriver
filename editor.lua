@@ -6,7 +6,7 @@ do
 
 	local entityCounter = 1
 
-	function editor.createEntity(type)
+	function editor.createEntity(type, componentProperties)
 		local entity = {
 			type = type,
 			__shapes = {}, -- underscore prefix so it won't be saved in the map file
@@ -18,7 +18,7 @@ do
 		-- component uniqueness and only one pickable component is a requirement to make picking a lot less problematic (multiple draws/transforms would be a pain)
 		local created = {}
 		local ids = {}
-		for _, component in ipairs(entityTypes[type].components) do 
+		for i, component in ipairs(entityTypes[type].components) do 
 			if ids[component.id] then 
 				error("Multiple components with the same id: " .. component.id)
 			end 
@@ -36,6 +36,15 @@ do
 				component.name = type
 			end
 
+			if componentProperties then 
+				-- addTable only works properly if number and order of components still matches the entity type
+				-- This check should be enough to make sure most of the time, but is by no means sufficient for all cases
+				if component.id ~= componentProperties[i].id then 
+					error("Current entity type description seems to mismatch the one of the saved map for entity of type '" .. entity.type .. "'")
+				end
+				addTable(component, componentProperties[i]) 
+			end 
+			
 			local componentObject = components[component.componentType](component)
 			created[component.componentType] = true
 			if components[component.componentType].static.pickable then 
@@ -179,19 +188,7 @@ do
 			map.entities = {}
 			entityCounter = 0
 			for _, tableEntity in ipairs(fileTable.entities) do 
-				local entity = editor.createEntity(tableEntity.type)
-				for _, fileComponent in ipairs(tableEntity.components) do 
-					local comp = getComponentById(entity, fileComponent.id)
-					if comp == nil then 
-						error("Current entity type description seems to mismatch the one of the saved map for entity of type '" .. entity.type .. "'")
-					else 
-						for propertyKey, v in pairs(comp) do 
-							if type(propertyKey) ~= "string" or propertyKey:sub(1,2) ~= "__" then 
-								comp[propertyKey] = fileComponent[propertyKey]
-							end 
-						end 
-					end 
-				end 
+				editor.createEntity(tableEntity.type, tableEntity.components)
 			end 
 			updateShapes()
 
