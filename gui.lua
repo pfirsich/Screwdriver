@@ -158,7 +158,13 @@ do
 
 		gui.sceneWindowLayout:newLine({["spacing-vertical"] = 20})
 		gui.setCustomEntitiesFile = kraid.widgets.Button{parent = gui.sceneWindowScroll, height = 30, minWidth = 50, text = "Add & Load entity file",
-											cliCmd = 'gui.dialogQuestionString("Add & Load entity file", lfs.currentdir() .. "/", \'editor.loadEntityFile("%INPUT%")\')', onClicked = widgetExecCliCmd_nostack}
+											cliCmd = 'editor.loadEntityFile("<path>")', 
+											onClicked = function(self) 
+												filebrowserMode.enter(function(path) 
+													cliExec(self.cliCmd:gsub("<path>", path))
+													exitSpecialMode()
+												end)
+											end}
 		gui.sceneWindowLayout:addWidget(gui.setCustomEntitiesFile)
 
 		gui.sceneWindowLayout:newLine()
@@ -402,6 +408,20 @@ do
 				local button = kraid.widgets.Button{parent = parent, text = element.name, elementId = element.id, minWidth = 30, height = 25}
 				button:setParam("onClicked", widgetExecCliCmd)
 				parent.layout:addWidget(button)
+			elseif element.type == "File" then 
+				local label = kraid.widgets.Label{parent = parent, text = "No file.", elementId = element.id, minWidth = 40}
+				parent.layout:addWidget(label)
+				local cmd = 'getComponentById(getEntityByGUID(gui.selectedEntities[1]), "' .. component.id ..  '"):' .. element.id .. '("<path>")'
+				local button = kraid.widgets.Button{parent = parent, text = "..", elementId = element.id, width = 20, height = 20, cliCmd = cmd, 
+					onClicked = function(self)
+						filebrowserMode.enter(function(path)
+							cliExec(self.cliCmd:gsub("<path>", path))
+							exitSpecialMode() 
+						end)
+					end}
+				parent.layout:addWidget(button)
+			else
+			    error("Unsupported gui element type '" .. element.type .. "'")
 			end
 			parent.layout:arrange()
 			parent:setParam("inflatedHeight", select(4, parent:getChildrenBBox()) + 10)

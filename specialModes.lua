@@ -8,6 +8,11 @@ function callSpecialMode(funcName, ...)
 	return false
 end
 
+function exitSpecialMode()
+	specialMode = nil
+	love.resize(love.window.getDimensions()) -- in case the window got resized during the file browsing
+end
+
 -- Startup: Load or New file
 startupMode = {}
 
@@ -34,8 +39,7 @@ function startupMode.load()
 		onClicked = function() filebrowserMode.enter(
 			function(path) -- chose file
 				editor.saveMapFile(startupMode.setupMapDirectory(path))
-				specialMode = nil
-				love.resize(love.window.getDimensions()) -- in case the window got resized during the file browsing
+				exitSpecialMode()
 			end,
 			function() -- cancel 
 				startupMode.enter()
@@ -45,8 +49,7 @@ function startupMode.load()
 		onClicked = function() filebrowserMode.enter(
 			function(path) -- chose file
 				editor.loadMapFile(startupMode.setupMapDirectory(path))
-				specialMode = nil
-				love.resize(love.window.getDimensions())
+				exitSpecialMode()
 			end,
 			function() -- cancel 
 				startupMode.enter()
