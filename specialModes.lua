@@ -149,7 +149,7 @@ function filebrowserMode.cd(path)
 	-- preload images
 end 
 
-function filebrowserMode.enter(loadCB, cancelCB) -- always passes paths relative to the lfs.currentdir()
+function filebrowserMode.enter(loadCB, cancelCB, startPath) -- always passes paths relative to the lfs.currentdir()
 	specialMode = filebrowserMode
 	filebrowserMode.okButton:setParam("onClicked", function() 
 		local path = filebrowserMode.pathLabel.text:sub(7)
@@ -163,15 +163,23 @@ function filebrowserMode.enter(loadCB, cancelCB) -- always passes paths relative
 			collectgarbage("collect")
 
 			local relative = paths.makeRelative(lfs.currentdir(), path)
-			print("File:", path, "Relative:", relative)
+			print(path, relative)
 			loadCB(relative) 
 		end
 	end)
 	filebrowserMode.cancelButton:setParam("onClicked", cancelCB)
 	filebrowserMode.resize(love.window.getDimensions())
+
+	local cdPath, file = lfs.currentdir(), ""
+	if startPath then 
+		startPath, file = paths.splitFile(startPath)
+		cdPath = cdPath .. "/" .. startPath
+	end
 	-- lfs.currentdir() instead of "." lets the filebrowser handle all paths absolutely. 
 	-- This is necessary to normalize paths starting with .. (or having them relatively in the front)
-	filebrowserMode.cd(lfs.currentdir()) 
+	filebrowserMode.cd(cdPath) 
+	filebrowserMode.inputLine:setParam("text", file)
+	filebrowserMode.inputLine:onChange()
 end 
 
 function filebrowserMode.resize(w, h)
