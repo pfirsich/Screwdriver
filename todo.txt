@@ -1,8 +1,5 @@
-* specialModes
-	* with the startup mode initialization (especially in save/load and map.lua) can/should look different
-	* Filebrowser muss schlussendlich immer relative Pfade auskacken! (relativ zur Mapdatei)
-	* newImage abstrahieren und auf io-Implementation umsteigen
-	* Command line arguments -> load
+* file-gui-elements + proper image loading
+* filebrowser images separat
 
 * Color picker + Color fürs Sprite
 	* Drei Numberwheels untereinander + ein rectangle mit gepickter Farbe?
@@ -11,6 +8,7 @@
 * Show Details
 
 Later/Maybe: 
+* Error handling gründlich überdenken - jedes mal error ist ziemlich ungeil
 * specialModes in globalModes verwandeln und alles vom normalen editor-mode darein verschieben und schöner machen
 	gui.base wird dann globalModes[currentMode].gui oder gui[currentMode] oder gui.base[currentMode]
 	Vielleicht aber auch nicht, damit die Funktionsaufrufe im CLI nicht so doof aussehen und alles etwas einfacher ist? -> Markus fragen

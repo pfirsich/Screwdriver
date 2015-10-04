@@ -85,9 +85,11 @@ do
 				totalBBox[3] = math.max(totalBBox[3], entityBBox[3])
 				totalBBox[4] = math.max(totalBBox[4], entityBBox[4])
 			end 
-			camera.position = {(totalBBox[1] + totalBBox[3])/2, (totalBBox[2] + totalBBox[4])/2}
-			local winW, winH = love.window.getWidth(), love.window.getHeight()
-			camera.setScale(math.min(winW / (totalBBox[3] - totalBBox[1]), winH / (totalBBox[4] - totalBBox[2])) * 0.5)
+			if totalBBox[1] ~= math.huge and totalBBox[2] ~= math.huge and totalBBox[3] ~= -math.huge and totalBBox[4] ~= -math.huge then
+				camera.position = {(totalBBox[1] + totalBBox[3])/2, (totalBBox[2] + totalBBox[4])/2}
+				local winW, winH = love.window.getWidth(), love.window.getHeight()
+				camera.setScale(math.min(winW / (totalBBox[3] - totalBBox[1]), winH / (totalBBox[4] - totalBBox[2])) * 0.5)
+			end
 		end
 	end
 
@@ -114,7 +116,7 @@ do
 	function editor.saveMapFile(path)
 		file, err = io.open(path, "w")
 		if file == nil then 
-			gui.dialogNotice("Error!", "Error while opening file: " .. tostring(err))
+			error("Error while opening file: " .. tostring(err))
 		else 
 			local function writeTable(tbl, depth)
 			    for key, value in pairs(tbl) do
@@ -149,11 +151,11 @@ do
 	end
 
 	function editor.loadEntityFile(path)
-		print("entiyfile: ", path)
+		print("entityfile: ", path)
 
 		f, err = loadfile(path)
 		if f == nil then 
-			gui.dialogNotice("Error!", "Error while opening/parsing entity file: " .. tostring(err))
+			error("Error while opening/parsing entity file: " .. tostring(err))
 		else 
 			f()
 			table.insert(map.entityFiles, path)
@@ -163,7 +165,7 @@ do
 	function editor.loadMapFile(path)
 		f, err = loadfile(path)
 		if f == nil then 
-			gui.dialogNotice("Error!", "Error while opening/parsing file: " .. tostring(err))
+			error("Error while opening/parsing file: " .. tostring(err))
 		else 
 			local fileTable = f()
 			map = {}
@@ -186,8 +188,8 @@ do
 						for propertyKey, v in pairs(comp) do 
 							if type(propertyKey) ~= "string" or propertyKey:sub(1,2) ~= "__" then 
 								comp[propertyKey] = fileComponent[propertyKey]
-							end  
-						end
+							end 
+						end 
 					end 
 				end 
 			end 

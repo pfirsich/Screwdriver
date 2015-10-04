@@ -1,0 +1,48 @@
+return {
+	entityFiles = {
+		"../testEntities.lua",
+	},
+	entities = {
+		{
+			type = "everything",
+			components = {
+				{
+					id = "core",
+					componentType = "Core",
+					hidden = false,
+					name = "everything",
+				},
+				{
+					scale = {
+						1,
+						1,
+					},
+					position = {
+						0,
+						0,
+					},
+					componentType = "Transforms",
+					keepAspect = true,
+					rotation = 0.83381301863034,
+					offset = {
+						-250,
+						-250,
+					},
+					id = "transforms",
+				},
+				{
+					imagePath = "pfirsich.png",
+					id = "sprite",
+					componentType = "Sprite",
+					color = {
+						255,
+						255,
+						255,
+						255,
+					},
+				},
+			},
+			guid = 1,
+		},
+	},
+}

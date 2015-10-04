@@ -1,6 +1,6 @@
 return {
 	entityFiles = {
-		"testEntities.lua",
+		"../testEntities.lua",
 	},
 	entities = {
 		{
