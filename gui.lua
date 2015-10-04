@@ -174,10 +174,15 @@ do
 		gui.setCustomEntitiesFile = kraid.widgets.Button{parent = gui.sceneWindowScroll, height = 30, minWidth = 50, text = "Add & Load entity file",
 											cliCmd = 'editor.loadEntityFile("<path>")', 
 											onClicked = function(self) 
-												filebrowserMode.enter(function(path) 
-													cliExec(self.cliCmd:gsub("<path>", path))
-													exitSpecialMode()
-												end)
+												filebrowserMode.enter(
+													function(path) 
+														cliExec(self.cliCmd:gsub("<path>", path))
+														exitSpecialMode()
+													end,
+													function()
+														exitSpecialMode()
+													end
+												)
 											end}
 		gui.sceneWindowLayout:addWidget(gui.setCustomEntitiesFile)
 
@@ -409,11 +414,17 @@ do
 
 			local cmd = target .. '.' .. element.variable .. ' = <path>'
 			local button = kraid.widgets.Button{parent = parent, text = "..", elementId = element.id, width = 20, height = 20, cliCmd = cmd, 
-				onClicked = function(self)
-					filebrowserMode.enter(function(path)
-						cliExec(self.cliCmd:gsub("<path>", '"' .. path .. '"'))
-						exitSpecialMode() 
-					end)
+				onClicked = function(self) 
+					filebrowserMode.enter(
+						function(path)
+							cliExec(self.cliCmd:gsub("<path>", '"' .. path .. '"'))
+							exitSpecialMode() 
+						end, 
+						function()
+							exitSpecialMode()
+						end,
+						eval("return " .. (label.target or "") .. '.' .. element.variable)
+					)
 				end}
 			parent.layout:addWidget(button)
 		else

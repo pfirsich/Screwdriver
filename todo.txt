@@ -1,7 +1,6 @@
 * Global component property gui elements wieder implementieren
 	Neues Base widget am Ende einfügen, damit alle Kinder Categories sind (und vor allem, damit man einfacher löschen kann)
 	Vielleicht stattdessen aber auch einfach nur categories löschen
-* filebrowser muss eine Datei übergeben bekommen kriegen können (damit die am anfang markiert ist)
 
 * Color picker + Color fürs Sprite
 	* Drei Numberwheels untereinander + ein rectangle mit gepickter Farbe?
