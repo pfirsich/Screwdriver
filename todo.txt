@@ -1,6 +1,7 @@
 * Global component property gui elements wieder implementieren
+	Neues Base widget am Ende einfügen, damit alle Kinder Categories sind (und vor allem, damit man einfacher löschen kann)
+	Vielleicht stattdessen aber auch einfach nur categories löschen
 * filebrowser muss eine Datei übergeben bekommen kriegen können (damit die am anfang markiert ist)
-* Sprite-Bug
 
 * Color picker + Color fürs Sprite
 	* Drei Numberwheels untereinander + ein rectangle mit gepickter Farbe?
@@ -26,7 +27,6 @@ Later/Maybe:
 * J-Query mäßig verschiedene Entites selecten (nach id/type) und operationen anwenden
 
 Bugs:
-* Sprite-Größe passt sich neuen Bildern nicht an (god damn it)
 * GUI
 	* Breakout-Widgets sind kaka (siehe Numberwheel für's grid spacing) (oder close-buttons)
 	* Numberwheel-Textfelder sind fuckig. (man kann nicht löschen oder effektiv zahlen ändern)

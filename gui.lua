@@ -130,8 +130,8 @@ do
 			end 
 			gui.selectedEntities = selectedGUIDs
 
-			if selectionChanged and #gui.entityList.selected == 1 then 
-				rebuildPropertyGUIElements(gui.entityList.selected[1].entity)
+			if selectionChanged and #gui.selectedEntities == 1 then 
+				rebuildPropertyGUIElements(getEntityByGUID(gui.selectedEntities[1]))
 			end 
 		end 
 
@@ -438,8 +438,6 @@ do
 		for _, component in ipairs(entity.components) do 
 			if not component.__hidden then 
 				for _, element in ipairs(component.__guiElements) do 
-					element.id = component.id .. "/" .. (element.variable or "") .. "/" .. (element.cmd or "")
-
 					local cat = nil 
 					for i, widget in ipairs(gui.propertyWindowScroll.children) do 
 						if widget.type == "Category" and widget.text == (element.__category or component.componentType) then 
@@ -459,6 +457,7 @@ do
 						cat:setParam("onResize", function(self) self.layout:arrange() end)
 					end 
 
+					element.id = component.id .. "/" .. (element.variable or "") .. "/" .. (element.cmd or "")
 					createElementWidgets(cat, element, 'getComponentById(getEntityByGUID(gui.selectedEntities[1]), "' .. component.id ..  '")')
 				end
 				gui.propertyWindowLayout:arrange()
@@ -516,6 +515,8 @@ do
 			for _, component in ipairs(entity.components) do 
 				if not component.__hidden then 
 					for _, element in ipairs(component.__guiElements) do 
+						-- element.id has to be calculated here again, because it was never commited to the mapstack and could be gone by now
+						element.id = component.id .. "/" .. (element.variable or "") .. "/" .. (element.cmd or "")
 						updateElement(gui.propertyWindowScroll, element)
 					end
 				end
