@@ -95,11 +95,18 @@ end
 filebrowserMode = {
 	elementSpacing = 20,
 	panelHeight = 200,
-	nameHeight = 30
+	nameHeight = 30,
+	imageMap = {}
 }
 
 function filebrowserMode.getImage(path)
-
+	local img = filebrowserMode.imageMap[path]
+	if img == nil then 
+		filebrowserMode.imageMap[path] = newImage(path)
+		return filebrowserMode.imageMap[path]
+	else 
+		return img 
+	end 
 end
 
 function filebrowserMode.cd(path)
@@ -120,7 +127,7 @@ function filebrowserMode.cd(path)
 				local ext = paths.getExt(file):lower()
 				-- list from here: http://openil.sourceforge.net/features.php (some missing)
 				if ext == "png" or ext == "bmp" or ext == "jpg" or ext == "jpeg" or ext == "tga" then  
-					element.image = getImage(path .. "/" .. file)
+					element.image = filebrowserMode.getImage(path .. "/" .. file)
 				end
 			end
 			table.insert(filebrowserMode.elements, element)
@@ -147,6 +154,11 @@ function filebrowserMode.enter(loadCB, cancelCB) -- always passes paths relative
 		if attr and attr.mode == "directory" then 
 			filebrowserMode.cd(path)
 		else
+			-- free the images (make sure that no handles to it are left)
+			filebrowserMode.imageMap = {}
+			filebrowserMode.elements = {}
+			collectgarbage("collect")
+
 			local relative = paths.makeRelative(lfs.currentdir(), path)
 			print("File:", path, "Relative:", relative)
 			loadCB(relative) 

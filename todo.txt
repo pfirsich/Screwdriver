@@ -1,5 +1,6 @@
 * file-gui-elements + proper image loading
-* filebrowser images separat
+	createEntity nimmt componentProperties als Parameter, sodass loadImage im Konstruktor auch funktioniert, wenn imagePath nicht teil der Entity-Definition ist
+	file-gui-elements callen id als member function. parameter ist der pfad.
 
 * Color picker + Color fürs Sprite
 	* Drei Numberwheels untereinander + ein rectangle mit gepickter Farbe?

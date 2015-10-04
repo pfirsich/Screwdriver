@@ -68,15 +68,19 @@ function string.splitLast(str, sep)
     end
 end 
 
+function newImage(path) 
+    local file = assert(io.open(path, "rb"))
+    local filedata = love.filesystem.newFileData(file:read("*all"), path)
+    file:close()
+    return love.graphics.newImage(filedata)
+end
+
 do 
     local imageMap = {}
     function getImage(path)
         local img = imageMap[path]
         if img == nil then
-            local file = assert(io.open(path, "rb"))
-            local filedata = love.filesystem.newFileData(file:read("*all"), path)
-            file:close()
-            imageMap[path] = love.graphics.newImage(filedata)
+            imageMap[path] = newImage(path)
             return imageMap[path]
         else 
             return img 
