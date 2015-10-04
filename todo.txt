@@ -1,11 +1,13 @@
-* Color picker + Color fürs Sprite
-	* Drei Numberwheels untereinander + ein rectangle mit gepickter Farbe?
+* Color picker
+	* Inputs commiten
 	* Background color in Core.static
+* Numberwheels entretarden
 * Polygone!
 	* Wie starten die? Preset-Buttons, Textur-Buttons (auch Trafos), Trafos, Funktionen für Modis? Transforms-Component für Texturen benutzen?
 * Show Details
 
 Later/Maybe: 
+* Focus benutzen um den Zeitpunkt für einen commit auf den map stack zu erkennen (fokus auf ein ui element -> changes -> fokus verloren -> commit)
 * Arrow key + enter Bedienung im filebrowser
 * Implement cmd for Numberwheel, String and Checkbox gui elements
 * Error handling gründlich überdenken - jedes mal error ist ziemlich ungeil

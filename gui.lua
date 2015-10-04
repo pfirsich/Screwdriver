@@ -359,7 +359,11 @@ do
 				if widget.type == "Label" then 
 					widget.text = element.label .. ": " .. eval("return " .. varString)
 				end 
-			end
+			elseif element.type == "Color" then 
+				if widget.type == "Colorpicker" then 
+					widget:setColor({unpack(eval("return " .. varString))})
+				end 
+			end 
 		end
 	end
 
@@ -427,7 +431,14 @@ do
 					)
 				end}
 			parent.layout:addWidget(button)
-		else
+		elseif element.type == "Color" then 
+			local label = kraid.widgets.Label{parent = parent, target = target, elementId = element.id, minWidth = 40, text = element.label}
+			parent.layout:addWidget(label)
+			parent.layout:newLine()
+			local colorPicker = ColorpickerWidget{parent = parent, target = target, elementId = element.id, minWidth = 200}
+			parent.layout:addWidget(colorPicker)
+			colorPicker:setParam("onChange", function(self, value) eval(self.target .. "." .. element.variable .. " = " .. tostringArray(value)) end)
+		else 
 		    error("Unsupported gui element type '" .. element.type .. "'")
 		end
 		parent.layout:arrange()

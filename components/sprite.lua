@@ -9,6 +9,7 @@ do
         if self.imagePath ~= "" then self:loadImageFile(self.imagePath) end
 
         self.__guiElements = {
+            {variable = "color", type = "Color", label = "Color", cmd = ""},
             {variable = "imagePath", type = "File", label = "Image", cmd = ""},
             {variable = "", type = "Button", label = "Load Image", cmd = ":loadImageFile()"}
         }

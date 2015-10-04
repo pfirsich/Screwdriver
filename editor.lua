@@ -90,10 +90,12 @@ do
 			local totalBBox = {math.huge, math.huge, -math.huge, -math.huge}
 			for _, guid in ipairs(selected) do 
 				local entityBBox = getEntityByGUID(guid).__shapes.bbox
-				totalBBox[1] = math.min(totalBBox[1], entityBBox[1])
-				totalBBox[2] = math.min(totalBBox[2], entityBBox[2])
-				totalBBox[3] = math.max(totalBBox[3], entityBBox[3])
-				totalBBox[4] = math.max(totalBBox[4], entityBBox[4])
+				if entityBBox then 
+					totalBBox[1] = math.min(totalBBox[1], entityBBox[1])
+					totalBBox[2] = math.min(totalBBox[2], entityBBox[2])
+					totalBBox[3] = math.max(totalBBox[3], entityBBox[3])
+					totalBBox[4] = math.max(totalBBox[4], entityBBox[4])
+				end
 			end 
 			if totalBBox[1] ~= math.huge and totalBBox[2] ~= math.huge and totalBBox[3] ~= -math.huge and totalBBox[4] ~= -math.huge then
 				camera.position = {(totalBBox[1] + totalBBox[3])/2, (totalBBox[2] + totalBBox[4])/2}

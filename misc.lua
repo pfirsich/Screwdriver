@@ -58,6 +58,10 @@ function eval(str)
     return f()
 end
 
+function tostringArray(tbl)
+    return "{" .. table.concat(tbl, ", ") .. "}"
+end
+
 function string.split(str, sep)
     sep = sep or "%s" -- whitespace
     local ret = {}

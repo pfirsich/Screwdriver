@@ -9,6 +9,7 @@ require "map"
 require "camera"
 require "lfs"
 require "specialModes"
+require "colorpicker"
 
 function love.resize(w, h)
 	if callSpecialMode("resize", w, h) then return end
@@ -60,16 +61,39 @@ function love.load(arg)
 		}
 	]])
 
+	checkersShader = love.graphics.newShader([[
+		#define PI2 6.2831853 
+		
+		// Number of squares per axis per color (5 => 5 white and 5 black squares)
+		uniform float countX = 5.0; 
+		uniform float countY = 5.0; 
+
+		const vec3 color1 = vec3(0.0, 0.0, 0.0);
+		const vec3 color2 = vec3(1.0, 1.0, 1.0);
+
+		vec4 effect(vec4 color, Image texture, vec2 textureCoords, vec2 screenCoords) {
+			float val = step(0.0, sin(textureCoords.x*PI2*countX) * sin(textureCoords.y*PI2*countY));
+			return vec4(mix(color1, color2, vec3(val)), 1.0);
+		}
+	]])
+
+	local pixelImageData = love.image.newImageData(1, 1)
+	pixelImageData:setPixel(0, 0, 255, 255, 255, 255)
+	pixelImage = love.graphics.newImage(pixelImageData)
+
 	love.keyboard.setKeyRepeat(true)
 
 	filebrowserMode.load()
 	startupMode.load()
 
+	-- start
 	if arg[2] then 
 		local path, file = paths.splitFile(arg[2])
 		lfs.chdir(path)
 		editor.loadMapFile(file)
 	else
+		--lfs.chdir("media")
+		--editor.loadMapFile("test.map")
 		startupMode.enter()
 	end
 end
@@ -237,7 +261,6 @@ function love.draw()
 
 			if not getComponentByType(entity, "Core").hidden then 
 				for i = 1, #entity.components do 
-					if entity.components[i].color then entity.components[i].color[4] = hovered and 200 or 255 end
 					if entity.components[i].renderStart then entity.components[i]:renderStart() end
 				end 
 
@@ -266,7 +289,7 @@ function love.draw()
 		end 
 
 		love.graphics.setColor(255, 255, 0, 255)
-		love.graphics.setLineWidth(3.0/camera.scale)
+		love.graphics.setLineWidth(5.0/camera.scale)
 		for _, guid in ipairs(gui.selectedEntities) do 
 			local entity = getEntityByGUID(guid) 
 			if entity and entity.__pickableComponent and entity.__shapes then 
