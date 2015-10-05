@@ -132,8 +132,8 @@ function getModule(gui)
         end
     end
 
-    function Base:keyPressed(self, key, isrepeat) end -- stub
-    function Base:textInput(self, text) end -- stub
+    function Base:keyPressed(key, isrepeat) end -- stub
+    function Base:textInput(text) end -- stub
 
     function Base:onMouseDown(x, y, button)
         self:toTop()
@@ -165,13 +165,24 @@ function getModule(gui)
         return false
     end
 
-    function Base:mousePressed(x, y, button)
-        passMouseEvent(self, "mousePressed", x, y, function(self, x, y, button) self:onMouseDown(x, y, button) end, button)
+    function Base:mousePressed(x, y, button, noninitial)
+        local focused = self.focused 
+        if not noninitial then 
+            self:setSubTree("focused", nil)
+        end
+
+        passMouseEvent(self, "mousePressed", x, y, function(self, x, y, button) self:onMouseDown(x, y, button) end, button, true)
+
+        if not noninitial and focused and focused ~= self.focused then 
+            if focused.onFocusLost then focused:onFocusLost() end
+        end 
     end
 
-    function Base:mouseReleased(x, y, button)
-        passMouseEvent(self, "mouseReleased", x, y, function(self, x, y, button) self:onMouseUp(x, y, button) end, button)
-        self:setSubTree("clicked", false) -- not very efficient
+    function Base:mouseReleased(x, y, button, noninitial)
+        passMouseEvent(self, "mouseReleased", x, y, function(self, x, y, button) self:onMouseUp(x, y, button) end, button, true)
+        if not noninitial then 
+            self:setSubTree("clicked", false)
+        end
     end
 
     function Base:mouseMove(x, y, dx, dy)

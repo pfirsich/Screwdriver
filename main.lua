@@ -136,7 +136,6 @@ end
 function love.mousepressed(x, y, button)
 	if callSpecialMode("mousepressed", x, y, button) then return end
 
-	gui.base:getGrandParent():setSubTree("focused", nil)
 	gui.base:mousePressed(x, y, button)
 
 	if gui.base.hovered == nil then -- in editor view, not hovering GUI elements
