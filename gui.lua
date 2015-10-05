@@ -352,8 +352,10 @@ do
 			elseif element.type == "Numberwheel" then 
 				if widget.type == "Numberwheel" then 
 					widget.value = eval("return " .. varString)
-					widget.numberInputLine.text = string.format(widget.format, widget.value)
 					widget.cliCmd = varString .. " = " .. tostring(widget.value)
+					if gui.base.focused ~= widget and gui.base.focused ~= widget.numberInputLine then 
+						widget:updateText()
+					end 
 				end
 			elseif element.type == "File" then 
 				if widget.type == "Label" then 
@@ -383,7 +385,10 @@ do
 			input:setParam("onChange", function(self) eval(self.target .. "." .. element.variable .. ' = "' .. self.text .. '"') end)
 			input:setParam("keyPressed", function(self, key, isrepeat)
 				kraid.widgets.LineInput.keyPressed(self, key, isrepeat)
-				if key == "return" then cliExec(self.cliCmd) end
+				if key == "return" then 
+					cliExec(self.cliCmd) 
+					gui.base:setSubTree("focused", nil)
+				end
 			end)
 		elseif element.type == "Numberwheel" then 
 			local label = kraid.widgets.Label{parent = parent, text = element.label, elementId = element.id}
@@ -393,15 +398,7 @@ do
 														speed = params.speed, minValue = params.minValue, maxValue = params.maxValue}
 
 			numberWheel:setParam("onChange", function(self, value) eval(self.target .. "." .. element.variable .. " = " .. tostring(value)) end)
-			numberWheel:setParam("mouseReleased", function(self, x, y, button) 
-				if self.blownUp and button == "l" then cliExec(self.cliCmd) end
-				kraid.widgets.Numberwheel.mouseReleased(self, x, y, button)
-			end)
-
-			numberWheel.numberInputLine:setParam("keyPressed", function(self, key, isrepeat)
-				kraid.widgets.LineInput.keyPressed(self, key, isrepeat)
-				if key == "return" then cliExec(numberWheel.cliCmd) end
-			end)
+			numberWheel:setParam("onFocusLost", widgetExecCliCmd) -- no need to updateText here, since it will be updated anyway if not focused (see updateElementWidgets)
 			parent.layout:addWidget(numberWheel)
 		elseif element.type == "Button" then 
 			local button = kraid.widgets.Button{parent = parent, text = element.label, elementId = element.id, minWidth = 30, height = 25, onClicked = widgetExecCliCmd}
