@@ -1,8 +1,11 @@
 * Polygone!
-	* Wann recentern?
-* __showInDetails ist Quark. Stattdessen ne getDetails() Funktion für Components implementieren.
+	* Lock aspect ratio für texture scale
+	* Texture transforms (Offset und Rotatio übrig)
+		* edit modes - linksklick translate, rechtsklick rotate, skalieren ohne edit mode!
+		* draw texture only mode
 
 Later/Maybe:
+* __showInDetails ist Quark. Stattdessen ne getDetails() Funktion für Components implementieren.
 * Error handling gründlich überdenken - jedes mal error ist ziemlich ungeil
 * Zoom in den Mauszeiger, statt in den Bildschirm-Mittelpunkt
 
@@ -21,6 +24,8 @@ Later/Maybe:
 * Properly passing mousewheel events so scrollbars do what they should do at all times
 * Falls komplette deepe Kopien von map auf dem Mapstack ein Speicherproblem bergen, nur alle X einträge voll speichern + delta-befehle
 * J-Query mäßig verschiedene Entites selecten (nach id/type) und operationen anwenden
+* recenter() wurde bei jeder Modifikation aufgerufen. Dadurch hat jede Modifikation auch die Texturkoordinaten verändert, jedoch war der 
+Mittelpunkt des Polygons immer an einer praktischen Stelle
 
 Bugs:
 * GUI
