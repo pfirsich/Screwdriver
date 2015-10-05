@@ -22,8 +22,7 @@ function getModule(gui)
                 kraid.widgets.LineInput.keyPressed(line, key, isrepeat)
                 if key == "return" then 
                     self:updateText()
-                    self:getGrandParent():setSubTree("focused", nil)
-                    self:onFocusLost()
+                    self:focus(nil)
                 end
             end}
 

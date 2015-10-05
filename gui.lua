@@ -387,7 +387,7 @@ do
 				kraid.widgets.LineInput.keyPressed(self, key, isrepeat)
 				if key == "return" then 
 					cliExec(self.cliCmd) 
-					gui.base:setSubTree("focused", nil)
+					gui.base:focus(nil)
 				end
 			end)
 		elseif element.type == "Numberwheel" then 

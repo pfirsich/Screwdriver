@@ -138,7 +138,7 @@ function getModule(gui)
     function Base:onMouseDown(x, y, button)
         self:toTop()
         self.clicked = true
-        self:getGrandParent():setSubTree("focused", self)
+        self:focus(self)
         gui.internal.callThemeFunction(self, "onMouseDown", x, y, button)
     end
 
@@ -165,6 +165,14 @@ function getModule(gui)
         return false
     end
 
+    function Base:focus(widget)
+        -- This variable is needed so the callback can be called after 
+        local focused = self.focused 
+        self:getGrandParent():setSubTree("focused", widget)
+        if focused ~= widget and focused and focused.onFocusLost then focused:onFocusLost() end
+    end
+
+    -- I don't like this code, but I don't know how it can be done better.
     function Base:mousePressed(x, y, button, noninitial)
         local focused = self.focused 
         if not noninitial then 
