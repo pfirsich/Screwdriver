@@ -1,224 +1,224 @@
 return {
-	entityFiles = {
+	["entityFiles"] = {
 		"../testEntities.lua",
 	},
-	entities = {
+	["entities"] = {
 		{
-			type = "everything",
-			components = {
+			["type"] = "everything",
+			["components"] = {
 				{
-					id = "core",
-					componentType = "Core",
-					hidden = true,
-					name = "everything",
+					["id"] = "core",
+					["componentType"] = "Core",
+					["hidden"] = true,
+					["name"] = "everything",
 				},
 				{
-					rotation = 0,
-					position = {
+					["rotation"] = 0,
+					["position"] = {
 						410.30911707899,
 						-450.16477911596,
 					},
-					id = "transforms",
-					componentType = "Transforms",
-					keepAspect = true,
-					offset = {
+					["id"] = "transforms",
+					["componentType"] = "Transforms",
+					["keepAspect"] = true,
+					["offset"] = {
 						0,
 						0,
 					},
-					scale = {
+					["scale"] = {
 						1,
 						1,
 					},
 				},
 				{
-					imagePath = "pfirsich.png",
-					color = {
+					["imagePath"] = "pfirsich.png",
+					["color"] = {
 						255,
 						255,
 						255,
 						255,
 					},
-					id = "sprite",
-					componentType = "Sprite",
+					["id"] = "sprite",
+					["componentType"] = "Sprite",
 				},
 			},
-			guid = 0,
+			["guid"] = 0,
 		},
 		{
-			type = "everything",
-			components = {
+			["type"] = "everything",
+			["components"] = {
 				{
-					id = "core",
-					componentType = "Core",
-					hidden = false,
-					name = "everything",
+					["id"] = "core",
+					["componentType"] = "Core",
+					["hidden"] = false,
+					["name"] = "everything",
 				},
 				{
-					rotation = 0,
-					position = {
-						-365.9736563042,
-						-304.45633373109,
+					["rotation"] = 0,
+					["position"] = {
+						-599.63678711659,
+						-304.71355580778,
 					},
-					id = "transforms",
-					componentType = "Transforms",
-					keepAspect = true,
-					offset = {
+					["id"] = "transforms",
+					["componentType"] = "Transforms",
+					["keepAspect"] = true,
+					["offset"] = {
 						0,
 						0,
 					},
-					scale = {
+					["scale"] = {
 						1,
 						1,
 					},
 				},
 				{
-					imagePath = "pfirsich.png",
-					color = {
+					["imagePath"] = "pfirsich.png",
+					["color"] = {
 						255,
 						255,
 						255,
 						255,
 					},
-					id = "sprite",
-					componentType = "Sprite",
+					["id"] = "sprite",
+					["componentType"] = "Sprite",
 				},
 			},
-			guid = 1,
+			["guid"] = 1,
 		},
 		{
-			type = "everything",
-			components = {
+			["type"] = "everything",
+			["components"] = {
 				{
-					id = "core",
-					componentType = "Core",
-					hidden = false,
-					name = "everything",
+					["id"] = "core",
+					["componentType"] = "Core",
+					["hidden"] = false,
+					["name"] = "everything",
 				},
 				{
-					rotation = 0,
-					position = {
+					["rotation"] = 0,
+					["position"] = {
 						289.87418406386,
 						-22.335460774793,
 					},
-					id = "transforms",
-					componentType = "Transforms",
-					keepAspect = true,
-					offset = {
+					["id"] = "transforms",
+					["componentType"] = "Transforms",
+					["keepAspect"] = true,
+					["offset"] = {
 						0,
 						0,
 					},
-					scale = {
+					["scale"] = {
 						1,
 						1,
 					},
 				},
 				{
-					imagePath = "pfirsich.png",
-					color = {
+					["imagePath"] = "pfirsich.png",
+					["color"] = {
 						255,
 						255,
 						255,
 						255,
 					},
-					id = "sprite",
-					componentType = "Sprite",
+					["id"] = "sprite",
+					["componentType"] = "Sprite",
 				},
 			},
-			guid = 2,
+			["guid"] = 2,
 		},
 		{
-			type = "everything",
-			components = {
+			["type"] = "everything",
+			["components"] = {
 				{
-					id = "core",
-					componentType = "Core",
-					hidden = false,
-					name = "everything",
+					["id"] = "core",
+					["componentType"] = "Core",
+					["hidden"] = false,
+					["name"] = "everything",
 				},
 				{
-					rotation = 0,
-					position = {
+					["rotation"] = 0,
+					["position"] = {
 						314.14805096344,
 						105.59883615666,
 					},
-					id = "transforms",
-					componentType = "Transforms",
-					keepAspect = true,
-					offset = {
+					["id"] = "transforms",
+					["componentType"] = "Transforms",
+					["keepAspect"] = true,
+					["offset"] = {
 						0,
 						0,
 					},
-					scale = {
+					["scale"] = {
 						1,
 						1,
 					},
 				},
 				{
-					imagePath = "../text.png",
-					color = {
+					["imagePath"] = "../text.png",
+					["color"] = {
 						255,
 						255,
 						255,
 						255,
 					},
-					id = "sprite",
-					componentType = "Sprite",
+					["id"] = "sprite",
+					["componentType"] = "Sprite",
 				},
 			},
-			guid = 4,
+			["guid"] = 3,
 		},
 		{
-			type = "everything",
-			components = {
+			["type"] = "everything",
+			["components"] = {
 				{
-					id = "core",
-					componentType = "Core",
-					hidden = false,
-					name = "everything",
+					["id"] = "core",
+					["componentType"] = "Core",
+					["hidden"] = false,
+					["name"] = "everything",
 				},
 				{
-					rotation = 0,
-					position = {
+					["rotation"] = 0,
+					["position"] = {
 						901.10575080064,
 						-276.35377422384,
 					},
-					id = "transforms",
-					componentType = "Transforms",
-					keepAspect = true,
-					offset = {
+					["id"] = "transforms",
+					["componentType"] = "Transforms",
+					["keepAspect"] = true,
+					["offset"] = {
 						0,
 						0,
 					},
-					scale = {
+					["scale"] = {
 						1,
 						1,
 					},
 				},
 				{
-					imagePath = "pfirsich.png",
-					color = {
+					["imagePath"] = "pfirsich.png",
+					["color"] = {
 						255,
 						255,
 						255,
 						255,
 					},
-					id = "sprite",
-					componentType = "Sprite",
+					["id"] = "sprite",
+					["componentType"] = "Sprite",
 				},
 			},
-			guid = 5,
+			["guid"] = 4,
 		},
 		{
-			type = "dummy",
-			components = {
+			["type"] = "dummy",
+			["components"] = {
 				{
-					id = "core",
-					componentType = "Core",
-					hidden = false,
-					name = "dummy",
+					["id"] = "core",
+					["componentType"] = "Core",
+					["hidden"] = false,
+					["name"] = "dummy",
 				},
 			},
-			guid = 6,
+			["guid"] = 5,
 		},
 	},
 }

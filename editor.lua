@@ -132,12 +132,16 @@ do
 		else 
 			local function writeTable(tbl, depth)
 			    for key, value in pairs(tbl) do
-			    	if type(key) ~= "string" or key:sub(1,2) ~= "__" then 
+			    	local writeValue = false
+			    	if type(key) == "string" and key:sub(1,2) ~= "__" then 
+			    		writeValue = true
+			    		file:write(string.rep("\t", depth) .. '["' .. key .. '"] = ')
+			    	elseif type(key) == "number" then 
+			    		writeValue = true
 			    		file:write(string.rep("\t", depth))
-			    		if type(key) ~= "number" then  
-			    			file:write(key .. " = ")
-			    		end
+			    	end 
 
+			    	if writeValue then 
 			    		local t = type(value)
 			    		if t == "table" then
 				            file:write("{\n")
