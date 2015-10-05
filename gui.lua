@@ -473,14 +473,14 @@ do
 		end 
 
 		for name, component in pairs(components) do 
-			if #component.static.guiElements > 0 then 
+			if #component.static.__guiElements > 0 then 
 				local cat = findCategory(gui.sceneWindowScroll, name) 
 
 				if cat == nil then 
 					cat = createCategory(gui.sceneWindowScroll, gui.sceneWindowLayout, name, collapseRearrangeSceneWindow)
 				end 
 
-				for _, element in ipairs(component.static.guiElements) do 
+				for _, element in ipairs(component.static.__guiElements) do 
 					element.id = name .. "/" .. (element.variable or "") .. "/" .. (element.cmd or "")
 					createElementWidgets(cat, element, 'components["' .. name .. '"].static')
 				end
@@ -549,7 +549,7 @@ do
 		-- Property and scene window + gui elements from component descriptions
 		-- global property gui elements
 		for name, component in pairs(components) do 
-			for _, element in ipairs(component.static.guiElements) do 
+			for _, element in ipairs(component.static.__guiElements) do 
 				element.id = name .. "/" .. (element.variable or "") .. "/" .. (element.cmd or "")
 				updateElementWidgets(gui.sceneWindowScroll, element)
 			end 

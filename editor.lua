@@ -24,11 +24,11 @@ do
 			end 
 			ids[component.id] = true
 
-			if components[component.componentType].static.unique and created[component.componentType] then 
+			if components[component.componentType].static.__unique and created[component.componentType] then 
 				error("Component '" .. component.componentType .. "' can not be added to an entity more than once.")
 			end 
 
-			if components[component.componentType].static.pickable and entity.__pickableComponent ~= nil then 
+			if components[component.componentType].static.__pickable and entity.__pickableComponent ~= nil then 
 				error("Only one pickable component can be added to an entity.")
 			end 
 
@@ -47,7 +47,7 @@ do
 
 			local componentObject = components[component.componentType](component)
 			created[component.componentType] = true
-			if components[component.componentType].static.pickable then 
+			if components[component.componentType].static.__pickable then 
 				-- I have to save the id because saving a reference would cause the object to be duplicated when deep-copied (therefore destroying the reference)
 				entity.__pickableComponent = componentObject.id 
 			end
@@ -132,32 +132,32 @@ do
 		else 
 			local function writeTable(tbl, depth)
 			    for key, value in pairs(tbl) do
-			    	local writeValue = false
-			    	if type(key) == "string" and key:sub(1,2) ~= "__" then 
-			    		writeValue = true
-			    		file:write(string.rep("\t", depth) .. '["' .. key .. '"] = ')
-			    	elseif type(key) == "number" then 
-			    		writeValue = true
-			    		file:write(string.rep("\t", depth))
-			    	end 
+			    	local kType = type(key)
+			    	local vType = type(value)
+			    	if (kType == "number" or (kType == "string" and key:sub(1,2) ~= "__")) and 
+			    	   (vType == "table" or vType == "string" or vType == "boolean" or vType == "number") then 
+				    	if kType == "string" then 
+				    		file:write(string.rep("\t", depth) .. '["' .. key .. '"] = ')
+				    	elseif kType == "number" then 
+				    		file:write(string.rep("\t", depth))
+				    	end 
 
-			    	if writeValue then 
-			    		local t = type(value)
-			    		if t == "table" then
+				    	if vType == "table" then
 				            file:write("{\n")
 				            writeTable(value, depth + 1)
 				            file:write(string.rep("\t", depth) .. "},\n")
-				        elseif t == "string" then 
+				        elseif vType == "string" then 
 				        	file:write('"' .. value .. '",\n')
-				        elseif t == "boolean" or t == "number" then 
+				        elseif vType == "boolean" or vType == "number" then 
 				        	file:write(tostring(value) .. ",\n")
-				        end
-			    	end 			        
+				        end	
+				    end		        
 			    end
 			end 
 
 			file:write("return {\n")
 			writeTable(map, 1)
+			writeTable({componentStatics = table.map(components, function(c) return c.static end)}, 1)
 			file:write("}\n")
 			file:close()
 			
@@ -199,6 +199,12 @@ do
 				editor.createEntity(tableEntity.type, tableEntity.components)
 			end 
 			updateShapes()
+
+			for componentType, statics in pairs(fileTable.componentStatics) do 
+				for variable, value in pairs(statics) do 
+					components[componentType].static[variable] = value
+				end 
+			end 
 
 			mapStack.cursor = 1
 			for i = 1, #mapStack do 

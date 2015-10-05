@@ -16,8 +16,8 @@ do
 		self.__showInDetails = false
 	end
 
-	Core.static.unique = true
-	Core.static.pickable = false
+	Core.static.__unique = true
+	Core.static.__pickable = false
 
 	Core.static.showGrid = true
 	Core.static.gridSpacing = 200
@@ -25,7 +25,7 @@ do
 	Core.static.showDetails = true
 	Core.static.showEntityBorders = true
 
-	Core.static.guiElements = { -- background color
+	Core.static.__guiElements = { -- background color
 		--{id = "showDetails", name = "Show details", type = "Checkbox"},
 		{variable = "showGrid", type = "Checkbox", label = "Show grid"},
 		{variable = "gridSpacing", type = "Numberwheel", label = "Grid spacing", params = {minValue = 1.0}},
@@ -58,9 +58,9 @@ do
 		self.__showInDetails = false
 	end 
 
-	WithOptional.static.unique = true 
-	WithOptional.static.pickable = false
+	WithOptional.static.__unique = true 
+	WithOptional.static.__pickable = false
 
-	WithOptional.static.guiElements = {}
+	WithOptional.static.__guiElements = {}
 
 end

@@ -13,7 +13,10 @@ return {
 					["name"] = "everything",
 				},
 				{
-					["rotation"] = 0,
+					["scale"] = {
+						1,
+						1,
+					},
 					["position"] = {
 						410.30911707899,
 						-450.16477911596,
@@ -25,21 +28,18 @@ return {
 						0,
 						0,
 					},
-					["scale"] = {
-						1,
-						1,
-					},
+					["rotation"] = 0,
 				},
 				{
 					["imagePath"] = "pfirsich.png",
+					["id"] = "sprite",
+					["componentType"] = "Sprite",
 					["color"] = {
 						255,
 						255,
 						255,
 						255,
 					},
-					["id"] = "sprite",
-					["componentType"] = "Sprite",
 				},
 			},
 			["guid"] = 0,
@@ -54,7 +54,10 @@ return {
 					["name"] = "everything",
 				},
 				{
-					["rotation"] = 0,
+					["scale"] = {
+						1,
+						1,
+					},
 					["position"] = {
 						-599.63678711659,
 						-304.71355580778,
@@ -66,21 +69,18 @@ return {
 						0,
 						0,
 					},
-					["scale"] = {
-						1,
-						1,
-					},
+					["rotation"] = 0,
 				},
 				{
 					["imagePath"] = "pfirsich.png",
+					["id"] = "sprite",
+					["componentType"] = "Sprite",
 					["color"] = {
 						255,
 						255,
 						255,
 						255,
 					},
-					["id"] = "sprite",
-					["componentType"] = "Sprite",
 				},
 			},
 			["guid"] = 1,
@@ -95,7 +95,10 @@ return {
 					["name"] = "everything",
 				},
 				{
-					["rotation"] = 0,
+					["scale"] = {
+						1,
+						1,
+					},
 					["position"] = {
 						289.87418406386,
 						-22.335460774793,
@@ -107,21 +110,18 @@ return {
 						0,
 						0,
 					},
-					["scale"] = {
-						1,
-						1,
-					},
+					["rotation"] = 0,
 				},
 				{
 					["imagePath"] = "pfirsich.png",
+					["id"] = "sprite",
+					["componentType"] = "Sprite",
 					["color"] = {
 						255,
 						255,
 						255,
 						255,
 					},
-					["id"] = "sprite",
-					["componentType"] = "Sprite",
 				},
 			},
 			["guid"] = 2,
@@ -136,7 +136,10 @@ return {
 					["name"] = "everything",
 				},
 				{
-					["rotation"] = 0,
+					["scale"] = {
+						1,
+						1,
+					},
 					["position"] = {
 						314.14805096344,
 						105.59883615666,
@@ -148,21 +151,18 @@ return {
 						0,
 						0,
 					},
-					["scale"] = {
-						1,
-						1,
-					},
+					["rotation"] = 0,
 				},
 				{
 					["imagePath"] = "../text.png",
+					["id"] = "sprite",
+					["componentType"] = "Sprite",
 					["color"] = {
 						255,
 						255,
 						255,
 						255,
 					},
-					["id"] = "sprite",
-					["componentType"] = "Sprite",
 				},
 			},
 			["guid"] = 3,
@@ -177,7 +177,10 @@ return {
 					["name"] = "everything",
 				},
 				{
-					["rotation"] = 0,
+					["scale"] = {
+						1,
+						1,
+					},
 					["position"] = {
 						901.10575080064,
 						-276.35377422384,
@@ -189,21 +192,18 @@ return {
 						0,
 						0,
 					},
-					["scale"] = {
-						1,
-						1,
-					},
+					["rotation"] = 0,
 				},
 				{
 					["imagePath"] = "pfirsich.png",
+					["id"] = "sprite",
+					["componentType"] = "Sprite",
 					["color"] = {
 						255,
 						255,
 						255,
 						255,
 					},
-					["id"] = "sprite",
-					["componentType"] = "Sprite",
 				},
 			},
 			["guid"] = 4,

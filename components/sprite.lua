@@ -49,9 +49,9 @@ do
         love.graphics.setColor(255, 255, 255, 255)
     end 
 
-    Sprite.static.unique = true
-    Sprite.static.pickable = true
+    Sprite.static.__unique = true
+    Sprite.static.__pickable = true
 
-    Sprite.static.guiElements = {}
+    Sprite.static.__guiElements = {}
 
 end 

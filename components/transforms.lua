@@ -15,14 +15,14 @@ do
             table.iextend(self.__guiElements,{
                 {variable = "position[1]", type = "Numberwheel", label = "X-Pos", cmd = ""},
                 {variable = "position[2]", type = "Numberwheel", label = "Y-Pos", cmd = ""},
-                {variable = "", type = "Button", label = "Move entities", cmd = 'editor.editMode = components["Transforms"].static.editModes.move'}
+                {variable = "", type = "Button", label = "Move entities", cmd = 'editor.editMode = components["Transforms"].editModes.move'}
             })
         end
             
         if self.rotation ~= nil then
             table.iextend(self.__guiElements,{
                 {variable = "rotation", type = "Numberwheel", label = "Angle", cmd = "", params = {speed = 1.0}},
-                {variable = "", type = "Button", label = "Rotate entities", cmd = 'editor.editMode = components["Transforms"].static.editModes.rotate'}
+                {variable = "", type = "Button", label = "Rotate entities", cmd = 'editor.editMode = components["Transforms"].editModes.rotate'}
             })
         end
         
@@ -30,7 +30,7 @@ do
             table.iextend(self.__guiElements,{
                 {variable = "offset[1]", type = "Numberwheel", label = "X-Offset", cmd = ""},
                 {variable = "offset[2]", type = "Numberwheel", label = "Y-Offset", cmd = ""},
-                --{name = "Offset entities", type = "Button", id = 'editor.editMode = components["Transforms"].static.editModes.offset'}
+                --{name = "Offset entities", type = "Button", id = 'editor.editMode = components["Transforms"].editModes.offset'}
             })
         end
         
@@ -39,7 +39,7 @@ do
                 {variable = "scale[1]", type = "Numberwheel", label = "X-Scale", cmd = "", params = {speed = 0.5}},
                 {variable = "scale[2]", type = "Numberwheel", label = "Y-Scale", cmd = "", params = {speed = 0.5}},
                 {variable = "keepAspect", type = "Checkbox", label = "Keep aspect ratio", cmd = ""},
-                {variable = "", type = "Button", label = "Scale entities", cmd = 'editor.editMode = components["Transforms"].static.editModes.scale'}
+                {variable = "", type = "Button", label = "Scale entities", cmd = 'editor.editMode = components["Transforms"].editModes.scale'}
             })
         end 
 
@@ -71,12 +71,12 @@ do
         love.graphics.pop()
     end 
 
-    Transforms.static.unique = true
-    Transforms.static.pickable = false
+    Transforms.static.__unique = true
+    Transforms.static.__pickable = false
 
-    Transforms.static.guiElements = {}
+    Transforms.static.__guiElements = {}
 
-    Transforms.static.editModes = {
+    Transforms.editModes = {
         move = {description = "Move entities"},
         rotate = {description = "Rotate entities"},
         --offset = {description = "Offset entities"}, -- do i even want this?
@@ -84,8 +84,8 @@ do
     }
 
     -- Move mode
-    function Transforms.static.editModes.move.onMouseDown(x, y, button)
-        local mode = Transforms.static.editModes.move
+    function Transforms.editModes.move.onMouseDown(x, y, button)
+        local mode = Transforms.editModes.move
         if button == "l" then 
             mode.entity = getEntityByGUID(gui.selectedEntities[1])
             if mode.entity then 
@@ -94,15 +94,15 @@ do
         end
     end
 
-    function Transforms.static.editModes.move.onMouseMove(x, y, dx, dy)
-        local mode = Transforms.static.editModes.move
+    function Transforms.editModes.move.onMouseMove(x, y, dx, dy)
+        local mode = Transforms.editModes.move
         if mode.transforms then 
             mode.transforms.position = {mode.transforms.position[1] + dx / camera.scale, mode.transforms.position[2] + dy / camera.scale}
         end 
     end 
 
-    function Transforms.static.editModes.move.onMouseUp(x, y, button)
-        local mode = Transforms.static.editModes.move
+    function Transforms.editModes.move.onMouseUp(x, y, button)
+        local mode = Transforms.editModes.move
         if button == "l" and mode.transforms then 
             cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "Transforms").position = {' .. table.concat(mode.transforms.position, ", ") .. "}")
             mode.transforms = nil
@@ -111,8 +111,8 @@ do
     end
 
     -- Rotate mode
-    function Transforms.static.editModes.rotate.onMouseDown(x, y, button)
-        local mode = Transforms.static.editModes.rotate
+    function Transforms.editModes.rotate.onMouseDown(x, y, button)
+        local mode = Transforms.editModes.rotate
         if button == "l" then 
             mode.entity = getEntityByGUID(gui.selectedEntities[1])
             if mode.entity then 
@@ -124,8 +124,8 @@ do
         end
     end
 
-    function Transforms.static.editModes.rotate.onMouseMove(x, y, dx, dy)
-        local mode = Transforms.static.editModes.rotate
+    function Transforms.editModes.rotate.onMouseMove(x, y, dx, dy)
+        local mode = Transforms.editModes.rotate
         if mode.transforms then 
             local wx, wy = camera.screenToWorld(x, y)
             local angle = math.atan2(wy - mode.transforms.position[2], wx - mode.transforms.position[1])
@@ -133,8 +133,8 @@ do
         end 
     end 
 
-    function Transforms.static.editModes.rotate.onMouseUp(x, y, button)
-        local mode = Transforms.static.editModes.rotate
+    function Transforms.editModes.rotate.onMouseUp(x, y, button)
+        local mode = Transforms.editModes.rotate
         if button == "l" and mode.transforms then
             cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "Transforms").rotation = ' .. tostring(mode.transforms.rotation)) 
             mode.transforms = nil
@@ -143,8 +143,8 @@ do
     end
 
     -- Scale mode
-    function Transforms.static.editModes.scale.getRelativeRotatedDistance(mx, my)
-        local mode = Transforms.static.editModes.scale
+    function Transforms.editModes.scale.getRelativeRotatedDistance(mx, my)
+        local mode = Transforms.editModes.scale
         local wx, wy = camera.screenToWorld(mx, my)
         local relX, relY = wx - mode.transforms.position[1], wy - mode.transforms.position[2]
 
@@ -156,22 +156,22 @@ do
         return distX, distY
     end
 
-    function Transforms.static.editModes.scale.onMouseDown(x, y, button)
-        local mode = Transforms.static.editModes.scale
+    function Transforms.editModes.scale.onMouseDown(x, y, button)
+        local mode = Transforms.editModes.scale
         if button == "l" then 
             mode.entity = getEntityByGUID(gui.selectedEntities[1])
             if mode.entity then 
                 mode.transforms = getComponentByType(mode.entity, "Transforms")
-                mode.startDistX, mode.startDistY = Transforms.static.editModes.scale.getRelativeRotatedDistance(x, y)
+                mode.startDistX, mode.startDistY = Transforms.editModes.scale.getRelativeRotatedDistance(x, y)
                 mode.startScale = {unpack(mode.transforms.scale)}
             end 
         end
     end
 
-    function Transforms.static.editModes.scale.onMouseMove(x, y, dx, dy)
-        local mode = Transforms.static.editModes.scale
+    function Transforms.editModes.scale.onMouseMove(x, y, dx, dy)
+        local mode = Transforms.editModes.scale
         if mode.transforms then 
-            local distX, distY = Transforms.static.editModes.scale.getRelativeRotatedDistance(x, y)
+            local distX, distY = Transforms.editModes.scale.getRelativeRotatedDistance(x, y)
 
             local facX, facY = distX / mode.startDistX, distY / mode.startDistY
             if mode.transforms.keepAspect then
@@ -183,8 +183,8 @@ do
         end 
     end 
 
-    function Transforms.static.editModes.scale.onMouseUp(x, y, button)
-        local mode = Transforms.static.editModes.scale
+    function Transforms.editModes.scale.onMouseUp(x, y, button)
+        local mode = Transforms.editModes.scale
         if button == "l" and mode.transforms then 
             cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "Transforms").scale = {' .. table.concat(mode.transforms.scale, ", ") .. "}")
             mode.transforms = nil
