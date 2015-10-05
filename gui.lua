@@ -137,8 +137,8 @@ do
 
 		-- Scene Window
 		gui.sceneWindow = kraid.widgets.Window{parent = gui.base, text = "Scene", width = 280, minWidth = 80} -- width has to be passed so close button is at the right position from the start
-		gui.sceneWindow.summon = function(self)
-			self:setParam("visible", true)
+		gui.sceneWindow.toggle = function(self)
+			self:setParam("visible", not self.visible)
 			self:setParam("width", self.width)
 			self:setParam("height", love.window.getHeight() - 200)
 			self:setParam("position", {0, 0})
@@ -224,8 +224,8 @@ do
 
 		-- property window
 		gui.propertyWindow = kraid.widgets.Window{parent = gui.base, text = "Properties", width = 280}
-		gui.propertyWindow.summon = function(self)
-			self:setParam("visible", true)
+		gui.propertyWindow.toggle = function(self)
+			self:setParam("visible", not self.visible)
 			self:setParam("width", self.width)
 			self:setParam("height", love.window.getHeight() - 200)
 			self:setParam("position", {love.window.getWidth() - self.width, 0})
@@ -256,8 +256,8 @@ do
 
 		-- CLI window
 		gui.consoleWindow = kraid.widgets.Window{parent = gui.base, text = "Console", width = love.window.getWidth()}
-		gui.consoleWindow.summon = function(self)
-			self:setParam("visible", true)
+		gui.consoleWindow.toggle = function(self)
+			self:setParam("visible", not self.visible)
 			self:setParam("width", love.window.getWidth())
 			self:setParam("height", 200)
 			self:setParam("position", {0, love.window.getHeight() - self.height})
@@ -304,17 +304,17 @@ do
 			gui.consoleWindowScrollBar:onChange()
 		end)
 
-		-- Summon buttons
-		local summonButtonW, summonButtonH = 180, 15
-		gui.summonSceneWindow = kraid.widgets.Button{	parent = gui.base, text = "Summon scene window", 
-													width = summonButtonW, height = summonButtonH, 
-													onClicked = function() gui.sceneWindow:summon() end}
-		gui.summonPropertyWindow = kraid.widgets.Button{	parent = gui.base, text = "Summon property window", 
-														width = summonButtonW, height = summonButtonH, 
-														onClicked = function() gui.propertyWindow:summon() end}
-		gui.summonConsoleWindow = kraid.widgets.Button{	parent = gui.base, text = "Summon console window", 
-														width = summonButtonW, height = summonButtonH, 
-														onClicked = function() gui.consoleWindow:summon() end}
+		-- Toggle buttons
+		local toggleButtonW, toggleButtonH = 180, 15
+		gui.toggleSceneWindow = kraid.widgets.Button{	parent = gui.base, text = "Toggle scene window", 
+													width = toggleButtonW, height = toggleButtonH, 
+													onClicked = function() gui.sceneWindow:toggle() end}
+		gui.togglePropertyWindow = kraid.widgets.Button{	parent = gui.base, text = "Toggle property window", 
+														width = toggleButtonW, height = toggleButtonH, 
+														onClicked = function() gui.propertyWindow:toggle() end}
+		gui.toggleConsoleWindow = kraid.widgets.Button{	parent = gui.base, text = "Toggle console window", 
+														width = toggleButtonW, height = toggleButtonH, 
+														onClicked = function() gui.consoleWindow:toggle() end}
 
 		return gui
 	end

@@ -55,9 +55,9 @@ do
 	shortcut("lctrl+r,rctrl+r", 'editor.editMode = components["Transforms"].static.editModes.rotate')
 	shortcut("lctrl+e,rctrl+e", 'editor.editMode = components["Transforms"].static.editModes.scale')
 	shortcut("lctrl+s,rctrl+s", 'editor.saveMap()')
-	shortcut("f1", 'gui.sceneWindow:summon()')
-	shortcut("f2", 'gui.propertyWindow:summon()')
-	shortcut("f3", 'gui.consoleWindow:summon()')
+	shortcut("f1", 'gui.sceneWindow:toggle()')
+	shortcut("f2", 'gui.propertyWindow:toggle()')
+	shortcut("f3", 'gui.consoleWindow:toggle()')
 	shortcut("tab", 'toggle(components["Core"].static, "showEntityBorders"); toggle(components["Core"].static, "showNames")') 
 
 	shortcut("pageup", "editor.entityUp(gui.selectedEntities)", true)

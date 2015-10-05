@@ -15,22 +15,22 @@ function love.resize(w, h)
 	if callSpecialMode("resize", w, h) then return end
 
 	local oldVisible = gui.sceneWindow.visible 
-	gui.sceneWindow:summon()
+	gui.sceneWindow:toggle()
 	gui.sceneWindow:setParam("visible", oldVisible)
 
 	oldVisible = gui.propertyWindow.visible 
-	gui.propertyWindow:summon()
+	gui.propertyWindow:toggle()
 	gui.propertyWindow:setParam("visible", oldVisible)
 	
 	oldVisible = gui.consoleWindow.visible 
-	gui.consoleWindow:summon()
+	gui.consoleWindow:toggle()
 	gui.consoleWindow:setParam("visible", oldVisible)
 
 	local center = love.window.getWidth() / 2
-	local buttonW = gui.summonSceneWindow.width
-	gui.summonSceneWindow:setParam("position", {center - buttonW * 1.5, 0})
-	gui.summonPropertyWindow:setParam("position", {center - buttonW * 0.5, 0})
-	gui.summonConsoleWindow:setParam("position", {center + buttonW * 0.5, 0})
+	local buttonW = gui.toggleSceneWindow.width
+	gui.toggleSceneWindow:setParam("position", {center - buttonW * 1.5, 0})
+	gui.togglePropertyWindow:setParam("position", {center - buttonW * 0.5, 0})
+	gui.toggleConsoleWindow:setParam("position", {center + buttonW * 0.5, 0})
 end
 
 function love.load(arg) 

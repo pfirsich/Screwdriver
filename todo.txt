@@ -1,12 +1,18 @@
-* Color picker
-	* Inputs commiten
-	* Background color in Core.static
-* Numberwheels entretarden, am besten auch den crash beheben :>
+* onFocusLost implementieren
+	* Darauf triggern, dass Numberwheels die value in das textfeld zurückschreiben, ansonsten
+	passiert das nicht mehr, jedoch werden weiterhin inputs rejected, wenn das ergebnis keine Zahl ist.
+	Die Numberwheel-value wird weiterhin, wenn möglich kontinuierlich geupdated.
+	Der Input von Zeichen [^.-0123456789] ist weiterhin verboten, allerdings können zahlen auch mit . anfangen.
+	Das entretarded die Numberwheels und behebt hoffentlich den crash
+	Alle Numberhweels/Textfelder/Colors usw. (?) auf onFocusLost cliExec ausführen lassen
+-- BA only
 * Polygone!
 	* Wie starten die? Preset-Buttons, Textur-Buttons (auch Trafos), Trafos, Funktionen für Modis? Transforms-Component für Texturen benutzen?
 * Show Details
 
-Later/Maybe: 
+Later/Maybe:
+* Background colors? Mit Markus über Hintergründe reden
+	static component properties in die Mapdatei? 
 * Focus benutzen um den Zeitpunkt für einen commit auf den map stack zu erkennen (fokus auf ein ui element -> changes -> fokus verloren -> commit)
 * Arrow key + enter Bedienung im filebrowser
 * Implement cmd for Numberwheel, String and Checkbox gui elements
