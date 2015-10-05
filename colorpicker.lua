@@ -18,8 +18,11 @@ do -- Hax
 				self.color[i] = value
 				if self.onChange then self:onChange(self.color) end
 			end
+			local onFocusLost = function(nw)
+				if self.onFocusLost then self:onFocusLost() end
+			end
 			self.numberWheels[i] = kraid.widgets.Numberwheel{parent = nil, minValue = 0, maxValue = 255, speed = 5.0, onChange = onChange,
-															width = 150, height = 25, value = self.color[i], format = "%d"}
+											width = 150, height = 25, value = self.color[i], format = "%d", onFocusLost = onFocusLost}
 		end 
 
 		kraid.widgets.Base.init(self, params)
@@ -36,6 +39,12 @@ do -- Hax
 			self.color[i] = color[i]
 		end
 	end
+
+	function ColorpickerWidget:updateNumberwheelTexts()
+		for i = 1, 4 do 
+			self.numberWheels[i]:updateText()
+		end 
+	end 
 
 	local xGradientShader = love.graphics.newShader([[
 		uniform vec4 from = vec4(0.0, 0.0, 0.0, 1.0);

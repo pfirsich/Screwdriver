@@ -364,6 +364,18 @@ do
 			elseif element.type == "Color" then 
 				if widget.type == "Colorpicker" then 
 					widget:setColor({unpack(eval("return " .. varString))})
+					widget.cliCmd = varString .. " = " .. tostringArray(widget.color)
+					local focused = false 
+					if gui.base.focused == widget then focused = true end 
+					for i = 1, 4 do 
+						if gui.base.focused == widget.numberWheels[i] then focused = true end
+						if gui.base.focused == widget.numberWheels[i].numberInputLine then focused = true end 
+					end 
+					if not focused then 
+						for i = 1, 4 do 
+							widget:updateNumberwheelTexts()
+						end 
+					end 
 				end 
 			end 
 		end
@@ -435,6 +447,7 @@ do
 			local colorPicker = ColorpickerWidget{parent = parent, target = target, elementId = element.id, minWidth = 200}
 			parent.layout:addWidget(colorPicker)
 			colorPicker:setParam("onChange", function(self, value) eval(self.target .. "." .. element.variable .. " = " .. tostringArray(value)) end)
+			colorPicker:setParam("onFocusLost", widgetExecCliCmd)
 		else 
 		    error("Unsupported gui element type '" .. element.type .. "'")
 		end
