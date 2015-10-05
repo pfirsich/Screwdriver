@@ -1,7 +1,7 @@
 * Color picker
 	* Inputs commiten
 	* Background color in Core.static
-* Numberwheels entretarden
+* Numberwheels entretarden, am besten auch den crash beheben :>
 * Polygone!
 	* Wie starten die? Preset-Buttons, Textur-Buttons (auch Trafos), Trafos, Funktionen für Modis? Transforms-Component für Texturen benutzen?
 * Show Details

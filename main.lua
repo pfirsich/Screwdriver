@@ -241,6 +241,10 @@ function love.keypressed(key, isrepeat)
 end
 
 function love.draw()
+	-- For some reason the screen doesn't clear on some systems. This is dirty, but it works. I am deeply sorry.
+	love.graphics.setColor(0, 0, 0, 255)
+	love.graphics.rectangle("fill", 0, 0, love.graphics.getDimensions())
+
 	if callSpecialMode("draw") then return end
 
 	if components["Core"].static.showGrid then 
