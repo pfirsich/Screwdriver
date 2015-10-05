@@ -50,16 +50,21 @@ do
 	shortcut("lctrl+z,rctrl+z", "mapStack:seek(-1)")
 	shortcut("lctrl+y,rctrl+y", "mapStack:seek(1)")
 	shortcut("lctrl+f,rctrl+f", "editor.focusCamera(gui.selectedEntities)")
-	shortcut("lctrl+ ,rctrl+ ", "editor.editMode = editor.defaultEditMode")
-	shortcut("lctrl+t,rctrl+t", 'editor.editMode = components["Transforms"].editModes.move')
-	shortcut("lctrl+r,rctrl+r", 'editor.editMode = components["Transforms"].editModes.rotate')
-	shortcut("lctrl+e,rctrl+e", 'editor.editMode = components["Transforms"].editModes.scale')
+
 	shortcut("lctrl+s,rctrl+s", 'editor.saveMap()')
 	shortcut("f1", 'gui.sceneWindow:toggle()')
 	shortcut("f2", 'gui.propertyWindow:toggle()')
 	shortcut("f3", 'gui.consoleWindow:toggle()')
-	shortcut("tab", 'toggle(components["Core"].static, "showEntityBorders"); toggle(components["Core"].static, "showNames")') 
 
+	-- use the stack for these, since onEnter and onExit could change something in the map object
+	shortcut("lctrl+ ,rctrl+ ", "editor.changeEditMode(editor.defaultEditMode)", true)
+	shortcut("lctrl+t,rctrl+t", 'editor.changeEditMode(components["Transforms"].editModes.move)', true)
+	shortcut("lctrl+r,rctrl+r", 'editor.changeEditMode(components["Transforms"].editModes.rotate)', true)
+	shortcut("lctrl+e,rctrl+e", 'editor.changeEditMode(components["Transforms"].editModes.scale)', true)
+	shortcut("lctrl+q,rctrl+q", 'editor.changeEditMode(components["SimplePolygon"].editModes.editPoints)', true)
+	shortcut("lctrl+w,rctrl+w", 'editor.changeEditMode(components["SimplePolygon"].editModes.editTexture)', true)
+
+	shortcut("tab", 'toggle(components["Core"].static, "showEntityBorders"); toggle(components["Core"].static, "showNames")', true) 
 	shortcut("pageup", "editor.entityUp(gui.selectedEntities)", true)
 	shortcut("pagedown", "editor.entityDown(gui.selectedEntities)", true)
 	shortcut("delete", "editor.removeEntities(gui.selectedEntities)", true)
