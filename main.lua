@@ -43,6 +43,7 @@ function love.load(arg)
 		uniform float cameraScale;
 		uniform vec2 cameraPos;
 		uniform float spacing = 100.0;
+		uniform vec4 gridColor = vec4(0.7, 0.7, 0.7, 1.0); 
 
 		const float thickness = 1.0;
 		//const float smoothness = 2.0;
@@ -57,7 +58,7 @@ function love.load(arg)
 			float gridVal = gridFunc(fract(realCoords.x), thickness/cameraScale) + gridFunc(fract(realCoords.y), thickness/cameraScale);
 			float originMarkerFactor = 1.5;
 			gridVal += gridFunc(abs(realCoords.x), thickness*originMarkerFactor/cameraScale) + gridFunc(abs(realCoords.y), thickness*originMarkerFactor/cameraScale);
-		    return mix(vec4(0.0), vec4(0.7), vec4(clamp(gridVal, 0.0, 1.0)));
+		    return mix(vec4(0.0), gridColor, vec4(clamp(gridVal, 0.0, 1.0)));
 		}
 	]])
 
@@ -242,16 +243,22 @@ end
 
 function love.draw()
 	-- For some reason the screen doesn't clear on some systems. This is dirty, but it works. I am deeply sorry.
-	love.graphics.setColor(0, 0, 0, 255)
+	components["Core"].static.backgroundColor[4] = 255
+	love.graphics.setColor(components["Core"].static.backgroundColor)
 	love.graphics.rectangle("fill", 0, 0, love.graphics.getDimensions())
 
 	if callSpecialMode("draw") then return end
 
 	if components["Core"].static.showGrid then 
+		local bgColor = table.map(components["Core"].static.backgroundColor, function(v) return v/255 end)
+		local bgLuminance = math.sqrt(0.299*bgColor[1]*bgColor[1] + 0.587*bgColor[2]*bgColor[2] + 0.114*bgColor[3]*bgColor[3])
+		local gridColor = {1.0 - bgLuminance, 1.0 - bgLuminance, 1.0 - bgLuminance, 1.0}
+
 		love.graphics.setShader(gridShader)
 		gridShader:send("cameraScale", camera.scale)
 		gridShader:send("cameraPos", {camera.position[1] - love.window.getWidth()/2/camera.scale, camera.position[2] + love.window.getHeight()/2/camera.scale})
 		gridShader:send("spacing", components["Core"].static.gridSpacing)
+		gridShader:send("gridColor", gridColor)
 		love.graphics.rectangle("fill", 0, 0, love.window.getWidth(), love.window.getHeight())
 		love.graphics.setShader()
 	end

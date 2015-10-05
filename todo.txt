@@ -14,9 +14,6 @@
 * Show Details
 
 Later/Maybe:
-* Background colors? Mit Markus über Hintergründe reden
-	static component properties in die Mapdatei?
-
 * Focus benutzen um den Zeitpunkt für einen commit auf den map stack zu erkennen (fokus auf ein ui element -> changes -> fokus verloren -> commit)
 * Error handling gründlich überdenken - jedes mal error ist ziemlich ungeil
 

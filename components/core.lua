@@ -24,13 +24,15 @@ do
 	Core.static.showNames = true 
 	Core.static.showDetails = true
 	Core.static.showEntityBorders = true
+	Core.static.backgroundColor = {0, 0, 0, 255}
 
 	Core.static.__guiElements = { -- background color
 		--{id = "showDetails", name = "Show details", type = "Checkbox"},
-		{variable = "showGrid", type = "Checkbox", label = "Show grid"},
-		{variable = "gridSpacing", type = "Numberwheel", label = "Grid spacing", params = {minValue = 1.0}},
 		{variable = "showNames", type = "Checkbox", label = "Show names"},
 		{variable = "showEntityBorders", type = "Checkbox", label = "Show entity borders"},
+		{variable = "showGrid", type = "Checkbox", label = "Show grid"},
+		{variable = "gridSpacing", type = "Numberwheel", label = "Grid spacing", params = {minValue = 1.0}},
+		{variable = "backgroundColor", type = "Color", label = "Background color"},
 	}
 
 

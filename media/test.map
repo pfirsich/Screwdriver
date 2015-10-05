@@ -221,4 +221,25 @@ return {
 			["guid"] = 5,
 		},
 	},
+	["componentStatics"] = {
+		["WithOptional"] = {
+		},
+		["Transforms"] = {
+		},
+		["Sprite"] = {
+		},
+		["Core"] = {
+			["gridSpacing"] = 50.157566905938,
+			["showGrid"] = true,
+			["showEntityBorders"] = false,
+			["backgroundColor"] = {
+				102.16923418404,
+				68.562017521701,
+				0,
+				255,
+			},
+			["showNames"] = false,
+			["showDetails"] = true,
+		},
+	},
 }
