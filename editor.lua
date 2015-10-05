@@ -4,22 +4,28 @@ do
 	editor.editMode = editor.defaultEditMode
 	editor.hoveredEntities = {}
 
-	local entityCounter = 1
+	local entityCounter = 0
 
-	function editor.changeEditMode(mode)
-		if mode.onEnter then mode.onEnter() end
+	function editor.changeEditMode(mode, ...)
+		if editor.editMode.onExit then editor.editMode.onExit(mode) end 
+		if mode.onEnter then mode.onEnter(...) end
 		editor.editMode = mode
 		updateShapes() -- update shapes to make sure mode dependent shapes are now correct
 	end
 
 	function editor.createEntity(type, componentProperties)
+		if type == nil then 
+			gui.printConsole("No entity type selected.")
+			return
+		end
+
+		entityCounter = entityCounter + 1
 		local entity = {
 			type = type,
 			__shapes = {}, -- underscore prefix so it won't be saved in the map file
 			guid = entityCounter,
 			components = {},
 		}
-		entityCounter = entityCounter + 1
 
 		-- component uniqueness and only one pickable component is a requirement to make picking a lot less problematic (multiple draws/transforms would be a pain)
 		local created = {}
@@ -40,6 +46,9 @@ do
 
 			local pass = tableDeepCopy(component)
 			if component.componentType == "Core" and component.name == nil then pass.name = type end
+			-- HAX HAX HAX HAX HAX
+			if componentProperties then pass.fromMapFile = true end -- e.g. so edit modes that are initiated on entity creation are not entered
+			pass.entityGUID = entity.guid
 
 			if componentProperties then 
 				-- addTable only works properly if number and order of components still matches the entity type
@@ -59,8 +68,9 @@ do
 
 			table.insert(entity.components, componentObject) 
 		end 
-
+		assert(getComponentByType(entity, "Core"), "Every component has to have a Core component!")
 		table.insert(map.entities, entity)
+		gui.selectEntities({entity.guid})
 		return entity
 	end
 
@@ -124,11 +134,6 @@ do
 		end 
 	end
 
-	-- both paths should be absolute
-	local function makePathRelative(basePath, path)
-		return path
-	end
-
 	-- it's not pretty that these functions call functtions from the gui module, but it's handy to have these as easily bindable functions
 	function editor.saveMapFile(path)
 		file, err = io.open(path, "w")
@@ -181,6 +186,7 @@ do
 			f()
 			table.insert(map.entityFiles, path)
 			rebuildGlobalComponentGUIElements()
+			updateEntityTypesList()
 		end 
 	end 
 

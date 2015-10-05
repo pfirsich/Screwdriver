@@ -109,6 +109,14 @@ do
 		end 
 
 		function gui.selectEntities(guidList)
+			local entityList = {}
+			for i = #map.entities, 1, -1 do
+				local coreComp = getComponentByType(map.entities[i], "Core")
+				local name = coreComp.name .. " (guid: " .. tostring(map.entities[i].guid) .. ") " .. (coreComp.hidden and "(hidden)" or "")
+				table.insert(entityList, {text = name, entity = map.entities[i]})
+			end
+			gui.entityList:setParam("tree", {children = entityList})
+
 			local selection = {}
 			-- i dont just assign guidList to gui.selectedEntities, because guidList could contain GUIDs not currently in use
 			local selectedGUIDs = {}
@@ -122,6 +130,7 @@ do
 			end 
 			gui.entityList:setParam("selected", selection)
 
+			-- rebuild gui if selection changed
 			local selectionChanged = not gui.selectedEntities or #gui.selectedEntities ~= #selectedGUIDs
 			if not selectionChanged then 
 				for i = 1, #gui.selectedEntities do 
@@ -409,7 +418,14 @@ do
 			local numberWheel = kraid.widgets.Numberwheel{parent = parent, elementId = element.id, target = target, cliCmd = "", 
 														speed = params.speed, minValue = params.minValue, maxValue = params.maxValue}
 
-			numberWheel:setParam("onChange", function(self, value) eval(self.target .. "." .. element.variable .. " = " .. tostring(value)) end)
+			numberWheel:setParam("onChange", function(self, value) 
+				eval(self.target .. "." .. element.variable .. " = " .. tostring(value))
+				if element.cmd then 
+					local evalStr = element.cmd
+					if evalStr:sub(1,1) == "." or element.cmd:sub(1,1) == ":" then evalStr = target .. evalStr end
+					eval(evalStr) 
+				end
+			end)
 			numberWheel:setParam("onFocusLost", widgetExecCliCmd) -- no need to updateText here, since it will be updated anyway if not focused (see updateElementWidgets)
 			parent.layout:addWidget(numberWheel)
 		elseif element.type == "Button" then 
@@ -528,32 +544,21 @@ do
 		end 
 	end
 
-	function updateGUI()
-		-- update entity types list
+	function updateEntityTypesList()
 		local entityTypesList = {}
 		for k, v in pairs(entityTypes) do 
 			table.insert(entityTypesList, {text = v.label, entityType = k})
 		end 
 
-		if #entityTypesList ~= #gui.entityTypesList.tree.children then 
-			gui.entityTypesList:setParam("tree", {children = entityTypesList})
-			if #entityTypesList > 0 then gui.entityTypesList.selected = {entityTypesList[1]} end 
-		end
+		gui.entityTypesList:setParam("tree", {children = entityTypesList})
+		if #entityTypesList > 0 then gui.entityTypesList.selected = {entityTypesList[1]} end 
+	end
 
+	function updateGUI()
+		-- update treeview selections
 		gui.selectedEntityType = #gui.entityTypesList.selected > 0 and gui.entityTypesList.selected[1].entityType or nil
 
-		-- update entity list
-		local entityList = {}
-		for i = #map.entities, 1, -1 do
-			local coreComp = getComponentByType(map.entities[i], "Core")
-			assert(coreComp, "Every entity has to have a 'Core' component!")
-			assert(coreComp.name, "Every 'Core' component should have a name attribute")
-			local name = coreComp.name .. " (guid: " .. tostring(map.entities[i].guid) .. ") " .. (coreComp.hidden and "(hidden)" or "")
-			table.insert(entityList, {text = name, entity = map.entities[i]})
-		end
-
 		local selectedGUIDs = table.map(gui.entityList.selected, function(selected) return selected.entity.guid end)
-		gui.entityList:setParam("tree", {children = entityList})
 		gui.selectEntities(selectedGUIDs)
 
 		-- Property and scene window + gui elements from component descriptions
