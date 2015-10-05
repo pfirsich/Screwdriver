@@ -6,6 +6,12 @@ do
 
 	local entityCounter = 1
 
+	function editor.changeEditMode(mode)
+		if mode.onEnter then mode.onEnter() end
+		editor.editMode = mode
+		updateShapes() -- update shapes to make sure mode dependent shapes are now correct
+	end
+
 	function editor.createEntity(type, componentProperties)
 		local entity = {
 			type = type,
@@ -32,9 +38,8 @@ do
 				error("Only one pickable component can be added to an entity.")
 			end 
 
-			if component.componentType == "Core" then 
-				component.name = type
-			end
+			local pass = tableDeepCopy(component)
+			if component.componentType == "Core" and component.name == nil then pass.name = type end
 
 			if componentProperties then 
 				-- addTable only works properly if number and order of components still matches the entity type
@@ -42,10 +47,10 @@ do
 				if component.id ~= componentProperties[i].id then 
 					error("Current entity type description seems to mismatch the one of the saved map for entity of type '" .. entity.type .. "'")
 				end
-				addTable(component, componentProperties[i]) 
+				addTable(pass, componentProperties[i]) 
 			end 
 
-			local componentObject = components[component.componentType](component)
+			local componentObject = components[component.componentType](pass)
 			created[component.componentType] = true
 			if components[component.componentType].static.__pickable then 
 				-- I have to save the id because saving a reference would cause the object to be duplicated when deep-copied (therefore destroying the reference)
