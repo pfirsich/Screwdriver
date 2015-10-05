@@ -319,6 +319,7 @@ function getModule(gui)
             if radius > 1.0 then 
                 -- negative sign because I think clockwise increase seems more intuitive
                 self:setParam("value", self.value - dphi * (type(self.speed) == "function" and self.speed(radius) or self.speed))
+                self:updateText()
             end
         end
     end
