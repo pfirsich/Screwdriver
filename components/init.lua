@@ -15,3 +15,4 @@ end
 require "components.core"
 require "components.transforms"
 require "components.sprite"
+require "components.simplepolygon"

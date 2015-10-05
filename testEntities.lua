@@ -56,3 +56,21 @@ entityTypes["everything"] = {
 		}
 	}
 }
+
+entityTypes["polygon"] = {
+	label = "Polygon",
+	components = {
+		{
+			id = "core",
+			componentType = "Core",
+		},
+		{	
+			id = "transforms",
+			componentType = "Transforms",
+		},
+		{
+			id = "polygon",
+			componentType = "SimplePolygon",
+		}
+	}
+}

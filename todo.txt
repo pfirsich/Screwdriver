@@ -1,6 +1,6 @@
 * Polygone!
-	* Wie starten die? Preset-Buttons, Textur-Buttons (auch Trafos), Trafos, Funktionen für Modis? Transforms-Component für Texturen benutzen?
-* Show Details
+	* Wann recentern?
+* __showInDetails ist Quark. Stattdessen ne getDetails() Funktion für Components implementieren.
 
 Later/Maybe:
 * Error handling gründlich überdenken - jedes mal error ist ziemlich ungeil

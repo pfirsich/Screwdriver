@@ -25,6 +25,14 @@ function getEntityByGUID(guid)
 	return nil
 end 
 
+function getEntityByComponent(bycomp)
+	for _, entity in ipairs(map.entities) do 
+		for _, component in ipairs(entity.components) do 
+			if component == bycomp then return entity end
+		end 
+	end 
+end 
+
 function foreachEntity(func)
 	for i = 1, #map.entities do 
 		if map.entities[i].guid == guid then func(map.entities[i]) end 

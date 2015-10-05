@@ -18,16 +18,16 @@ return {
 						410.30911707899,
 						-450.16477911596,
 					},
+					["id"] = "transforms",
 					["componentType"] = "Transforms",
 					["keepAspect"] = true,
-					["id"] = "transforms",
-					["scale"] = {
-						1,
-						1,
-					},
 					["offset"] = {
 						0,
 						0,
+					},
+					["scale"] = {
+						1,
+						1,
 					},
 				},
 				{
@@ -59,16 +59,16 @@ return {
 						-599.63678711659,
 						-304.71355580778,
 					},
+					["id"] = "transforms",
 					["componentType"] = "Transforms",
 					["keepAspect"] = true,
-					["id"] = "transforms",
-					["scale"] = {
-						1,
-						1,
-					},
 					["offset"] = {
 						0,
 						0,
+					},
+					["scale"] = {
+						1,
+						1,
 					},
 				},
 				{
@@ -100,16 +100,16 @@ return {
 						289.87418406386,
 						-22.335460774793,
 					},
+					["id"] = "transforms",
 					["componentType"] = "Transforms",
 					["keepAspect"] = true,
-					["id"] = "transforms",
-					["scale"] = {
-						1,
-						1,
-					},
 					["offset"] = {
 						0,
 						0,
+					},
+					["scale"] = {
+						1,
+						1,
 					},
 				},
 				{
@@ -141,16 +141,16 @@ return {
 						314.14805096344,
 						105.59883615666,
 					},
+					["id"] = "transforms",
 					["componentType"] = "Transforms",
 					["keepAspect"] = true,
-					["id"] = "transforms",
-					["scale"] = {
-						1,
-						1,
-					},
 					["offset"] = {
 						0,
 						0,
+					},
+					["scale"] = {
+						1,
+						1,
 					},
 				},
 				{
@@ -182,16 +182,16 @@ return {
 						901.10575080064,
 						-276.35377422384,
 					},
+					["id"] = "transforms",
 					["componentType"] = "Transforms",
 					["keepAspect"] = true,
-					["id"] = "transforms",
-					["scale"] = {
-						1,
-						1,
-					},
 					["offset"] = {
 						0,
 						0,
+					},
+					["scale"] = {
+						1,
+						1,
 					},
 				},
 				{
@@ -220,18 +220,60 @@ return {
 			},
 			["guid"] = 5,
 		},
+		{
+			["type"] = "polygon",
+			["components"] = {
+				{
+					["id"] = "core",
+					["componentType"] = "Core",
+					["hidden"] = false,
+					["name"] = "polygon",
+				},
+				{
+					["rotation"] = 0,
+					["position"] = {
+						0,
+						0,
+					},
+					["id"] = "transforms",
+					["componentType"] = "Transforms",
+					["keepAspect"] = true,
+					["offset"] = {
+						0,
+						0,
+					},
+					["scale"] = {
+						1,
+						1,
+					},
+				},
+				{
+					["points"] = {
+					},
+					["imagePath"] = "",
+					["color"] = {
+						255,
+						255,
+						255,
+						255,
+					},
+					["renderWholeTexture"] = false,
+					["componentType"] = "SimplePolygon",
+					["id"] = "polygon",
+				},
+			},
+			["guid"] = 6,
+		},
 	},
 	["componentStatics"] = {
-		["WithOptional"] = {
+		["Sprite"] = {
 		},
 		["Transforms"] = {
-		},
-		["Sprite"] = {
 		},
 		["Core"] = {
 			["gridSpacing"] = 50.157566905938,
 			["showGrid"] = true,
-			["showEntityBorders"] = false,
+			["showEntityBorders"] = true,
 			["backgroundColor"] = {
 				102.16923418404,
 				68.562017521701,
@@ -240,6 +282,10 @@ return {
 			},
 			["showNames"] = false,
 			["showDetails"] = true,
+		},
+		["WithOptional"] = {
+		},
+		["SimplePolygon"] = {
 		},
 	},
 }

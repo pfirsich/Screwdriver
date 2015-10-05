@@ -149,7 +149,7 @@ function love.mousepressed(x, y, button)
 			camera.zoomLevel = camera.zoomLevel + 1
 		end
 
-		if button == "l" then 
+		if button == "l" and not editor.editMode.fixedSelection then 
 			if #editor.hoveredEntities > 0 then 					
 				local ctrl = love.keyboard.isDown("lctrl") and editor.editMode == editor.defaultEditMode
 				if love.keyboard.isDown("lalt") and #gui.selectedEntities == 1 then -- step down selection
@@ -182,10 +182,13 @@ function love.mousepressed(x, y, button)
 						gui.selectEntities({editor.hoveredEntities[#editor.hoveredEntities]})
 					end
 				end
-				if editor.editMode.onMouseDown then editor.editMode.onMouseDown(x, y, button) end
 			else 
 				gui.selectEntities({})
 			end
+		end
+		
+		if #gui.selectedEntities > 0 and editor.editMode.onMouseDown then 		
+			editor.editMode.onMouseDown(x, y, button)
 		end
 	end
 end
@@ -194,8 +197,11 @@ function love.mousereleased(x, y, button)
 	if callSpecialMode("mousereleased", x, y, button) then return end
 
 	gui.base:mouseReleased(x, y, button)
-	if editor.editMode.onMouseUp then editor.editMode.onMouseUp(x, y, button) end
 	camera.dragged = false
+	
+	if #gui.selectedEntities > 0 and editor.editMode.onMouseUp then 		
+		editor.editMode.onMouseUp(x, y, button)
+	end
 end
 
 function love.mousemoved(x, y, dx, dy)
@@ -215,7 +221,9 @@ function love.mousemoved(x, y, dx, dy)
 		editor.hoveredEntities = {}
 	end 
 
-	if editor.editMode.onMouseMove then editor.editMode.onMouseMove(x, y, dx, dy) end
+	if #gui.selectedEntities > 0 and editor.editMode.onMouseMove then 
+		editor.editMode.onMouseMove(x, y, dx, dy) 
+	end
 end
 
 function love.textinput(text)
@@ -330,7 +338,7 @@ function love.draw()
 		end
 	camera.pop()
 
-	local modeDescription = "Mode: " .. editor.editMode.description
+	local modeDescription = "Mode: " .. editor.editMode.description .. (editor.editMode.fixedSelection and " (selection fixed)" or "")
 	local winW, winH = love.window.getDimensions()
 	local textW, textH = love.graphics.getFont():getWidth(modeDescription), love.graphics.getFont():getHeight()
 	local shadowOffset = 2
