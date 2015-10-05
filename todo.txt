@@ -4,6 +4,7 @@
 
 Later/Maybe:
 * Error handling gründlich überdenken - jedes mal error ist ziemlich ungeil
+* Zoom in den Mauszeiger, statt in den Bildschirm-Mittelpunkt
 
 * Arrow key + enter Bedienung im filebrowser
 * Texture-GUI-Element, das File + Preview ist
