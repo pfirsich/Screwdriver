@@ -41,6 +41,5 @@ Mittelpunkt des Polygons immer an einer praktischen Stelle
 # Bugs:
 * GUI
 	* Breakout-Widgets sind kaka (siehe Numberwheel für's grid spacing) (oder close-buttons)
-	* Checkboxes verstehen nicht, dass man weiter hovert, wenn man die gerade gecheckt/unchecked hat
 * Up/Down mit multiple selection macht funky sachen, wenn alle ausgewählten schon ganz oben sind
 * editModes kacken ein bisschen ab, wenn man position, scale oder rotation des Transform-Components auf nil setzt
