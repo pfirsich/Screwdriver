@@ -81,6 +81,7 @@ do
 
 	shortcut("tab", 'toggle(components["Core"].static, "showEntityBorders"); toggle(components["Core"].static, "showNames")', true) 
 	shortcut("c", 'toggle(components["Transforms"].static, "showCenterMarkers")', true) 
+	shortcut("g", 'toggle(components["Core"].static, "showGrid")', true) 
 	shortcut("pageup", "editor.entityUp(gui.selectedEntities)", true)
 	shortcut("pagedown", "editor.entityDown(gui.selectedEntities)", true)
 	shortcut("delete", "editor.removeEntities(gui.selectedEntities)", true)

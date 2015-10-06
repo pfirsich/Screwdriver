@@ -285,7 +285,7 @@ function getModule(gui)
     theme.Numberwheel.wheelAlpha = 150
 
     function theme.Numberwheel.init(self)
-        self.breakout = true
+        self.breakout = false
         self.numberInputLine.position = {self.theme.Numberwheel.textMarginLeft, 0}
         self.numberInputLine.width = self.width - self.theme.Numberwheel.textMarginLeft
         self.numberInputLine.height = self.height
@@ -325,11 +325,11 @@ function getModule(gui)
     end
 
     function theme.Numberwheel.onMouseDown(self, x, y, button)
-        if button == "l" then self.blownUp = true end
+        if button == "l" then self.blownUp = true; self.breakout = true end
     end
 
     function theme.Numberwheel.mouseReleased(self, x, y, button)
-        if button == "l" then self.blownUp = false end
+        if button == "l" then self.blownUp = false; self.breakout = false end
     end
 
     function theme.Numberwheel.draw(self)
