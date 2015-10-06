@@ -140,14 +140,21 @@ function love.mousepressed(x, y, button)
 	gui.base:mousePressed(x, y, button)
 
 	if gui.base.hovered == nil then -- in editor view, not hovering GUI elements
+		local wmx, wmy = camera.screenToWorld(x, y)
+		local mouseWorldRel = {camera.position[1] - wmx, camera.position[2] - wmy}
+
 		if button == "m" then -- drag camera
 			camera.dragged = true
 			camera.dragStartCamera = {camera.position[1], camera.position[2]}
 			camera.dragStartMouse = {x, y}
 		elseif button == "wd" then 
 			camera.zoomLevel = camera.zoomLevel - 1
+			camera.position[1] = wmx + mouseWorldRel[1] * camera.zoomBase
+			camera.position[2] = wmy + mouseWorldRel[2] * camera.zoomBase
 		elseif button == "wu" then 
 			camera.zoomLevel = camera.zoomLevel + 1
+			camera.position[1] = wmx + mouseWorldRel[1] / camera.zoomBase
+			camera.position[2] = wmy + mouseWorldRel[2] / camera.zoomBase
 		end
 
 		if button == "l" and not editor.editMode.fixedSelection then 

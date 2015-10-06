@@ -1,8 +1,7 @@
 Later/Maybe:
-* __showInDetails ist Quark. Stattdessen ne getDetails() Funktion für Components implementieren.
 * Error handling gründlich überdenken - jedes mal error ist ziemlich ungeil
-* Zoom in den Mauszeiger, statt in den Bildschirm-Mittelpunkt
 
+* __showInDetails ist Quark. Stattdessen ne getDetails() Funktion für Components implementieren.
 * Arrow key + enter Bedienung im filebrowser
 * Texture-GUI-Element, das File + Preview ist
 * onFocusLost an cliExec für alle anderen Widgets binden
