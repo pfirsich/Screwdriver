@@ -399,7 +399,7 @@ end
 function pickEntities(x, y)
 	local picked = {}
 	for _, entity in ipairs(map.entities) do 
-		if #entity.__shapes > 0 and pointInBBox(entity.__shapes.bbox, x, y) then 
+		if not getComponentByType(entity, "Core").locked and #entity.__shapes > 0 and pointInBBox(entity.__shapes.bbox, x, y) then 
 			for _, shape in ipairs(entity.__shapes) do 
 				if pointInPolygon(shape, x, y) then 
 					table.insert(picked, entity.guid)
