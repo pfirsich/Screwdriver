@@ -9,9 +9,10 @@ return {
 				{
 					["componentType"] = "Core",
 					["entityGUID"] = 1,
-					["fromMapFile"] = true,
-					["hidden"] = false,
 					["id"] = "core",
+					["fromMapFile"] = true,
+					["locked"] = false,
+					["hidden"] = false,
 					["name"] = "polygon",
 				},
 				{
@@ -125,9 +126,10 @@ return {
 				{
 					["componentType"] = "Core",
 					["entityGUID"] = 2,
-					["fromMapFile"] = true,
-					["hidden"] = false,
 					["id"] = "core",
+					["fromMapFile"] = true,
+					["locked"] = false,
+					["hidden"] = false,
 					["name"] = "polygon",
 				},
 				{
@@ -207,9 +209,10 @@ return {
 				{
 					["componentType"] = "Core",
 					["entityGUID"] = 3,
-					["fromMapFile"] = true,
-					["hidden"] = false,
 					["id"] = "core",
+					["fromMapFile"] = true,
+					["locked"] = false,
+					["hidden"] = false,
 					["name"] = "polygon",
 				},
 				{
@@ -218,8 +221,8 @@ return {
 						1,
 					},
 					["position"] = {
-						-1095.7216427007,
-						-1309.6740643228,
+						-1477.7377959961,
+						-1701.2406214506,
 					},
 					["id"] = "transforms",
 					["componentType"] = "Transforms",
@@ -313,6 +316,7 @@ return {
 		["WithOptional"] = {
 		},
 		["SimplePolygon"] = {
+			["showCenterMarkers"] = true,
 		},
 	},
 }

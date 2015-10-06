@@ -68,13 +68,27 @@ do
     end
 
     function Transforms:renderEnd()
+        if Transforms.static.showCenterMarkers then 
+            local radius = 10.0 / camera.scale
+            love.graphics.setColor(0, 0, 0, 255)
+            love.graphics.setLineWidth(4.0 / camera.scale)
+            love.graphics.circle("line", 0, 0, radius, 16)
+            love.graphics.setColor(255, 255, 255, 255)
+            love.graphics.setLineWidth(2.0/camera.scale)
+            love.graphics.circle("line", 0, 0, radius, 16)
+        end
+
         love.graphics.pop()
     end 
 
     Transforms.static.__unique = true
     Transforms.static.__pickable = false
 
-    Transforms.static.__guiElements = {}
+    Transforms.static.showCenterMarkers = true
+
+    Transforms.static.__guiElements = {
+        {variable = "showCenterMarkers", type = "Checkbox", label = "Show center markers", cmd = ""},
+    }
 
     Transforms.editModes = {
         move = {description = "Move entities"},

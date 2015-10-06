@@ -186,27 +186,12 @@ do
                 love.graphics.draw(self.__mesh)
             end
         end
-
-        if SimplePolygon.static.showCenterMarkers then 
-            if self.__mesh then -- draw only if recentered at least once
-                love.graphics.setColor(0, 0, 0, 255)
-                love.graphics.setLineWidth(4.0/camera.scale)
-                love.graphics.circle("line", 0, 0, 15 / camera.scale, 16)
-                love.graphics.setColor(255, 255, 255, 255)
-                love.graphics.setLineWidth(2.0/camera.scale)
-                love.graphics.circle("line", 0, 0, 15 / camera.scale, 16)
-            end 
-        end
     end
 
     SimplePolygon.static.__unique = true
     SimplePolygon.static.__pickable = true
 
-    SimplePolygon.static.showCenterMarkers = true
-
-    SimplePolygon.static.__guiElements = {
-        {variable = "showCenterMarkers", type = "Checkbox", label = "Show center markers", cmd = ""},
-    }
+    SimplePolygon.static.__guiElements = {}
 
     SimplePolygon.editModes = {
         appendPoints = {description = "Append points to the polygon (initialization)", fixedSelection = true},
