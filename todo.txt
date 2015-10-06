@@ -1,5 +1,4 @@
 # ToDo
-* Render whole texture wieder fixen
 * Undo triggert kein remesh
 * Alte Editor-Notizen revisiten und mögliche Ideen hierhin übertragen
 

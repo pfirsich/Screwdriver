@@ -172,7 +172,12 @@ do
 
         love.graphics.setColor(unpack(self.color))
         if self.renderWholeTexture and self.__image then 
-        	love.graphics.draw(self.__image, -self.textureOffset[1], -self.textureOffset[2], self.textureRotation, 1.0/self.textureScale[1], 1.0/self.textureScale[2])
+        	love.graphics.push()
+        	love.graphics.scale(1.0/self.textureScale[1], 1.0/self.textureScale[2])
+        	love.graphics.rotate(self.textureRotation)
+        	love.graphics.translate(-self.textureOffset[1], -self.textureOffset[2])
+        	love.graphics.draw(self.__image)
+        	love.graphics.pop()
     	else 
 	    	if #self.points >= 6 then 
 	    		love.graphics.draw(self.__mesh)
