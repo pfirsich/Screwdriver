@@ -138,7 +138,8 @@ do
 	function editor.saveMapFile(path)
 		file, err = io.open(path, "w")
 		if file == nil then 
-			error("Error while opening file: " .. tostring(err))
+			--error("Error while opening file: " .. tostring(err))
+			gui.dialogNotice("Error while opening file: " .. tostring(err) .. ". Nothing has been saved!")
 		else 
 			local function writeTable(tbl, depth)
 			    for key, value in pairs(tbl) do
