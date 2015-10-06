@@ -252,6 +252,7 @@ do
         mode.entity = getEntityByGUID(gui.selectedEntities[1])
         if mode.entity then 
             mode.polygon = getComponentByType(mode.entity, "SimplePolygon")
+            mode.transforms = getComponentByType(mode.entity, "Transforms")
             if mode.polygon then 
                 local wx, wy = camera.screenToWorld(x, y)
                 if #mode.entity.__shapes > 0 and pointInBBox(mode.entity.__shapes.bbox, wx, wy) then 
@@ -283,6 +284,12 @@ do
     function SimplePolygon.editModes.editPoints.onMouseMove(x, y, dx, dy)
         local mode = SimplePolygon.editModes.editPoints
         if mode.shapeIndex and mode.shapeIndex <= #mode.polygon.points/2 then 
+            if mode.transforms then 
+                dx = dx / mode.transforms.scale[1]
+                dy = dy / mode.transforms.scale[2]
+                dx, dy = rotatePoint(dx, dy, -mode.transforms.rotation)
+            end 
+
             local i = mode.shapeIndex * 2 - 1
             mode.polygon.points[i+0] = mode.polygon.points[i+0] + dx / camera.scale
             mode.polygon.points[i+1] = mode.polygon.points[i+1] + dy / camera.scale
@@ -325,6 +332,12 @@ do
     function SimplePolygon.editModes.editTexture.onMouseMove(x, y, dx, dy)
         local mode = SimplePolygon.editModes.editTexture
         if mode.translate then 
+            if mode.transforms then  
+                dx = dx / mode.transforms.scale[1]
+                dy = dy / mode.transforms.scale[2]
+                dx, dy = rotatePoint(dx, dy, -mode.transforms.rotation)
+            end
+
             dx, dy = rotatePoint(dx, dy, -mode.polygon.textureRotation)
             mode.polygon.textureOffset[1] = mode.polygon.textureOffset[1] - dx * mode.polygon.textureScale[1] / camera.scale 
             mode.polygon.textureOffset[2] = mode.polygon.textureOffset[2] - dy * mode.polygon.textureScale[2] / camera.scale 
