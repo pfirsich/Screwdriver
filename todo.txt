@@ -1,10 +1,9 @@
 * Polygone!
-	* Lock aspect ratio für texture scale
-	* Texture transforms (Offset und Rotatio übrig)
-		* edit modes - linksklick translate, rechtsklick rotate, skalieren ohne edit mode!
+	* edit modes - linksklick translate, rechtsklick rotate, skalieren ohne edit mode!
 		* draw texture only mode
 
 Later/Maybe:
+* Reihenfolge der Texture transforms ändern?
 * __showInDetails ist Quark. Stattdessen ne getDetails() Funktion für Components implementieren.
 * Error handling gründlich überdenken - jedes mal error ist ziemlich ungeil
 * Zoom in den Mauszeiger, statt in den Bildschirm-Mittelpunkt

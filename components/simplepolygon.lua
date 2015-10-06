@@ -14,7 +14,10 @@ do
         self.color = {255, 255, 255, 255}
         self.renderWholeTexture = false
         self.points = {}
+        self.textureScaleKeepAspect = true
         self.textureScale = {1.0, 1.0}
+        self.textureOffset = {0.0, 0.0}
+        self.textureRotation = 0
         addTable(self, properties)
 
         self.__mesh = love.graphics.newMesh({{0, 0, 0, 0}}, nil, "triangles")
@@ -28,6 +31,10 @@ do
             {variable = "", type = "Button", label = "Load Image", cmd = ":loadImageFile()"},
             {variable = "textureScale[1]", type = "Numberwheel", label = "X-Texture scale", cmd = ":remesh()", params = {speed = 0.5}},
             {variable = "textureScale[2]", type = "Numberwheel", label = "Y-Texture scale", cmd = ":remesh()", params = {speed = 0.5}},
+            {variable = "textureScaleKeepAspect", type = "Checkbox", label = "Keep aspect ratio", cmd = ""},
+            {variable = "textureOffset[1]", type = "Numberwheel", label = "X-Texture offset", cmd = ":remesh()"},
+            {variable = "textureOffset[2]", type = "Numberwheel", label = "Y-Texture offset", cmd = ":remesh()"},
+            {variable = "textureRotation", type = "Numberwheel", label = "Texture angle", cmd = ":remesh()", params = {speed = 1.0}},
             {variable = "renderWholeTexture", type = "Checkbox", label = "Render whole texture"},
         }
 
@@ -139,8 +146,11 @@ do
     			for i = 1, 6, 2 do 
     				local u, v 
     				if self.__image then 
-    					u = tri[i] / self.__image:getWidth() * self.textureScale[1]
-    					v = tri[i+1] / self.__image:getHeight() * self.textureScale[2]
+    					u = tri[i+0] * self.textureScale[1] / self.__image:getWidth()
+    					v = tri[i+1] * self.textureScale[2] / self.__image:getHeight()
+    					u, v = rotatePoint(u, v, self.textureRotation)
+    					u = u + self.textureOffset[1] / self.__image:getWidth()
+    					v = v + self.textureOffset[2] / self.__image:getHeight()
     				else 
     					u, v = 0.0, 0.0
     				end
@@ -153,6 +163,19 @@ do
     end
 
     function SimplePolygon:renderStart()
+    	-- This might not belong here
+    	if self.textureScaleKeepAspect then 
+            if self.textureScale[1] ~= self.__lastTextureScale then 
+                self.textureScale[2] = self.textureScale[1]
+                self.__lastTextureScale = self.textureScale[1]
+            end 
+
+            if self.textureScale[2] ~= self.__lastTextureScale then 
+                self.textureScale[1] = self.textureScale[2]
+                self.__lastTextureScale = self.textureScale[1]
+            end
+        end 
+
         love.graphics.setColor(unpack(self.color))
     	if #self.points >= 6 then 
     		love.graphics.draw(self.__mesh)
