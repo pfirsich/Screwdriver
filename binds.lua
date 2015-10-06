@@ -30,18 +30,33 @@ do
 		end 
 	end
 
-	function simulateShortcut(keys)
+	function getShortcut(keys)
 		for _, shortcut in ipairs(shortcuts) do 
 			for str in string.gmatch(shortcut[1], "([^,]+)") do
 				if str == keys then 
-					if shortcut[3] then 
-						cliExec(shortcut[2])
-					else
-						cliExec_nostack(shortcut[2])
-					end
-					break
+					return shortcut
 				end
 			end
+		end
+	end 
+
+	function simulateShortcut(keys)
+		local shortcut = getShortcut(keys)
+		if shortcut then 
+			if shortcut[3] then 
+				cliExec(shortcut[2])
+			else
+				cliExec_nostack(shortcut[2])
+			end
+		end
+	end
+
+	function printShortcut(keys)
+		local shortcut = getShortcut(keys)
+		if shortcut then 
+			gui.printConsole("keys: " .. shortcut[1] .. ", uses map stack: " .. tostring(shortcut[3]) .. ", command: " .. shortcut[2])
+		else 
+			gui.printConsole("No shortcut found matching this key combination.")
 		end
 	end
 
@@ -65,6 +80,7 @@ do
 	shortcut("lctrl+w,rctrl+w", 'editor.changeEditMode(components["SimplePolygon"].editModes.editTexture)', true)
 
 	shortcut("tab", 'toggle(components["Core"].static, "showEntityBorders"); toggle(components["Core"].static, "showNames")', true) 
+	shortcut("c", 'toggle(components["Transforms"].static, "showCenterMarkers")', true) 
 	shortcut("pageup", "editor.entityUp(gui.selectedEntities)", true)
 	shortcut("pagedown", "editor.entityDown(gui.selectedEntities)", true)
 	shortcut("delete", "editor.removeEntities(gui.selectedEntities)", true)

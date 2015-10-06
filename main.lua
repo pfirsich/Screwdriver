@@ -99,6 +99,11 @@ function love.load(arg)
 	end
 end
 
+function quit(force)
+	if force then love.quit = nil end 
+	love.event.push("quit")
+end
+
 function love.quit()
 	gui.base:focus(nil) -- so numberwheels/colorpicker, which cliExec on onFocusLost execute due changes
 	local inMode, q = callSpecialMode("quit")
