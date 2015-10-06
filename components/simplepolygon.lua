@@ -18,7 +18,8 @@ do
         self:remesh()
 
         self.__guiElements = {
-            {variable = "", type = "Button", label = "Edit Points", cmd = 'editor.changeEditMode(components["SimplePolygon"].editModes.editPoints)'},
+            {variable = "", type = "Button", label = "Edit Vertices", cmd = 'editor.changeEditMode(components["SimplePolygon"].editModes.editPoints)'},
+            {variable = "", type = "Button", label = "Edit Texture", cmd = 'editor.changeEditMode(components["SimplePolygon"].editModes.editTexture)'},
             {variable = "color", type = "Color", label = "Color", cmd = ""},
             {variable = "imagePath", type = "File", label = "Image", cmd = ""},
             {variable = "", type = "Button", label = "Load Image", cmd = ":loadImageFile()"},
