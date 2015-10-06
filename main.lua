@@ -100,6 +100,7 @@ function love.load(arg)
 end
 
 function love.quit()
+	gui.base:focus(nil) -- so numberwheels/colorpicker, which cliExec on onFocusLost execute due changes
 	local inMode, q = callSpecialMode("quit")
 	if inMode then return q end 
 
@@ -403,19 +404,24 @@ function pickEntities(x, y)
 	return picked
 end
 
+function rotatePoint(x, y, angle)
+	local sinphi = math.sin(angle)
+	local cosphi = math.cos(angle)
+	local nx = cosphi * x - sinphi * y
+	local ny = sinphi * x + cosphi * y
+	return nx, ny
+end
+
 function transformPoint(transforms, x, y)
 	-- offset and scale 
 	x = (x + transforms.offset[1]) * transforms.scale[1]
 	y = (y + transforms.offset[2]) * transforms.scale[2]
 
 	-- rotate
-	local sinphi = math.sin(transforms.rotation)
-	local cosphi = math.cos(transforms.rotation)
-	local nx = cosphi * x - sinphi * y
-	local ny = sinphi * x + cosphi * y
+	x, y = rotatePoint(x, y, transforms.rotation)
 
 	-- translate and return
-	return nx + transforms.position[1], ny + transforms.position[2]
+	return x + transforms.position[1], y + transforms.position[2]
 end 
 
 function updateShape(entity)
