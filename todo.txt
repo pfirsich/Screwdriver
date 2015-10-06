@@ -1,6 +1,5 @@
 * Polygone!
 	* edit modes - linksklick translate, rechtsklick rotate, skalieren ohne edit mode!
-		* draw texture only mode
 
 Later/Maybe:
 * Reihenfolge der Texture transforms ändern?

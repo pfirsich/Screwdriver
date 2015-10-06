@@ -148,9 +148,9 @@ do
     				if self.__image then 
     					u = tri[i+0] * self.textureScale[1] / self.__image:getWidth()
     					v = tri[i+1] * self.textureScale[2] / self.__image:getHeight()
-    					u, v = rotatePoint(u, v, self.textureRotation)
-    					u = u + self.textureOffset[1] / self.__image:getWidth()
-    					v = v + self.textureOffset[2] / self.__image:getHeight()
+    					u = u + self.textureOffset[1] * self.textureScale[1] / self.__image:getWidth()
+    					v = v + self.textureOffset[2] * self.textureScale[2] / self.__image:getHeight()
+    					u, v = rotatePoint(u, v, -self.textureRotation)
     				else 
     					u, v = 0.0, 0.0
     				end
@@ -177,17 +177,23 @@ do
         end 
 
         love.graphics.setColor(unpack(self.color))
-    	if #self.points >= 6 then 
-    		love.graphics.draw(self.__mesh)
+        if self.renderWholeTexture and self.__image then 
+        	love.graphics.draw(self.__image, -self.textureOffset[1], -self.textureOffset[2], self.textureRotation, 1.0/self.textureScale[1], 1.0/self.textureScale[2])
+    	else 
+	    	if #self.points >= 6 then 
+	    		love.graphics.draw(self.__mesh)
+	    	end
+	    end
 
-    		-- center marker
+    	-- center marker
+    	if self.__mesh then -- draw only if recentered at least once
     		love.graphics.setColor(0, 0, 0, 255)
     		love.graphics.setLineWidth(4.0/camera.scale)
     		love.graphics.circle("line", 0, 0, 15 / camera.scale, 12)
     		love.graphics.setColor(255, 255, 255, 255)
     		love.graphics.setLineWidth(2.0/camera.scale)
     		love.graphics.circle("line", 0, 0, 15 / camera.scale, 12)
-    	end
+    	end 
     end
 
     SimplePolygon.static.__unique = true
