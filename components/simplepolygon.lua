@@ -22,7 +22,7 @@ do
             {variable = "imagePath", type = "File", label = "Image", cmd = ""},
             {variable = "textureScale[1]", type = "Numberwheel", label = "X-Texture scale", cmd = ":remesh()", params = {speed = 0.5}},
             {variable = "textureScale[2]", type = "Numberwheel", label = "Y-Texture scale", cmd = ":remesh()", params = {speed = 0.5}},
-            {variable = "textureScaleKeepAspect", type = "Checkbox", label = "Keep aspect ratio", cmd = ""},
+            {variable = "textureScaleKeepAspect", type = "Checkbox", label = "Use X-scale for Y-scale too", cmd = ""},
             {variable = "textureOffset[1]", type = "Numberwheel", label = "X-Texture offset", cmd = ":remesh()"},
             {variable = "textureOffset[2]", type = "Numberwheel", label = "Y-Texture offset", cmd = ":remesh()"},
             {variable = "textureRotation", type = "Numberwheel", label = "Texture angle", cmd = ":remesh()", params = {speed = 1.0}},
@@ -136,6 +136,7 @@ do
     end
 
     function SimplePolygon:remesh()
+        if self.textureScaleKeepAspect then self.textureScale[2] = self.textureScale[1] end 
         if #self.points >= 6 then 
             local tris = love.math.triangulate(self.points)
             local vertices = {}
@@ -160,19 +161,6 @@ do
     end
 
     function SimplePolygon:renderStart()
-        -- This might not belong here
-        if self.textureScaleKeepAspect then 
-            if self.textureScale[1] ~= self.__lastTextureScale then 
-                self.textureScale[2] = self.textureScale[1]
-                self.__lastTextureScale = self.textureScale[1]
-            end 
-
-            if self.textureScale[2] ~= self.__lastTextureScale then 
-                self.textureScale[1] = self.textureScale[2]
-                self.__lastTextureScale = self.textureScale[1]
-            end
-        end 
-
         love.graphics.setColor(unpack(self.color))
         if self.renderWholeTexture and self.__image then 
             love.graphics.push()
@@ -339,6 +327,7 @@ do
             end
 
             dx, dy = rotatePoint(dx, dy, -mode.polygon.textureRotation)
+            if mode.polygon.textureScaleKeepAspect then mode.polygon.textureScale[2] = mode.polygon.textureScale[1] end 
             mode.polygon.textureOffset[1] = mode.polygon.textureOffset[1] - dx * mode.polygon.textureScale[1] / camera.scale 
             mode.polygon.textureOffset[2] = mode.polygon.textureOffset[2] - dy * mode.polygon.textureScale[2] / camera.scale 
             mode.polygon:remesh()
