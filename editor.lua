@@ -209,6 +209,7 @@ do
 			for _, tableEntity in ipairs(fileTable.entities) do 
 				editor.createEntity(tableEntity.type, tableEntity.components)
 			end 
+			updateUserdataValues()
 			updateShapes()
 
 			for componentType, statics in pairs(fileTable.componentStatics) do 

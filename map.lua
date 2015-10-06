@@ -17,6 +17,7 @@ do
 	function mapStack:seek(v, absolute)
 		self.cursor = math.min(math.max(absolute and v or self.cursor + v, 1), #self)
 		map = tableDeepCopy(mapStack[self.cursor].map)
+		updateUserdataValues()
 	end 
 
 	function mapStack:print()

@@ -6,28 +6,32 @@ do
         self.imagePath = "" -- find test image!
         self.color = {255, 255, 255, 255}
         addTable(self, properties)
-        if self.imagePath ~= "" then self:loadImageFile(self.imagePath) end
 
         self.__guiElements = {
             {variable = "color", type = "Color", label = "Color", cmd = ""},
             {variable = "imagePath", type = "File", label = "Image", cmd = ""},
-            {variable = "", type = "Button", label = "Load Image", cmd = ":loadImageFile()"}
         }
 
         self.__hidden = false
         self.__showInDetails = false
     end
 
+    function Sprite:updateUserdataValues()
+        self:loadImageFile()
+    end 
+
     function Sprite:loadImageFile()
-        local attr, err = lfs.attributes(self.imagePath)
-        if attr == nil then 
-            error("Attributes of image file could not be checked - '" .. self.imagePath .. "': " .. err)
+        if self.imagePath ~= "" then 
+            local attr, err = lfs.attributes(self.imagePath)
+            if attr == nil then 
+                error("Attributes of image file could not be checked - '" .. self.imagePath .. "': " .. err)
+            end
+            if attr.mode ~= "file" then 
+                error("'" .. self.imagePath .. "' is not a file.")
+            end
+            
+            self.__image = getImage(self.imagePath)
         end
-        if attr.mode ~= "file" then 
-            error("'" .. self.imagePath .. "' is not a file.")
-        end
-        
-        self.__image = getImage(self.imagePath)
     end 
 
     function Sprite:getShapes()

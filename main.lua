@@ -457,6 +457,16 @@ function updateShapes()
 	end
 end
 
+-- This function exists because some objects can not copied on/off the mapStack (for example löve-objects (images, meshes))
+-- so the references always point to the same objects which sometimes have to be updated
+function updateUserdataValues()
+	for _, entity in ipairs(map.entities) do 
+		for _, component in ipairs(entity.components) do 
+			if component.updateUserdataValues then component:updateUserdataValues() end
+		end
+	end 
+end
+
 -- does not push the changes to the mapstack (mostly used for actions that don't affect the map state)
 function cliExec_nostack(cmd) 
 	gui.consoleOutput:addLine("(not pushed) >> " .. cmd)
@@ -479,9 +489,11 @@ function cliExec(cmd)
 		-- if any divergences occur it will be immediately noticable by changes not showing up
 		editor.unsavedChanges = true
 		mapStack:push(cmd)
+		-- If f() accesses userdata values, this might go wrong!
 		map = mapStack[mapStack.cursor].map
 		local ret = f()
 		updateShapes() -- do this first to make sure that the mapStack has the properly updated shapes
+		updateUserdataValues()
 		map = tableDeepCopy(mapStack[mapStack.cursor].map)
 		return ret
 	end
