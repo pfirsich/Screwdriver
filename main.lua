@@ -482,7 +482,7 @@ function cliExec(cmd)
 	gui.consoleOutput:addLine(">> " .. cmd)
 	local f, err = loadstring(cmd)
 	if f == nil then 
-		gui.consoleOutput:addLine("ERROR: " .. err)
+		gui.printConsole("Syntax error: " .. err)
 	else 
 		-- every change to the map object is thrown away and cmd is applied to the topmost element on the mapStack
 		-- then another working copy map is created
@@ -491,11 +491,15 @@ function cliExec(cmd)
 		mapStack:push(cmd)
 		-- If f() accesses userdata values, this might go wrong!
 		map = mapStack[mapStack.cursor].map
-		local ret = f()
-		updateShapes() -- do this first to make sure that the mapStack has the properly updated shapes
-		updateUserdataValues()
-		map = tableDeepCopy(mapStack[mapStack.cursor].map)
-		return ret
+		local status, ret = pcall(f)
+		if status == false then 
+			gui.printConsole("Error: " .. ret)
+		else 
+			updateShapes() -- do this first to make sure that the mapStack has the properly updated shapes
+			updateUserdataValues()
+			map = tableDeepCopy(mapStack[mapStack.cursor].map)
+			return ret
+		end
 	end
 end 
 
