@@ -1,8 +1,4 @@
-* Polygone!
-	* edit modes - linksklick translate, rechtsklick rotate, skalieren ohne edit mode!
-
 Later/Maybe:
-* Reihenfolge der Texture transforms ändern?
 * __showInDetails ist Quark. Stattdessen ne getDetails() Funktion für Components implementieren.
 * Error handling gründlich überdenken - jedes mal error ist ziemlich ungeil
 * Zoom in den Mauszeiger, statt in den Bildschirm-Mittelpunkt

@@ -1,10 +1,3 @@
--- SimplePolygon
--- boolean für ganze textur statt polygon rendern
---     editTextures - fixedSelection = true, shapes = polygon
---         drag&drop move
---         rotate around center
---         scale around center
-
 do
     local SimplePolygon = class()
     components["SimplePolygon"] = SimplePolygon
@@ -148,9 +141,9 @@ do
     				if self.__image then 
     					u = tri[i+0] * self.textureScale[1] / self.__image:getWidth()
     					v = tri[i+1] * self.textureScale[2] / self.__image:getHeight()
-    					u = u + self.textureOffset[1] * self.textureScale[1] / self.__image:getWidth()
-    					v = v + self.textureOffset[2] * self.textureScale[2] / self.__image:getHeight()
     					u, v = rotatePoint(u, v, -self.textureRotation)
+    					u = u + self.textureOffset[1] / self.__image:getWidth()
+    					v = v + self.textureOffset[2] / self.__image:getHeight()
     				else 
     					u, v = 0.0, 0.0
     				end
@@ -203,7 +196,8 @@ do
 
     SimplePolygon.editModes = {
     	appendPoints = {description = "Append points to the polygon (initialization)", fixedSelection = true},
-    	editPoints = {description = "Left click on edge to add vertex, right click vertex to remove, drag&drop vertices to move", fixedSelection = true}
+    	editPoints = {description = "Left click on edge to add vertex, right click vertex to remove, drag&drop vertices to move", fixedSelection = true},
+		editTexture = {description = "Left click to drag the texture, right click to rotate", fixedSelection = true},
 	}
 
 	function SimplePolygon:addPoint(x, y, index)
@@ -309,4 +303,55 @@ do
     	end 
     	mode.shapeIndex = nil
     end 
+
+    -- Texture mode
+    function SimplePolygon.editModes.editTexture.onMouseDown(x, y, button) 
+    	local mode = SimplePolygon.editModes.editTexture
+    	mode.entity = getEntityByGUID(gui.selectedEntities[1])
+    	if mode.entity then 
+    		mode.polygon = getComponentByType(mode.entity, "SimplePolygon")
+    		mode.transforms = getComponentByType(mode.entity, "Transforms")
+
+    		if mode.transforms then 
+    			local wx, wy = camera.screenToWorld(x, y)
+    			mode.mouseAngleStart = math.atan2(wy - mode.transforms.position[2], wx - mode.transforms.position[1])
+    			mode.trafoRotStart = mode.polygon.textureRotation
+    		end
+
+    		if mode.polygon then 
+    			local wx, wy = camera.screenToWorld(x, y)
+    			if button == "l" then mode.translate = true end
+    			if button == "r" then mode.rotate = true end
+    		end 
+    	end 
+    end 
+
+    function SimplePolygon.editModes.editTexture.onMouseMove(x, y, dx, dy)
+    	local mode = SimplePolygon.editModes.editTexture
+    	if mode.translate then 
+    		dx, dy = rotatePoint(dx, dy, -mode.polygon.textureRotation)
+    		mode.polygon.textureOffset[1] = mode.polygon.textureOffset[1] - dx * mode.polygon.textureScale[1] / camera.scale 
+    		mode.polygon.textureOffset[2] = mode.polygon.textureOffset[2] - dy * mode.polygon.textureScale[2] / camera.scale 
+    		mode.polygon:remesh()
+    	end 
+
+    	if mode.rotate then 
+    		local wx, wy = camera.screenToWorld(x, y)
+    		local angle = math.atan2(wy - mode.transforms.position[2], wx - mode.transforms.position[1])
+            mode.polygon.textureRotation = mode.trafoRotStart + angle - mode.mouseAngleStart
+            mode.polygon:remesh()
+    	end 
+    end 
+
+    function SimplePolygon.editModes.editTexture.onMouseUp(x, y, button) 
+    	local mode = SimplePolygon.editModes.editTexture
+    	if mode.translate then 
+    		cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon").textureOffset = {' .. table.concat(mode.polygon.textureOffset, ", ") .. "}")
+    	end 
+    	if mode.rotate then 
+    		cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon").textureRotation = ' .. tostring(mode.polygon.textureRotation))
+    	end
+    	mode.translate = false
+    	mode.rotate = false
+    end
 end 
