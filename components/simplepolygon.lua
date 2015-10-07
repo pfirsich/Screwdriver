@@ -13,8 +13,6 @@ do
         self.textureRotation = 0
         addTable(self, properties)
 
-        self.__mesh = love.graphics.newMesh({{0, 0, 0, 0}}, nil, "triangles")
-
         self.__guiElements = {
             {variable = "", type = "Button", label = "Edit Vertices", cmd = 'editor.changeEditMode(components["SimplePolygon"].editModes.editPoints)'},
             {variable = "", type = "Button", label = "Edit Texture", cmd = 'editor.changeEditMode(components["SimplePolygon"].editModes.editTexture)'},
@@ -29,8 +27,9 @@ do
             {variable = "renderWholeTexture", type = "Checkbox", label = "Render whole texture"},
         }
 
-        -- HAX HAX HAX HAX HAX
-        if not properties.fromMapFile then 
+        if #self.points > 0 then 
+            self.__mesh = love.graphics.newMesh(#self.points / 2, nil, "triangles")
+        else 
             editor.changeEditMode(components["SimplePolygon"].editModes.appendPoints, properties.entityGUID)
             gui.printConsole("New polygon entity created. Changed edit mode to append points mode!")
         end
@@ -115,6 +114,12 @@ do
         return ret
     end
 
+    function SimplePolygon:initMesh()
+        self.__mesh = love.graphics.newMesh(#self.points / 2, nil, "triangles")
+        self:recenter()
+        self:remesh()
+    end
+
     function SimplePolygon:recenter()
         local centerX, centerY = 0, 0
         for i = 1, #self.points, 2 do 
@@ -131,32 +136,32 @@ do
 
         local transforms = getComponentByType(getEntityByComponent(self), "Transforms")
         transforms.position = {transforms.position[1] + centerX, transforms.position[2] + centerY}
-
-        self:remesh()
     end
 
     function SimplePolygon:remesh()
-        if self.textureScaleKeepAspect then self.textureScale[2] = self.textureScale[1] end 
-        if #self.points >= 6 then 
-            local tris = love.math.triangulate(self.points)
-            local vertices = {}
-            for _, tri in ipairs(tris) do
-                for i = 1, 6, 2 do 
-                    local u, v 
-                    if self.__image then 
-                        u = tri[i+0] * self.textureScale[1] / self.__image:getWidth()
-                        v = tri[i+1] * self.textureScale[2] / self.__image:getHeight()
-                        u, v = rotatePoint(u, v, -self.textureRotation)
-                        u = u + self.textureOffset[1] / self.__image:getWidth()
-                        v = v + self.textureOffset[2] / self.__image:getHeight()
-                    else 
-                        u, v = 0.0, 0.0
+        if self.__mesh then 
+            if self.textureScaleKeepAspect then self.textureScale[2] = self.textureScale[1] end 
+            if #self.points >= 6 then 
+                local tris = love.math.triangulate(self.points)
+                local vertices = {}
+                for _, tri in ipairs(tris) do
+                    for i = 1, 6, 2 do 
+                        local u, v 
+                        if self.__image then 
+                            u = tri[i+0] * self.textureScale[1] / self.__image:getWidth()
+                            v = tri[i+1] * self.textureScale[2] / self.__image:getHeight()
+                            u, v = rotatePoint(u, v, -self.textureRotation)
+                            u = u + self.textureOffset[1] / self.__image:getWidth()
+                            v = v + self.textureOffset[2] / self.__image:getHeight()
+                        else 
+                            u, v = 0.0, 0.0
+                        end
+                        local vertex = {tri[i], tri[i+1], u, v, 255, 255, 255, 255}
+                        table.insert(vertices, vertex)
                     end
-                    local vertex = {tri[i], tri[i+1], u, v, 255, 255, 255, 255}
-                    table.insert(vertices, vertex)
-                end
-            end 
-            self.__mesh:setVertices(vertices)
+                end 
+                self.__mesh:setVertices(vertices)
+            end
         end
     end
 
@@ -170,7 +175,7 @@ do
             love.graphics.draw(self.__image)
             love.graphics.pop()
         else 
-            if #self.points >= 6 then 
+            if #self.points >= 6 and self.__mesh then 
                 love.graphics.draw(self.__mesh)
             end
         end
@@ -212,7 +217,7 @@ do
     end
 
     function SimplePolygon.editModes.appendPoints.onExit()
-        getComponentByType(getEntityByGUID(SimplePolygon.editModes.appendPoints.entityGUID), "SimplePolygon"):recenter()
+        getComponentByType(getEntityByGUID(SimplePolygon.editModes.appendPoints.entityGUID), "SimplePolygon"):initMesh()
     end 
 
     function SimplePolygon.editModes.appendPoints.onMouseDown(x, y, button)
