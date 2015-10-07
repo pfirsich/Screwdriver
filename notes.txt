@@ -1,0 +1,7 @@
+Test-Game:
+Man ist in ner Höhle und muss ein Artefakt einsammeln. Nach dem Einsammeln beginnt der Timer und die Höhle beginnt einzubrechen (adequate Inszenierung!)
+Super meat boy/N+-mäßiger Platform-Kram mit kleinen Challenges zwischendrin um Items einzusammeln
+Z.B. ne Peitsche mit der man sich an Lampen festpeitschen und schwingen kann.
+Ne Dose Bohnen zum Furzen = Boost
+Vllt. auch Gegner die da rumlaufen oder Stacheln
+Visibility wie in TerminationShock
