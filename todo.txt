@@ -1,6 +1,4 @@
 # ToDo
-* Finally fix the keepAspectRatio-mess, rename cmd-parameter for numberwheels, unwrap params
-
 * Fancy Polygon
 	* Polygon fans (nicht in SimplePolygon, da SimplePolygon etwas sein sollte, dass überall relativ einfach implementiert werden kann):
 		Checkbox für an-aus, NW für height, NW für y-offset, NW für texture scale (entlang des fans), Texture, Color, angle range (vllt. auch direction und dann symmetrische angle range oder einen editMode in dem man edges damit bemalen kann (links = add, rechts = remove))
@@ -11,8 +9,9 @@
 	MetadataEntity? Draws connections (on-off-able) and has an edit mode to connect entities (maybe a dropdown?)
 
 # Später
+* keepAspect ratio wieder einbauen und reparieren. Dafür in onChange einhooken und gleichsetzen, dann gui.lua so modifizieren, dass bei cliExec für geindexte Variablen (z.B. position[1]), der ganze Tupel gesetzt wird.
 * Show centers of mass for polygons (to see the origin for texture rotation)
-* edit mode fürs offsetting
+* edit mode fürs offsetting - vermutlich nicht, da man das in der Regel genau machen will
 * File type Filter im Filebrowser
 * "spacing"-gui elemente, die Strukturierung etwas einfacher machen? (bzw. möglich)
 

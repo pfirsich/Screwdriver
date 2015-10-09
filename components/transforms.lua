@@ -38,7 +38,7 @@ do
             table.iextend(self.__guiElements,{
                 {variable = "scale[1]", type = "Numberwheel", label = "X-Scale", params = {speed = 0.5}},
                 {variable = "scale[2]", type = "Numberwheel", label = "Y-Scale", params = {speed = 0.5}},
-                {variable = "keepAspect", type = "Checkbox", label = "Use X-scale for Y-scale too"},
+                {variable = "keepAspect", type = "Checkbox", label = "Keep aspect ratio in edit mode"},
                 {variable = "", type = "Button", label = "Scale entities", cmd = 'editor.changeEditMode(components["Transforms"].editModes.scale)'}
             })
         end 
@@ -60,7 +60,6 @@ do
     end
 
     function Transforms:renderStart()
-        if self.keepAspect then self.scale[2] = self.scale[1] end
         love.graphics.push()
         if self.position ~= nil then love.graphics.translate(unpack(self.position)) end
         if self.rotation ~= nil then love.graphics.rotate(self.rotation) end
@@ -195,7 +194,6 @@ do
             end 
 
             mode.transforms.scale = {mode.startScale[1] * facX, mode.startScale[2] * facY}
-            if mode.transforms.keepAspect then mode.transforms.scale[2] = mode.transforms.scale[1] end
         end 
     end 
 

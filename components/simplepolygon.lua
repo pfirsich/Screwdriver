@@ -8,7 +8,6 @@ do
         self.renderWholeTexture = false
         self.renderWireframe = false
         self.points = {}
-        self.textureScaleKeepAspect = true
         self.textureScale = {1.0, 1.0}
         self.textureOffset = {0.0, 0.0}
         self.textureRotation = 0
@@ -22,7 +21,6 @@ do
             {variable = "imagePath", type = "File", label = "Image"},
             {variable = "textureScale[1]", type = "Numberwheel", label = "X-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
             {variable = "textureScale[2]", type = "Numberwheel", label = "Y-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
-            {variable = "textureScaleKeepAspect", type = "Checkbox", label = "Use X-scale for Y-scale too"},
             {variable = "textureOffset[1]", type = "Numberwheel", label = "X-Texture offset", params = {onChange = remeshOnChange}},
             {variable = "textureOffset[2]", type = "Numberwheel", label = "Y-Texture offset", params = {onChange = remeshOnChange}},
             {variable = "textureRotation", type = "Numberwheel", label = "Texture angle", params = {speed = 1.0, onChange = remeshOnChange}},
@@ -143,7 +141,6 @@ do
 
     function SimplePolygon:remesh()
         if self.__mesh then 
-            if self.textureScaleKeepAspect then self.textureScale[2] = self.textureScale[1] end 
             if #self.points >= 6 then 
                 local tris = love.math.triangulate(self.points)
                 local vertices = {}
@@ -338,7 +335,6 @@ do
             end
 
             dx, dy = rotatePoint(dx, dy, -mode.polygon.textureRotation)
-            if mode.polygon.textureScaleKeepAspect then mode.polygon.textureScale[2] = mode.polygon.textureScale[1] end 
             mode.polygon.textureOffset[1] = mode.polygon.textureOffset[1] - dx * mode.polygon.textureScale[1] / camera.scale 
             mode.polygon.textureOffset[2] = mode.polygon.textureOffset[2] - dy * mode.polygon.textureScale[2] / camera.scale 
             mode.polygon:remesh()
