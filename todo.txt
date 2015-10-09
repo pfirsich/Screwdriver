@@ -1,4 +1,7 @@
 # ToDo
+* offset-center-marker sind kaputt
+* add points auf edges ist an der falschen position
+
 * Fancy Polygon
 	* Polygon fans (nicht in SimplePolygon, da SimplePolygon etwas sein sollte, dass überall relativ einfach implementiert werden kann):
 		Checkbox für an-aus, NW für height, NW für y-offset, NW für texture scale (entlang des fans), Texture, Color, angle range (vllt. auch direction und dann symmetrische angle range oder einen editMode in dem man edges damit bemalen kann (links = add, rechts = remove))

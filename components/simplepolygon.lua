@@ -6,6 +6,7 @@ do
         self.imagePath = ""
         self.color = {255, 255, 255, 255}
         self.renderWholeTexture = false
+        self.renderWireframe = false
         self.points = {}
         self.textureScaleKeepAspect = true
         self.textureScale = {1.0, 1.0}
@@ -25,6 +26,7 @@ do
             {variable = "textureOffset[2]", type = "Numberwheel", label = "Y-Texture offset", cmd = ":remesh()"},
             {variable = "textureRotation", type = "Numberwheel", label = "Texture angle", cmd = ":remesh()", params = {speed = 1.0}},
             {variable = "renderWholeTexture", type = "Checkbox", label = "Render whole texture"},
+            {variable = "renderWireframe", type = "Checkbox", label = "Render as wireframe (debug)"},
         }
 
         if #self.points > 0 then 
@@ -176,7 +178,9 @@ do
             love.graphics.pop()
         else 
             if #self.points >= 6 and self.__mesh then 
+                if self.renderWireframe then love.graphics.setWireframe(true) end
                 love.graphics.draw(self.__mesh)
+                if self.renderWireframe then love.graphics.setWireframe(false) end
             end
         end
     end
