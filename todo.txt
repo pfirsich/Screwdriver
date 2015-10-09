@@ -1,5 +1,4 @@
 # ToDo
-* offset-center-marker sind kaputt
 * add points auf edges ist an der falschen position
 
 * Fancy Polygon

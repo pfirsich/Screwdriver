@@ -57,17 +57,17 @@ do
     end
 
     function Transforms:renderEnd()
+        love.graphics.pop()
+
         if Transforms.static.showCenterMarkers then 
             local radius = 10.0 / camera.scale
             love.graphics.setColor(0, 0, 0, 255)
             love.graphics.setLineWidth(4.0 / camera.scale)
-            love.graphics.circle("line", 0, 0, radius, 16)
+            love.graphics.circle("line", self.position[1], self.position[2], radius, 16)
             love.graphics.setColor(255, 255, 255, 255)
             love.graphics.setLineWidth(2.0/camera.scale)
-            love.graphics.circle("line", 0, 0, radius, 16)
+            love.graphics.circle("line", self.position[1], self.position[2], radius, 16)
         end
-
-        love.graphics.pop()
     end 
 
     Transforms.static.__unique = true
