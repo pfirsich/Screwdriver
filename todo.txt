@@ -1,5 +1,5 @@
 # ToDo
-* add points auf edges ist an der falschen position
+* Finally fix the keepAspectRatio-mess, rename cmd-parameter for numberwheels, unwrap params
 
 * Fancy Polygon
 	* Polygon fans (nicht in SimplePolygon, da SimplePolygon etwas sein sollte, dass überall relativ einfach implementiert werden kann):
@@ -11,6 +11,7 @@
 	MetadataEntity? Draws connections (on-off-able) and has an edit mode to connect entities (maybe a dropdown?)
 
 # Später
+* Show centers of mass for polygons (to see the origin for texture rotation)
 * edit mode fürs offsetting
 * File type Filter im Filebrowser
 * "spacing"-gui elemente, die Strukturierung etwas einfacher machen? (bzw. möglich)

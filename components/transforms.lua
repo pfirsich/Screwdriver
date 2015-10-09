@@ -47,6 +47,18 @@ do
         self.__showInDetails = false
     end
 
+    function Transforms:localToWorld(x, y)
+        x, y = (x + self.offset[1]) * self.scale[1], (y + self.offset[2]) * self.scale[2]
+        x, y = rotatePoint(x, y, self.rotation)
+        return x + self.position[1], y + self.position[2]
+    end 
+
+    function Transforms:worldToLocal(x, y)
+        x, y = x - self.position[1], y - self.position[2]
+        x, y = rotatePoint(x, y, -self.rotation)
+        return x / self.scale[1] - self.offset[1], y / self.scale[2] - self.offset[2]
+    end
+
     function Transforms:renderStart()
         if self.keepAspect then self.scale[2] = self.scale[1] end
         love.graphics.push()

@@ -13,6 +13,14 @@ function tableCopy(from)
     return to
 end 
 
+function rotatePoint(x, y, angle)
+    local sinphi = math.sin(angle)
+    local cosphi = math.cos(angle)
+    local nx = cosphi * x - sinphi * y
+    local ny = sinphi * x + cosphi * y
+    return nx, ny
+end
+
 function tableDeepCopy(tbl)
     local ret = {}
     for k, v in pairs(tbl) do

@@ -416,26 +416,6 @@ function pickEntities(x, y)
 	return picked
 end
 
-function rotatePoint(x, y, angle)
-	local sinphi = math.sin(angle)
-	local cosphi = math.cos(angle)
-	local nx = cosphi * x - sinphi * y
-	local ny = sinphi * x + cosphi * y
-	return nx, ny
-end
-
-function transformPoint(transforms, x, y)
-	-- offset and scale 
-	x = (x + transforms.offset[1]) * transforms.scale[1]
-	y = (y + transforms.offset[2]) * transforms.scale[2]
-
-	-- rotate
-	x, y = rotatePoint(x, y, transforms.rotation)
-
-	-- translate and return
-	return x + transforms.position[1], y + transforms.position[2]
-end 
-
 function updateShape(entity)
 	if entity.__pickableComponent then 
 		entity.__shapes = getComponentById(entity, entity.__pickableComponent):getShapes()
@@ -445,7 +425,7 @@ function updateShape(entity)
 		if transforms then 
 			for _, shape in ipairs(entity.__shapes) do 
 				for i = 1, #shape, 2 do 
-					shape[i], shape[i+1] = transformPoint(transforms, shape[i], shape[i+1])
+					shape[i], shape[i+1] = transforms:localToWorld(shape[i], shape[i+1])
 					minX, minY = math.min(minX, shape[i]), math.min(minY, shape[i+1])
 					maxX, maxY = math.max(maxX, shape[i]), math.max(maxY, shape[i+1])
 				end 

@@ -196,11 +196,12 @@ do
         editTexture = {description = "Left click to drag the texture, right click to rotate", fixedSelection = true},
     }
 
-    function SimplePolygon:addPoint(x, y, index)
+    function SimplePolygon:addPoint(x, y, index) -- in world coordinates
         local transforms = getComponentByType(getEntityByComponent(self), "Transforms")
         index = index ~= nil and index*2+1 or #self.points+1
-        table.insert(self.points, index, y - transforms.position[2])
-        table.insert(self.points, index, x - transforms.position[1])
+        x, y = transforms:worldToLocal(x, y)
+        table.insert(self.points, index, y)
+        table.insert(self.points, index, x)
     end
 
     function SimplePolygon:removePoint(index)
