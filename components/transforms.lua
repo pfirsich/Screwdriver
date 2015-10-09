@@ -13,32 +13,32 @@ do
         self.__guiElements = {}
         if self.position ~= nil then
             table.iextend(self.__guiElements,{
-                {variable = "position[1]", type = "Numberwheel", label = "X-Pos", cmd = ""},
-                {variable = "position[2]", type = "Numberwheel", label = "Y-Pos", cmd = ""},
+                {variable = "position[1]", type = "Numberwheel", label = "X-Pos"},
+                {variable = "position[2]", type = "Numberwheel", label = "Y-Pos"},
                 {variable = "", type = "Button", label = "Move entities", cmd = 'editor.changeEditMode(components["Transforms"].editModes.move)'}
             })
         end
             
         if self.rotation ~= nil then
             table.iextend(self.__guiElements,{
-                {variable = "rotation", type = "Numberwheel", label = "Angle", cmd = "", params = {speed = 1.0}},
+                {variable = "rotation", type = "Numberwheel", label = "Angle", params = {speed = 1.0}},
                 {variable = "", type = "Button", label = "Rotate entities", cmd = 'editor.changeEditMode(components["Transforms"].editModes.rotate)'}
             })
         end
         
         if self.offset ~= nil then 
             table.iextend(self.__guiElements,{
-                {variable = "offset[1]", type = "Numberwheel", label = "X-Offset", cmd = ""},
-                {variable = "offset[2]", type = "Numberwheel", label = "Y-Offset", cmd = ""},
+                {variable = "offset[1]", type = "Numberwheel", label = "X-Offset"},
+                {variable = "offset[2]", type = "Numberwheel", label = "Y-Offset"},
                 --{name = "Offset entities", type = "Button", id = 'editor.changeEditMode(components["Transforms"].editModes.offset)'}
             })
         end
         
         if self.scale ~= nil then 
             table.iextend(self.__guiElements,{
-                {variable = "scale[1]", type = "Numberwheel", label = "X-Scale", cmd = "", params = {speed = 0.5}},
-                {variable = "scale[2]", type = "Numberwheel", label = "Y-Scale", cmd = "", params = {speed = 0.5}},
-                {variable = "keepAspect", type = "Checkbox", label = "Use X-scale for Y-scale too", cmd = ""},
+                {variable = "scale[1]", type = "Numberwheel", label = "X-Scale", params = {speed = 0.5}},
+                {variable = "scale[2]", type = "Numberwheel", label = "Y-Scale", params = {speed = 0.5}},
+                {variable = "keepAspect", type = "Checkbox", label = "Use X-scale for Y-scale too"},
                 {variable = "", type = "Button", label = "Scale entities", cmd = 'editor.changeEditMode(components["Transforms"].editModes.scale)'}
             })
         end 
@@ -88,7 +88,7 @@ do
     Transforms.static.showCenterMarkers = true
 
     Transforms.static.__guiElements = {
-        {variable = "showCenterMarkers", type = "Checkbox", label = "Show center markers", cmd = ""},
+        {variable = "showCenterMarkers", type = "Checkbox", label = "Show center markers"},
     }
 
     Transforms.editModes = {

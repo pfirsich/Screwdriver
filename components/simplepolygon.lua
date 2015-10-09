@@ -14,17 +14,18 @@ do
         self.textureRotation = 0
         addTable(self, properties)
 
+        local remeshOnChange = function() self:remesh() end
         self.__guiElements = {
             {variable = "", type = "Button", label = "Edit Vertices", cmd = 'editor.changeEditMode(components["SimplePolygon"].editModes.editPoints)'},
             {variable = "", type = "Button", label = "Edit Texture", cmd = 'editor.changeEditMode(components["SimplePolygon"].editModes.editTexture)'},
-            {variable = "color", type = "Color", label = "Color", cmd = ""},
-            {variable = "imagePath", type = "File", label = "Image", cmd = ""},
-            {variable = "textureScale[1]", type = "Numberwheel", label = "X-Texture scale", cmd = ":remesh()", params = {speed = 0.5}},
-            {variable = "textureScale[2]", type = "Numberwheel", label = "Y-Texture scale", cmd = ":remesh()", params = {speed = 0.5}},
-            {variable = "textureScaleKeepAspect", type = "Checkbox", label = "Use X-scale for Y-scale too", cmd = ""},
-            {variable = "textureOffset[1]", type = "Numberwheel", label = "X-Texture offset", cmd = ":remesh()"},
-            {variable = "textureOffset[2]", type = "Numberwheel", label = "Y-Texture offset", cmd = ":remesh()"},
-            {variable = "textureRotation", type = "Numberwheel", label = "Texture angle", cmd = ":remesh()", params = {speed = 1.0}},
+            {variable = "color", type = "Color", label = "Color"},
+            {variable = "imagePath", type = "File", label = "Image"},
+            {variable = "textureScale[1]", type = "Numberwheel", label = "X-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
+            {variable = "textureScale[2]", type = "Numberwheel", label = "Y-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
+            {variable = "textureScaleKeepAspect", type = "Checkbox", label = "Use X-scale for Y-scale too"},
+            {variable = "textureOffset[1]", type = "Numberwheel", label = "X-Texture offset", params = {onChange = remeshOnChange}},
+            {variable = "textureOffset[2]", type = "Numberwheel", label = "Y-Texture offset", params = {onChange = remeshOnChange}},
+            {variable = "textureRotation", type = "Numberwheel", label = "Texture angle", params = {speed = 1.0, onChange = remeshOnChange}},
             {variable = "renderWholeTexture", type = "Checkbox", label = "Render whole texture"},
             {variable = "renderWireframe", type = "Checkbox", label = "Render as wireframe (debug)"},
         }

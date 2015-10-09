@@ -414,17 +414,13 @@ do
 		elseif element.type == "Numberwheel" then 
 			local label = kraid.widgets.Label{parent = parent, text = element.label, elementId = element.id}
 			parent.layout:addWidget(label)
-			local params = element.params or {speed = 10.0}
+			element.params = element.params or {speed = 10.0}
 			local numberWheel = kraid.widgets.Numberwheel{parent = parent, elementId = element.id, target = target, cliCmd = "", 
-														speed = params.speed, minValue = params.minValue, maxValue = params.maxValue}
+														speed = element.params.speed, minValue = element.params.minValue, maxValue = element.params.maxValue}
 
 			numberWheel:setParam("onChange", function(self, value) 
 				eval(self.target .. "." .. element.variable .. " = " .. tostring(value))
-				if element.cmd then 
-					local evalStr = element.cmd
-					if evalStr:sub(1,1) == "." or element.cmd:sub(1,1) == ":" then evalStr = target .. evalStr end
-					eval(evalStr) 
-				end
+				if element.params.onChange then element.params.onChange() end
 			end)
 			numberWheel:setParam("onFocusLost", widgetExecCliCmd) -- no need to updateText here, since it will be updated anyway if not focused (see updateElementWidgets)
 			parent.layout:addWidget(numberWheel)
