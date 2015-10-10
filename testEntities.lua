@@ -1,4 +1,4 @@
-entityTypes["dummy"] = {
+entityTypes["Core only"] = {
 	label = "Test entity type",
 	components = {
 		{
@@ -8,37 +8,7 @@ entityTypes["dummy"] = {
 	}
 }
 
-entityTypes["withopt"] = {
-	label = "Test dummy with optional",
-	components = {
-		{
-			id = "core",
-			componentType = "Core",
-		},
-		{	
-			id = "optional",
-			componentType = "WithOptional",
-			hasOptional = true,
-		}
-	}
-}
-
-entityTypes["withoutopt"] = {
-	label = "Test dummy without optional",
-	components = {
-		{
-			id = "core",
-			componentType = "Core",
-		},
-		{	
-			id = "optional",
-			componentType = "WithOptional",
-			hasOptional = false,
-		}
-	}
-}
-
-entityTypes["everything"] = {
+entityTypes["Sprite + Transforms"] = {
 	label = "All components",
 	components = {
 		{

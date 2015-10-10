@@ -11,9 +11,6 @@ do
             {variable = "color", type = "Color", label = "Color"},
             {variable = "imagePath", type = "File", label = "Image"},
         }
-
-        self.__hidden = false
-        self.__showInDetails = false
     end
 
     function Sprite:updateUserdataValues()

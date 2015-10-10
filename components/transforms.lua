@@ -42,9 +42,6 @@ do
                 {variable = "", type = "Button", label = "Scale entities", cmd = 'editor.changeEditMode(components["Transforms"].editModes.scale)'}
             })
         end 
-
-        self.__hidden = false
-        self.__showInDetails = false
     end
 
     function Transforms:localToWorld(x, y)

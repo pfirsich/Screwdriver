@@ -34,8 +34,6 @@ do
             editor.changeEditMode(components["SimplePolygon"].editModes.appendPoints, properties.entityGUID)
             gui.printConsole("New polygon entity created. Changed edit mode to append points mode!")
         end
-
-        self.__hidden = false
     end
 
     function SimplePolygon:updateUserdataValues()
