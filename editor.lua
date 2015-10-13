@@ -46,9 +46,6 @@ do
 
 			local pass = tableDeepCopy(component)
 			if component.componentType == "Core" and component.name == nil then pass.name = type end
-			-- HAX HAX HAX HAX HAX
-			if componentProperties then pass.fromMapFile = true end -- e.g. so edit modes that are initiated on entity creation are not entered
-			pass.entityGUID = entity.guid
 
 			if componentProperties then 
 				-- addTable only works properly if number and order of components still matches the entity type

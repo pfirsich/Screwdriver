@@ -33,7 +33,7 @@ do
         if #self.points > 0 then 
             self.__mesh = love.graphics.newMesh(#self.points / 2, nil, "triangles")
         else 
-            editor.changeEditMode(components["SimplePolygon"].editModes.appendPoints, properties.entityGUID)
+            editor.changeEditMode(components["SimplePolygon"].editModes.appendPoints)
             gui.printConsole("New polygon entity created. Changed edit mode to append points mode!")
         end
     end
@@ -218,13 +218,15 @@ do
     }
 
     -- append mode
-    function SimplePolygon.editModes.appendPoints.onEnter(entityGUID)
+    function SimplePolygon.editModes.appendPoints.onEnter()
         components["Core"].static.showEntityBorders = true
-        SimplePolygon.editModes.appendPoints.entityGUID = entityGUID
     end
 
     function SimplePolygon.editModes.appendPoints.onExit()
-        getComponentByType(getEntityByGUID(SimplePolygon.editModes.appendPoints.entityGUID), "SimplePolygon"):initMesh()
+        -- This might go wrong, if another entity is created and the first one didn't have any points appended
+        local entity = getEntityByGUID(gui.selectedEntities[1])
+        local polygon = getComponentByType(entity, "SimplePolygon")
+        if polygon then polygon:initMesh() end
     end 
 
     function SimplePolygon.editModes.appendPoints.onMouseDown(x, y, button)
@@ -308,8 +310,6 @@ do
 
     -- Texture mode
     function SimplePolygon.editModes.editTexture.onEnter(x, y, transformsKey)
-        print("FICKE DISCH")
-        print(transformsKey)
         SimplePolygon.editModes.editTexture.transformsKey = transformsKey
     end
 
