@@ -225,23 +225,25 @@ do
     function SimplePolygon.editModes.appendPoints.onExit()
         -- This might go wrong, if another entity is created and the first one didn't have any points appended
         local entity = getEntityByGUID(gui.selectedEntities[1])
-        local polygon = getComponentByType(entity, "SimplePolygon")
-        if polygon then polygon:initMesh() end
+        if entity and entity.__pickableComponent then 
+            local polygon = getComponentById(entity, entity.__pickableComponent)
+            if polygon and polygon.initMesh then polygon:initMesh() end
+        end
     end 
 
     function SimplePolygon.editModes.appendPoints.onMouseDown(x, y, button)
         local mode = SimplePolygon.editModes.appendPoints
         if button == "l" then 
             mode.entity = getEntityByGUID(gui.selectedEntities[1])
-            if mode.entity then 
-                mode.polygon = getComponentByType(mode.entity, "SimplePolygon")
-                if mode.polygon then 
+            if mode.entity and mode.entity.__pickableComponent then 
+                mode.polygon = getComponentById(mode.entity, mode.entity.__pickableComponent)
+                if mode.polygon and mode.polygon.addPoint then 
                     x, y = camera.screenToWorld(x, y)
                     local transforms = getComponentByType(mode.entity, "Transforms")
                     if transforms then 
                         x, y = transforms:worldToLocal(x, y)
                     end
-                    cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon"):addPoint(' .. x .. ", " .. y .. ')')
+                    cliExec('local entity = getEntityByGUID(gui.selectedEntities[1]); getComponentById(entity, entity.__pickableComponent):addPoint(' .. x .. ", " .. y .. ')')
                 end 
             end 
         end
@@ -256,26 +258,25 @@ do
     function SimplePolygon.editModes.editPoints.onMouseDown(x, y, button) 
         local mode = SimplePolygon.editModes.editPoints
         mode.entity = getEntityByGUID(gui.selectedEntities[1])
-        if mode.entity then 
-            mode.polygon = getComponentByType(mode.entity, "SimplePolygon")
+        if mode.entity and mode.entity.__pickableComponent then 
+            mode.polygon = getComponentById(mode.entity, mode.entity.__pickableComponent)
             mode.transforms = getComponentByType(mode.entity, "Transforms")
-            if mode.polygon then 
+            if mode.polygon and mode.polygon.removePoint and mode.polygon.addPoint and mode.polygon.movePoint then 
                 local wx, wy = camera.screenToWorld(x, y)
                 mode.shapeIndex = pickShapeFromEntity(wx, wy, mode.entity)
                 if mode.shapeIndex then 
                     if button == "r" and mode.shapeIndex <= #mode.polygon.points/2 then 
-                        cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon"):removePoint(' .. mode.shapeIndex .. ')')
+                        cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "'..mode.polygon.componentType..'"):removePoint(' .. mode.shapeIndex .. ')')
                         mode.shapeIndex = nil
                     end 
 
                     if button == "l" and mode.shapeIndex > #mode.polygon.points/2 then 
                         local pointIndex = mode.shapeIndex - #mode.polygon.points/2
-                        local transforms = getComponentByType(mode.entity, "Transforms")
-                        if transforms then 
-                            x, y = transforms:worldToLocal(wx, wy)
+                        if mode.transforms then 
+                            x, y = mode.transforms:worldToLocal(wx, wy)
                         end
                         local args = x .. ", " .. y .. ", " .. pointIndex
-                        cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon"):addPoint(' .. args .. ')')
+                        cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "'..mode.polygon.componentType..'"):addPoint(' .. args .. ')')
                     end 
                 end 
             end 
@@ -303,7 +304,7 @@ do
         if button == "l" and mode.shapeIndex and mode.shapeIndex <= #mode.polygon.points/2 then 
             local i = mode.shapeIndex * 2 - 1
             local args = mode.shapeIndex .. ", " .. mode.polygon.points[i+0] .. ", " .. mode.polygon.points[i+1]
-            cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon"):movePoint(' .. args .. ')')
+            cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "'..mode.polygon.componentType..'"):movePoint(' .. args .. ')')
         end 
         mode.shapeIndex = nil
     end 
@@ -316,11 +317,11 @@ do
     function SimplePolygon.editModes.editTexture.onMouseDown(x, y, button) 
         local mode = SimplePolygon.editModes.editTexture
         mode.entity = getEntityByGUID(gui.selectedEntities[1])
-        if mode.entity then 
-            mode.polygon = getComponentByType(mode.entity, "SimplePolygon")
+        if mode.entity and mode.entity.__pickableComponent then 
             mode.transforms = getComponentByType(mode.entity, "Transforms")
+            mode.polygon = getComponentById(mode.entity, mode.entity.__pickableComponent)
 
-            if mode.polygon then 
+            if mode.polygon and mode.polygon.getTextureTransformsToEdit then 
                 mode.transformsKey = mode.polygon:getTextureTransformsToEdit()
 
                 if mode.transforms then 
@@ -362,10 +363,10 @@ do
     function SimplePolygon.editModes.editTexture.onMouseUp(x, y, button) 
         local mode = SimplePolygon.editModes.editTexture
         if mode.translate then 
-            cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon").'..mode.transformsKey..'.offset = {' .. table.concat(mode.polygon[mode.transformsKey].offset, ", ") .. "}")
+            cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "'..mode.polygon.componentType..'").'..mode.transformsKey..'.offset = {' .. table.concat(mode.polygon[mode.transformsKey].offset, ", ") .. "}")
         end 
         if mode.rotate then 
-            cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon").'..mode.transformsKey..'.rotation = ' .. tostring(mode.polygon[mode.transformsKey].rotation))
+            cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "'..mode.polygon.componentType..'").'..mode.transformsKey..'.rotation = ' .. tostring(mode.polygon[mode.transformsKey].rotation))
         end
         mode.translate = false
         mode.rotate = false
