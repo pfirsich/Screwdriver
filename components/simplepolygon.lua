@@ -8,9 +8,11 @@ do
         self.renderWholeTexture = false
         self.renderWireframe = false
         self.points = {}
-        self.textureScale = {1.0, 1.0}
-        self.textureOffset = {0.0, 0.0}
-        self.textureRotation = 0
+        self.textureTransforms = {
+            scale = {1.0, 1.0},
+            offset = {0.0, 0.0},
+            rotation = 0,
+        }
         addTable(self, properties)
 
         local remeshOnChange = function() self:remesh() end
@@ -19,11 +21,11 @@ do
             {variable = "", type = "Button", label = "Edit Texture", cmd = 'editor.changeEditMode(components["SimplePolygon"].editModes.editTexture)'},
             {variable = "color", type = "Color", label = "Color"},
             {variable = "imagePath", type = "File", label = "Image"},
-            {variable = "textureScale[1]", type = "Numberwheel", label = "X-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
-            {variable = "textureScale[2]", type = "Numberwheel", label = "Y-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
-            {variable = "textureOffset[1]", type = "Numberwheel", label = "X-Texture offset", params = {onChange = remeshOnChange}},
-            {variable = "textureOffset[2]", type = "Numberwheel", label = "Y-Texture offset", params = {onChange = remeshOnChange}},
-            {variable = "textureRotation", type = "Numberwheel", label = "Texture angle", params = {speed = 1.0, onChange = remeshOnChange}},
+            {variable = "textureTransforms.scale[1]", type = "Numberwheel", label = "X-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
+            {variable = "textureTransforms.scale[2]", type = "Numberwheel", label = "Y-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
+            {variable = "textureTransforms.offset[1]", type = "Numberwheel", label = "X-Texture offset", params = {onChange = remeshOnChange}},
+            {variable = "textureTransforms.offset[2]", type = "Numberwheel", label = "Y-Texture offset", params = {onChange = remeshOnChange}},
+            {variable = "textureTransforms.rotation", type = "Numberwheel", label = "Texture angle", params = {speed = 1.0, onChange = remeshOnChange}},
             {variable = "renderWholeTexture", type = "Checkbox", label = "Render whole texture"},
             {variable = "renderWireframe", type = "Checkbox", label = "Render as wireframe (debug)"},
         }
@@ -148,11 +150,11 @@ do
                     for i = 1, 6, 2 do 
                         local u, v 
                         if self.__image then 
-                            u = tri[i+0] * self.textureScale[1] / self.__image:getWidth()
-                            v = tri[i+1] * self.textureScale[2] / self.__image:getHeight()
-                            u, v = rotatePoint(u, v, -self.textureRotation)
-                            u = u + self.textureOffset[1] / self.__image:getWidth()
-                            v = v + self.textureOffset[2] / self.__image:getHeight()
+                            u = tri[i+0] * self.textureTransforms.scale[1] / self.__image:getWidth()
+                            v = tri[i+1] * self.textureTransforms.scale[2] / self.__image:getHeight()
+                            u, v = rotatePoint(u, v, -self.textureTransforms.rotation)
+                            u = u + self.textureTransforms.offset[1] / self.__image:getWidth()
+                            v = v + self.textureTransforms.offset[2] / self.__image:getHeight()
                         else 
                             u, v = 0.0, 0.0
                         end
@@ -169,9 +171,9 @@ do
         love.graphics.setColor(unpack(self.color))
         if self.renderWholeTexture and self.__image then 
             love.graphics.push()
-            love.graphics.scale(1.0/self.textureScale[1], 1.0/self.textureScale[2])
-            love.graphics.rotate(self.textureRotation)
-            love.graphics.translate(-self.textureOffset[1], -self.textureOffset[2])
+            love.graphics.scale(1.0/self.textureTransforms.scale[1], 1.0/self.textureTransforms.scale[2])
+            love.graphics.rotate(self.textureTransforms.rotation)
+            love.graphics.translate(-self.textureTransforms.offset[1], -self.textureTransforms.offset[2])
             love.graphics.draw(self.__image)
             love.graphics.pop()
         else 
@@ -198,6 +200,10 @@ do
         local i = index * 2 - 1
         self.points[i+0] = x
         self.points[i+1] = y
+    end
+
+    function SimplePolygon:getTextureTransformsToEdit()
+        return "textureTransforms"
     end
 
     SimplePolygon.static.__unique = true
@@ -301,6 +307,12 @@ do
     end 
 
     -- Texture mode
+    function SimplePolygon.editModes.editTexture.onEnter(x, y, transformsKey)
+        print("FICKE DISCH")
+        print(transformsKey)
+        SimplePolygon.editModes.editTexture.transformsKey = transformsKey
+    end
+
     function SimplePolygon.editModes.editTexture.onMouseDown(x, y, button) 
         local mode = SimplePolygon.editModes.editTexture
         mode.entity = getEntityByGUID(gui.selectedEntities[1])
@@ -308,13 +320,15 @@ do
             mode.polygon = getComponentByType(mode.entity, "SimplePolygon")
             mode.transforms = getComponentByType(mode.entity, "Transforms")
 
-            if mode.transforms then 
-                local wx, wy = camera.screenToWorld(x, y)
-                mode.mouseAngleStart = math.atan2(wy - mode.transforms.position[2], wx - mode.transforms.position[1])
-                mode.trafoRotStart = mode.polygon.textureRotation
-            end
-
             if mode.polygon then 
+                mode.transformsKey = mode.polygon:getTextureTransformsToEdit()
+
+                if mode.transforms then 
+                    local wx, wy = camera.screenToWorld(x, y)
+                    mode.mouseAngleStart = math.atan2(wy - mode.transforms.position[2], wx - mode.transforms.position[1])
+                    mode.trafoRotStart = mode.polygon[mode.transformsKey].rotation
+                end
+
                 local wx, wy = camera.screenToWorld(x, y)
                 if button == "l" then mode.translate = true end
                 if button == "r" then mode.rotate = true end
@@ -331,16 +345,16 @@ do
                 dx, dy = rotatePoint(dx, dy, -mode.transforms.rotation)
             end
 
-            dx, dy = rotatePoint(dx, dy, -mode.polygon.textureRotation)
-            mode.polygon.textureOffset[1] = mode.polygon.textureOffset[1] - dx * mode.polygon.textureScale[1] / camera.scale 
-            mode.polygon.textureOffset[2] = mode.polygon.textureOffset[2] - dy * mode.polygon.textureScale[2] / camera.scale 
+            dx, dy = rotatePoint(dx, dy, -mode.polygon[mode.transformsKey].rotation)
+            mode.polygon[mode.transformsKey].offset[1] = mode.polygon[mode.transformsKey].offset[1] - dx * mode.polygon[mode.transformsKey].scale[1] / camera.scale 
+            mode.polygon[mode.transformsKey].offset[2] = mode.polygon[mode.transformsKey].offset[2] - dy * mode.polygon[mode.transformsKey].scale[2] / camera.scale 
             mode.polygon:remesh()
         end 
 
         if mode.rotate then 
             local wx, wy = camera.screenToWorld(x, y)
             local angle = math.atan2(wy - mode.transforms.position[2], wx - mode.transforms.position[1])
-            mode.polygon.textureRotation = mode.trafoRotStart + angle - mode.mouseAngleStart
+            mode.polygon[mode.transformsKey].rotation = mode.trafoRotStart + angle - mode.mouseAngleStart
             mode.polygon:remesh()
         end 
     end 
@@ -348,10 +362,10 @@ do
     function SimplePolygon.editModes.editTexture.onMouseUp(x, y, button) 
         local mode = SimplePolygon.editModes.editTexture
         if mode.translate then 
-            cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon").textureOffset = {' .. table.concat(mode.polygon.textureOffset, ", ") .. "}")
+            cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon").'..mode.transformsKey..'.offset = {' .. table.concat(mode.polygon[mode.transformsKey].offset, ", ") .. "}")
         end 
         if mode.rotate then 
-            cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon").textureRotation = ' .. tostring(mode.polygon.textureRotation))
+            cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon").'..mode.transformsKey..'.rotation = ' .. tostring(mode.polygon[mode.transformsKey].rotation))
         end
         mode.translate = false
         mode.rotate = false
