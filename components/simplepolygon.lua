@@ -132,6 +132,11 @@ do
             self.points[i+0] = self.points[i+0] - centerX
             self.points[i+1] = self.points[i+1] - centerY
         end 
+
+        local transforms = getComponentByType(getEntityByComponent(self), "Transforms")
+        if transforms then 
+            transforms.position = {transforms.position[1] + centerX, transforms.position[2] + centerY}
+        end
     end
 
     function SimplePolygon:remesh()
@@ -178,10 +183,8 @@ do
         end
     end
 
-    function SimplePolygon:addPoint(x, y, index) -- in world coordinates
-        local transforms = getComponentByType(getEntityByComponent(self), "Transforms")
+    function SimplePolygon:addPoint(x, y, index) -- in local coordinates
         index = index ~= nil and index*2+1 or #self.points+1
-        x, y = transforms:worldToLocal(x, y)
         table.insert(self.points, index, y)
         table.insert(self.points, index, x)
     end
@@ -225,8 +228,12 @@ do
             if mode.entity then 
                 mode.polygon = getComponentByType(mode.entity, "SimplePolygon")
                 if mode.polygon then 
-                    local wx, wy = camera.screenToWorld(x, y)
-                    cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon"):addPoint(' .. wx .. ", " .. wy .. ')')
+                    x, y = camera.screenToWorld(x, y)
+                    local transforms = getComponentByType(mode.entity, "Transforms")
+                    if transforms then 
+                        x, y = transforms:worldToLocal(x, y)
+                    end
+                    cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon"):addPoint(' .. x .. ", " .. y .. ')')
                 end 
             end 
         end
@@ -255,7 +262,11 @@ do
 
                     if button == "l" and mode.shapeIndex > #mode.polygon.points/2 then 
                         local pointIndex = mode.shapeIndex - #mode.polygon.points/2
-                        local args = wx .. ", " .. wy .. ", " .. pointIndex
+                        local transforms = getComponentByType(mode.entity, "Transforms")
+                        if transforms then 
+                            x, y = transforms:worldToLocal(wx, wy)
+                        end
+                        local args = x .. ", " .. y .. ", " .. pointIndex
                         cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon"):addPoint(' .. args .. ')')
                     end 
                 end 
