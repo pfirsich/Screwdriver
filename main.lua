@@ -401,16 +401,22 @@ function pointInPolygon(polygon, x, y) -- from here: http://geomalgorithms.com/a
 	return windings ~= 0
 end
 
+function pickShapeFromEntity(x, y, entity)
+	if #entity.__shapes > 0 and pointInBBox(entity.__shapes.bbox, x, y) then 
+		for shapeIndex, shape in ipairs(entity.__shapes) do 
+			if pointInPolygon(shape, x, y) then 
+				return shapeIndex
+			end 
+		end 
+	end 
+	return nil
+end 
+
 function pickEntities(x, y)
 	local picked = {}
 	for _, entity in ipairs(map.entities) do 
-		if not getComponentByType(entity, "Core").locked and #entity.__shapes > 0 and pointInBBox(entity.__shapes.bbox, x, y) then 
-			for _, shape in ipairs(entity.__shapes) do 
-				if pointInPolygon(shape, x, y) then 
-					table.insert(picked, entity.guid)
-					break
-				end 
-			end 
+		if not getComponentByType(entity, "Core").locked and pickShapeFromEntity(x, y, entity) ~= nil then 
+			table.insert(picked, entity.guid)
 		end
 	end 
 	return picked

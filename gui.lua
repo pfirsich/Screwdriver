@@ -524,7 +524,7 @@ do
 		for _, component in ipairs(entity.components) do 
 			if not component.__hidden then 
 				for _, element in ipairs(component.__guiElements) do 
-					local name = element.__category or component.componentType
+					local name = component.__category or component.componentType
 					local cat = findCategory(gui.propertyWindowScroll, name) 
 
 					if cat == nil then 

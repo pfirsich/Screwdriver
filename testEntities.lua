@@ -1,5 +1,5 @@
 entityTypes["Core only"] = {
-	label = "Test entity type",
+	label = "Core only",
 	components = {
 		{
 			id = "core",
@@ -9,7 +9,7 @@ entityTypes["Core only"] = {
 }
 
 entityTypes["Sprite + Transforms"] = {
-	label = "All components",
+	label = "Sprite + Transforms",
 	components = {
 		{
 			id = "core",

@@ -132,9 +132,6 @@ do
             self.points[i+0] = self.points[i+0] - centerX
             self.points[i+1] = self.points[i+1] - centerY
         end 
-
-        local transforms = getComponentByType(getEntityByComponent(self), "Transforms")
-        transforms.position = {transforms.position[1] + centerX, transforms.position[2] + centerY}
     end
 
     function SimplePolygon:remesh()
@@ -181,17 +178,6 @@ do
         end
     end
 
-    SimplePolygon.static.__unique = true
-    SimplePolygon.static.__pickable = true
-
-    SimplePolygon.static.__guiElements = {}
-
-    SimplePolygon.editModes = {
-        appendPoints = {description = "Append points to the polygon (initialization)", fixedSelection = true},
-        editPoints = {description = "Left click on edge to add vertex, right click vertex to remove, drag&drop vertices to move", fixedSelection = true},
-        editTexture = {description = "Left click to drag the texture, right click to rotate", fixedSelection = true},
-    }
-
     function SimplePolygon:addPoint(x, y, index) -- in world coordinates
         local transforms = getComponentByType(getEntityByComponent(self), "Transforms")
         index = index ~= nil and index*2+1 or #self.points+1
@@ -210,6 +196,17 @@ do
         self.points[i+0] = x
         self.points[i+1] = y
     end
+
+    SimplePolygon.static.__unique = true
+    SimplePolygon.static.__pickable = true
+
+    SimplePolygon.static.__guiElements = {}
+
+    SimplePolygon.editModes = {
+        appendPoints = {description = "Append points to the polygon (initialization)", fixedSelection = true},
+        editPoints = {description = "Left click on edge to add vertex, right click vertex to remove, drag&drop vertices to move", fixedSelection = true},
+        editTexture = {description = "Left click to drag the texture, right click to rotate", fixedSelection = true},
+    }
 
     -- append mode
     function SimplePolygon.editModes.appendPoints.onEnter(entityGUID)
@@ -249,28 +246,19 @@ do
             mode.transforms = getComponentByType(mode.entity, "Transforms")
             if mode.polygon then 
                 local wx, wy = camera.screenToWorld(x, y)
-                if #mode.entity.__shapes > 0 and pointInBBox(mode.entity.__shapes.bbox, wx, wy) then 
-                    mode.shapeIndex = nil
-                    for i, shape in ipairs(mode.entity.__shapes) do 
-                        if pointInPolygon(shape, wx, wy) then 
-                            mode.shapeIndex = i 
-                            break 
-                        end 
+                mode.shapeIndex = pickShapeFromEntity(wx, wy, mode.entity)
+                if mode.shapeIndex then 
+                    if button == "r" and mode.shapeIndex <= #mode.polygon.points/2 then 
+                        cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon"):removePoint(' .. mode.shapeIndex .. ')')
+                        mode.shapeIndex = nil
                     end 
 
-                    if mode.shapeIndex then 
-                        if button == "r" and mode.shapeIndex <= #mode.polygon.points/2 then 
-                            cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon"):removePoint(' .. mode.shapeIndex .. ')')
-                            mode.shapeIndex = nil
-                        end 
-
-                        if button == "l" and mode.shapeIndex > #mode.polygon.points/2 then 
-                            local pointIndex = mode.shapeIndex - #mode.polygon.points/2
-                            local args = wx .. ", " .. wy .. ", " .. pointIndex
-                            cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon"):addPoint(' .. args .. ')')
-                        end 
+                    if button == "l" and mode.shapeIndex > #mode.polygon.points/2 then 
+                        local pointIndex = mode.shapeIndex - #mode.polygon.points/2
+                        local args = wx .. ", " .. wy .. ", " .. pointIndex
+                        cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon"):addPoint(' .. args .. ')')
                     end 
-                end
+                end 
             end 
         end 
     end 

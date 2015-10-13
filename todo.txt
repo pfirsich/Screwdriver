@@ -9,6 +9,7 @@
 	MetadataEntity? Draws connections (on-off-able) and has an edit mode to connect entities (maybe a dropdown?)
 
 # Später
+* Ein "Lineal" um Jump-Height und so im Spiel sehen zu können
 * keepAspect ratio wieder einbauen und reparieren. Dafür in onChange einhooken und gleichsetzen, dann gui.lua so modifizieren, dass bei cliExec für geindexte Variablen (z.B. position[1]), der ganze Tupel gesetzt wird.
 * Show centers of mass for polygons (to see the origin for texture rotation)
 * edit mode fürs offsetting - vermutlich nicht, da man das in der Regel genau machen will
@@ -16,6 +17,7 @@
 * "spacing"-gui elemente, die Strukturierung etwas einfacher machen? (bzw. möglich)
 
 # Vielleicht
+* Umnennen: ScrewEd?
 * Map nicht nur als Lua speichern (sodass der Editor für alles mögliche verwendet werden kann) - JSON?
 * Farbe und Transforms in ein Textur-Component verschieben und das an Entities hängen
 * __showInDetails ist Quark. Stattdessen ne getDetails() Funktion für Components implementieren.
