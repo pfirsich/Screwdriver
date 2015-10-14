@@ -80,13 +80,12 @@ do
 		local fanStartPolygon = moveEdges(polygon, fanStart)
 		local fanEndPolygon = moveEdges(polygon, fanStart + fanHeight)
 
-		local u, uNext = 0, 0
+		local u = 0.0
 		for i = 1, #fanEndPolygon, 2 do 
 			local iNext = wrappedIndex(fanEndPolygon, i+2)
 
 			local dx, dy = fanStartPolygon[i] - fanStartPolygon[iNext], fanStartPolygon[i+1] - fanStartPolygon[iNext+1]
-			local len = math.sqrt(dx*dx + dy*dy)
-			uNext = uNext + len / textureWidth * textureScale
+			local uNext = u + math.sqrt(dx*dx + dy*dy) / textureWidth * textureScale
 
 			if not edgeMask or not edgeMask[(i+1)/2] then 
 				fanVertices[#fanVertices+1] = {fanEndPolygon[i],       fanEndPolygon[i+1],       u,     0.0}

@@ -147,7 +147,7 @@ do
 				    	if kType == "string" then 
 				    		file:write(string.rep("\t", depth) .. '["' .. key .. '"] = ')
 				    	elseif kType == "number" then 
-				    		file:write(string.rep("\t", depth))
+				    		file:write(string.rep("\t", depth) .. '[' .. key .. '] = ' )
 				    	end 
 
 				    	if vType == "table" then

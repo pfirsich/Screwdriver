@@ -1,6 +1,5 @@
 # ToDo
 * Fancy Polygon
-	* fix fan edge painting
 	* texture transforms
 
 * MetadataBoolean, MetadataString, MetadataNumber, MetadataChoice (choices = list of id-label pairs)
