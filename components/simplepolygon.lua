@@ -45,75 +45,13 @@ do
 
     function SimplePolygon:loadImageFile()
         if self.imagePath ~= "" then 
-            local attr, err = lfs.attributes(self.imagePath)
-            if attr == nil then 
-                error("Attributes of image file could not be checked - '" .. self.imagePath .. "': " .. err)
-            end
-            if attr.mode ~= "file" then 
-                error("'" .. self.imagePath .. "' is not a file.")
-            end
-            
             self.__image = getImage(self.imagePath)
-            self.__image:setWrap("repeat", "repeat")
-            self.__mesh:setTexture(self.__image)
+            if self.__image then 
+                self.__image:setWrap("repeat", "repeat")
+                self.__mesh:setTexture(self.__image)
+            end
         end
     end 
-
-    local function getCircleShape(x, y, r)
-        local ret = {}
-        local segments = 12
-        for i = 1, segments do 
-            local ri = i*2 - 1
-            local angle = 2.0 * math.pi / segments * (i-1)
-            ret[ri+0] = r * math.cos(angle) + x
-            ret[ri+1] = r * math.sin(angle) + y
-        end 
-        return ret
-    end
-
-    local function getLineShape(fromX, fromY, toX, toY, margin, thickness)
-        local dirX, dirY = toX - fromX, toY - fromY
-        local dirLen = math.sqrt(dirX*dirX + dirY*dirY)
-        local orthoDirX, orthoDirY = -dirY / dirLen, dirX / dirLen
-
-        local ret = {}
-        ret[1] = fromX + dirX / dirLen * margin + orthoDirX * thickness / 2
-        ret[2] = fromY + dirY / dirLen * margin + orthoDirY * thickness / 2
-
-        ret[3] = fromX + dirX / dirLen * margin - orthoDirX * thickness / 2
-        ret[4] = fromY + dirY / dirLen * margin - orthoDirY * thickness / 2
-
-        ret[5] = fromX + dirX / dirLen * (dirLen - margin) - orthoDirX * thickness / 2
-        ret[6] = fromY + dirY / dirLen * (dirLen - margin) - orthoDirY * thickness / 2      
-
-        ret[7] = fromX + dirX / dirLen * (dirLen - margin) + orthoDirX * thickness / 2
-        ret[8] = fromY + dirY / dirLen * (dirLen - margin) + orthoDirY * thickness / 2
-
-        return ret
-    end 
-
-    function SimplePolygon:getShapes()
-        local ret = {}
-        if editor.editMode == SimplePolygon.editModes.appendPoints or editor.editMode == SimplePolygon.editModes.editPoints then 
-            local radius = 10/camera.scale
-            for i = 1, #self.points, 2 do 
-                table.insert(ret, getCircleShape(self.points[i], self.points[i+1], radius))
-            end 
-
-            if #self.points >= 6 then
-                for i = 1, #self.points, 2 do 
-                    local ni = i + 2
-                    if ni > #self.points then ni = 1 end
-                    table.insert(ret, getLineShape(self.points[i], self.points[i+1], self.points[ni], self.points[ni+1], radius, 8.0/camera.scale))
-                end 
-            end 
-        else 
-            if #self.points >= 6 then 
-                ret = {{unpack(self.points)}}
-            end 
-        end 
-        return ret
-    end
 
     function SimplePolygon:initMesh()
         self.__mesh = love.graphics.newMesh(#self.points / 2, nil, "triangles")
@@ -165,6 +103,29 @@ do
                 self.__mesh:setVertices(vertices)
             end
         end
+    end
+
+    function SimplePolygon:getShapes()
+        local ret = {}
+        if editor.editMode == SimplePolygon.editModes.appendPoints or editor.editMode == SimplePolygon.editModes.editPoints then 
+            local radius = 10/camera.scale
+            for i = 1, #self.points, 2 do 
+                table.insert(ret, getCircleShape(self.points[i], self.points[i+1], radius))
+            end 
+
+            if #self.points >= 6 then
+                for i = 1, #self.points, 2 do 
+                    local ni = i + 2
+                    if ni > #self.points then ni = 1 end
+                    table.insert(ret, getLineShape(self.points[i], self.points[i+1], self.points[ni], self.points[ni+1], radius, 8.0/camera.scale))
+                end 
+            end 
+        else 
+            if #self.points >= 6 then 
+                ret = {{unpack(self.points)}}
+            end 
+        end 
+        return ret
     end
 
     function SimplePolygon:renderStart()

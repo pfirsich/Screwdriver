@@ -18,15 +18,7 @@ do
     end 
 
     function Sprite:loadImageFile()
-        if self.imagePath ~= "" then 
-            local attr, err = lfs.attributes(self.imagePath)
-            if attr == nil then 
-                error("Attributes of image file could not be checked - '" .. self.imagePath .. "': " .. err)
-            end
-            if attr.mode ~= "file" then 
-                error("'" .. self.imagePath .. "' is not a file.")
-            end
-            
+        if self.imagePath ~= "" then             
             self.__image = getImage(self.imagePath)
         end
     end 

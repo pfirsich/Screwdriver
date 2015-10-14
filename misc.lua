@@ -89,10 +89,27 @@ function string.splitLast(str, sep)
 end 
 
 function newImage(path) 
+    local attr, err = lfs.attributes(path)
+    if attr == nil then 
+        gui.dialogNotice("Error", "Attributes of image file could not be checked - '" .. self.imagePath .. "': " .. err)
+        return nil
+    end
+    if attr.mode ~= "file" then 
+        gui.dialogNotice("Error", "'" .. self.imagePath .. "' is not a file.")
+        return nil
+    end
+
     local file = assert(io.open(path, "rb"))
     local filedata = love.filesystem.newFileData(file:read("*all"), path)
     file:close()
-    return love.graphics.newImage(filedata)
+
+    local status, ret = pcall(love.graphics.newImage, filedata)
+    if status == false then 
+        gui.dialogNotice("Error", "Error while loading image: " .. ret)
+        return nil 
+    else 
+        return ret
+    end
 end
 
 do 
@@ -158,6 +175,39 @@ paths = {
         return table.concat(retParts, "/")
     end
 }
+
+function getCircleShape(x, y, r)
+    local ret = {}
+    local segments = 12
+    for i = 1, segments do 
+        local ri = i*2 - 1
+        local angle = 2.0 * math.pi / segments * (i-1)
+        ret[ri+0] = r * math.cos(angle) + x
+        ret[ri+1] = r * math.sin(angle) + y
+    end 
+    return ret
+end
+
+function getLineShape(fromX, fromY, toX, toY, margin, thickness)
+    local dirX, dirY = toX - fromX, toY - fromY
+    local dirLen = math.sqrt(dirX*dirX + dirY*dirY)
+    local orthoDirX, orthoDirY = -dirY / dirLen, dirX / dirLen
+
+    local ret = {}
+    ret[1] = fromX + dirX / dirLen * margin + orthoDirX * thickness / 2
+    ret[2] = fromY + dirY / dirLen * margin + orthoDirY * thickness / 2
+
+    ret[3] = fromX + dirX / dirLen * margin - orthoDirX * thickness / 2
+    ret[4] = fromY + dirY / dirLen * margin - orthoDirY * thickness / 2
+
+    ret[5] = fromX + dirX / dirLen * (dirLen - margin) - orthoDirX * thickness / 2
+    ret[6] = fromY + dirY / dirLen * (dirLen - margin) - orthoDirY * thickness / 2      
+
+    ret[7] = fromX + dirX / dirLen * (dirLen - margin) + orthoDirX * thickness / 2
+    ret[8] = fromY + dirY / dirLen * (dirLen - margin) + orthoDirY * thickness / 2
+
+    return ret
+end 
 
 function printTableShallow(name, t)
     print("--- " .. name .. "(" .. tostring(t) .. "):")
