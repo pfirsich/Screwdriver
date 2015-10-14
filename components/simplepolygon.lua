@@ -23,14 +23,17 @@ do
         self.__guiElements = {
             {variable = "", type = "Button", label = "Edit Vertices", cmd = 'editor.changeEditMode(components["SimplePolygon"].editModes.editPoints)'},
             {variable = "", type = "Button", label = "Edit Texture", cmd = 'editor.changeEditMode(components["SimplePolygon"].editModes.editTexture)'},
-            {variable = "color", type = "Color", label = "Color"},
+            {type = "Line"},
             {variable = "imagePath", type = "File", label = "Image"},
+            {variable = "color", type = "Color", label = "Color"},
+            {type = "Line"},
             {variable = "textureTransforms.scale[1]", type = "Numberwheel", label = "X-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
             {variable = "textureTransforms.scale[2]", type = "Numberwheel", label = "Y-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
             {variable = "textureTransforms.offset[1]", type = "Numberwheel", label = "X-Texture offset", params = {onChange = remeshOnChange}},
             {variable = "textureTransforms.offset[2]", type = "Numberwheel", label = "Y-Texture offset", params = {onChange = remeshOnChange}},
             {variable = "textureTransforms.rotation", type = "Numberwheel", label = "Texture angle", params = {speed = 1.0, onChange = remeshOnChange}},
-            {variable = "renderWholeTexture", type = "Checkbox", label = "Render whole texture"},
+            {type = "Line"},
+            {variable = "renderWholeTexture", type = "Checkbox", label = "Render whole texture (debug)"},
             {variable = "renderWireframe", type = "Checkbox", label = "Render as wireframe (debug)"},
         }
 

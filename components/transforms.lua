@@ -15,14 +15,16 @@ do
             table.iextend(self.__guiElements,{
                 {variable = "position[1]", type = "Numberwheel", label = "X-Pos"},
                 {variable = "position[2]", type = "Numberwheel", label = "Y-Pos"},
-                {variable = "", type = "Button", label = "Move entities", cmd = 'editor.changeEditMode(components["Transforms"].editModes.move)'}
+                {variable = "", type = "Button", label = "Move entities", cmd = 'editor.changeEditMode(components["Transforms"].editModes.move)'},
+                {type = "Line"},
             })
         end
             
         if self.rotation ~= nil then
             table.iextend(self.__guiElements,{
                 {variable = "rotation", type = "Numberwheel", label = "Angle", params = {speed = 1.0}},
-                {variable = "", type = "Button", label = "Rotate entities", cmd = 'editor.changeEditMode(components["Transforms"].editModes.rotate)'}
+                {variable = "", type = "Button", label = "Rotate entities", cmd = 'editor.changeEditMode(components["Transforms"].editModes.rotate)'},
+                {type = "Line"},
             })
         end
         
@@ -31,6 +33,7 @@ do
                 {variable = "offset[1]", type = "Numberwheel", label = "X-Offset"},
                 {variable = "offset[2]", type = "Numberwheel", label = "Y-Offset"},
                 --{name = "Offset entities", type = "Button", id = 'editor.changeEditMode(components["Transforms"].editModes.offset)'}
+                {type = "Line"},
             })
         end
         
@@ -39,7 +42,8 @@ do
                 {variable = "scale[1]", type = "Numberwheel", label = "X-Scale", params = {speed = 0.5}},
                 {variable = "scale[2]", type = "Numberwheel", label = "Y-Scale", params = {speed = 0.5}},
                 {variable = "keepAspect", type = "Checkbox", label = "Keep aspect ratio in edit mode"},
-                {variable = "", type = "Button", label = "Scale entities", cmd = 'editor.changeEditMode(components["Transforms"].editModes.scale)'}
+                {variable = "", type = "Button", label = "Scale entities", cmd = 'editor.changeEditMode(components["Transforms"].editModes.scale)'},
+                {type = "Line"},
             })
         end 
     end

@@ -418,9 +418,9 @@ do
 			local numberWheel = kraid.widgets.Numberwheel{parent = parent, elementId = element.id, target = target, cliCmd = "", 
 														speed = element.params.speed, minValue = element.params.minValue, maxValue = element.params.maxValue}
 
-			numberWheel:setParam("onChange", function(self, value) 
+			numberWheel:setParam("onChange", function(self, value)
 				eval(self.target .. "." .. element.variable .. " = " .. tostring(value))
-				if element.params.onChange then element.params.onChange(); print("onChange") end
+				if element.params.onChange then element.params.onChange() end
 			end)
 			numberWheel:setParam("onFocusLost", widgetExecCliCmd) -- no need to updateText here, since it will be updated anyway if not focused (see updateElementWidgets)
 			parent.layout:addWidget(numberWheel)
@@ -460,6 +460,10 @@ do
 			parent.layout:addWidget(colorPicker)
 			colorPicker:setParam("onChange", function(self, value) eval(self.target .. "." .. element.variable .. " = " .. tostringArray(value)) end)
 			colorPicker:setParam("onFocusLost", widgetExecCliCmd)
+		elseif element.type == "Line" then 
+			local line = kraid.widgets.Line{parent = parent}
+			parent.layout:addWidget(line)
+			parent.layout:newLine()
 		else 
 		    error("Unsupported gui element type '" .. element.type .. "'")
 		end

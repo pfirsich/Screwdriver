@@ -8,8 +8,8 @@ do
         addTable(self, properties)
 
         self.__guiElements = {
-            {variable = "color", type = "Color", label = "Color"},
             {variable = "imagePath", type = "File", label = "Image"},
+            {variable = "color", type = "Color", label = "Color"},
         }
     end
 

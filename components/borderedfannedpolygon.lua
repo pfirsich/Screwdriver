@@ -39,27 +39,25 @@ do
             {variable = "", type = "Button", label = "Edit Vertices", cmd = 'editor.changeEditMode(components["BorderedFannedPolygon"].editModes.editPoints)'},
             {variable = "", type = "Button", label = "Edit Texture", cmd = 'editor.changeEditMode(components["BorderedFannedPolygon"].editModes.editTexture)'},
             {variable = "", type = "Button", label = "Edit fan edges", cmd = 'editor.changeEditMode(components["BorderedFannedPolygon"].editModes.editFanEdges)'},
-            
+            {type = "Line"},
             {variable = "baseImagePath", type = "File", label = "Base image"},
             {variable = "baseColor", type = "Color", label = "Base color"},
-
             {variable = "borderImagePath", type = "File", label = "Border image"},
             {variable = "borderColor", type = "Color", label = "Border color"},
-
             {variable = "borderThickness", type = "Numberwheel", label = "Border thickness", params = {minValue = 1, speed = 5.0, onChange = remeshOnChange}},
             {variable = "blendThickness", type = "Numberwheel", label = "Blend thickness", params = {minValue = 1, speed = 5.0, onChange = remeshOnChange}},
-
+            {type = "Line"},
             {variable = "textureTransforms.scale[1]", type = "Numberwheel", label = "X-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
             {variable = "textureTransforms.scale[2]", type = "Numberwheel", label = "Y-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
             {variable = "textureTransforms.offset[1]", type = "Numberwheel", label = "X-Texture offset", params = {speed = 5.0, onChange = remeshOnChange}},
             {variable = "textureTransforms.offset[2]", type = "Numberwheel", label = "Y-Texture offset", params = {speed = 5.0, onChange = remeshOnChange}},
             {variable = "textureTransforms.rotation", type = "Numberwheel", label = "Texture angle", params = {speed = 1.0, onChange = remeshOnChange}},
-            
-            {variable = "fanImagePath", type = "File", label = "Image"},
+            {type = "Line"},
+            {variable = "fanImagePath", type = "File", label = "Fan image"},
             {variable = "fanOffset", type = "Numberwheel", label = "Fan offset", params = {speed = 5.0, onChange = remeshOnChange}},
             {variable = "fanHeight", type = "Numberwheel", label = "Fan height", params = {speed = 5.0, onChange = remeshOnChange}},
             {variable = "fanTextureScale", type = "Numberwheel", label = "Fan texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
-
+            {type = "Line"},
             {variable = "renderWireframe", type = "Checkbox", label = "Render as wireframe (debug)"},
         }
 
