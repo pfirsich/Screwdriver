@@ -113,6 +113,7 @@ return {
 					["renderWholeTexture"] = false,
 					["id"] = "polygon",
 					["renderWireframe"] = false,
+                    ["buildMesh"] = true,
 				},
 			},
 			["guid"] = 1,

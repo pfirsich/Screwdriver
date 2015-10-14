@@ -13,6 +13,7 @@ do
             offset = {0.0, 0.0},
             rotation = 0,
         }
+        self.buildMesh = false
         addTable(self, properties)
 
         local remeshOnChange = function() self:remesh() end
@@ -74,7 +75,7 @@ do
     end
 
     function SimplePolygon:remesh()
-        if #self.points >= 6 then 
+        if #self.points >= 6 and self.buildMesh then 
             local tris = love.math.triangulate(self.points)
             local vertices = {}
             for _, tri in ipairs(tris) do
@@ -186,7 +187,7 @@ do
             local polygon = getComponentById(entity, entity.__pickableComponent)
             if polygon and polygon.recenter and polygon.remesh then 
                 polygon:recenter()
-                polygon:remesh()
+                polygon.buildMesh = true
             end
         end
     end 
@@ -203,7 +204,7 @@ do
                     if transforms then 
                         x, y = transforms:worldToLocal(x, y)
                     end
-                    cliExec('local entity = getEntityByGUID(gui.selectedEntities[1]); getComponentById(entity, entity.__pickableComponent):addPoint(' .. x .. ", " .. y .. ')')
+                    cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "'..mode.polygon.componentType..'"):addPoint(' .. x .. ", " .. y .. ')')
                 end 
             end 
         end
