@@ -16,7 +16,10 @@ do
         self.buildMesh = false
         addTable(self, properties)
 
-        local remeshOnChange = function() self:remesh() end
+        local remeshOnChange = function() 
+            -- this should never fail, since it is only called when all of these sub calls will succeed
+            getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon"):remesh() 
+        end
         self.__guiElements = {
             {variable = "", type = "Button", label = "Edit Vertices", cmd = 'editor.changeEditMode(components["SimplePolygon"].editModes.editPoints)'},
             {variable = "", type = "Button", label = "Edit Texture", cmd = 'editor.changeEditMode(components["SimplePolygon"].editModes.editTexture)'},
@@ -82,11 +85,11 @@ do
                 for i = 1, 6, 2 do 
                     local u, v 
                     if self.__image then 
-                        u = tri[i+0] * self.textureTransforms.scale[1] / self.__image:getWidth()
-                        v = tri[i+1] * self.textureTransforms.scale[2] / self.__image:getHeight()
+                        u = tri[i+0] / self.__image:getWidth()
+                        v = tri[i+1] / self.__image:getHeight()
                         u, v = rotatePoint(u, v, -self.textureTransforms.rotation)
-                        u = u + self.textureTransforms.offset[1] / self.__image:getWidth()
-                        v = v + self.textureTransforms.offset[2] / self.__image:getHeight()
+                        u = u * self.textureTransforms.scale[1] + self.textureTransforms.offset[1] / self.__image:getWidth()
+                        v = v * self.textureTransforms.scale[2] + self.textureTransforms.offset[2] / self.__image:getHeight()
                     else 
                         u, v = 0.0, 0.0
                     end
@@ -129,8 +132,8 @@ do
         love.graphics.setColor(unpack(self.color))
         if self.renderWholeTexture and self.__image then 
             love.graphics.push()
-            love.graphics.scale(1.0/self.textureTransforms.scale[1], 1.0/self.textureTransforms.scale[2])
             love.graphics.rotate(self.textureTransforms.rotation)
+            love.graphics.scale(1.0/self.textureTransforms.scale[1], 1.0/self.textureTransforms.scale[2])
             love.graphics.translate(-self.textureTransforms.offset[1], -self.textureTransforms.offset[2])
             love.graphics.draw(self.__image)
             love.graphics.pop()
