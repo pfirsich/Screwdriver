@@ -72,12 +72,13 @@ do
 	shortcut("f3", 'gui.consoleWindow:toggle()')
 
 	-- use the stack for these, since onEnter and onExit could change something in the map object
-	shortcut("lctrl+ ,rctrl+ ", "editor.changeEditMode(editor.defaultEditMode)", true)
-	shortcut("lctrl+t,rctrl+t", 'editor.changeEditMode(components["Transforms"].editModes.move)', true)
-	shortcut("lctrl+r,rctrl+r", 'editor.changeEditMode(components["Transforms"].editModes.rotate)', true)
-	shortcut("lctrl+e,rctrl+e", 'editor.changeEditMode(components["Transforms"].editModes.scale)', true)
-	shortcut("lctrl+q,rctrl+q", 'editor.changeEditMode(components["SimplePolygon"].editModes.editPoints)', true)
-	shortcut("lctrl+w,rctrl+w", 'editor.changeEditMode(components["SimplePolygon"].editModes.editTexture)', true)
+	shortcut(" ", "editor.changeEditMode(editor.defaultEditMode)", true)
+	shortcut("t", 'editor.changeEditMode(components["Transforms"].editModes.move)', true)
+	shortcut("r", 'editor.changeEditMode(components["Transforms"].editModes.rotate)', true)
+	shortcut("e", 'editor.changeEditMode(components["Transforms"].editModes.scale)', true)
+	shortcut("q", 'editor.changeEditMode(components["SimplePolygon"].editModes.editPoints)', true)
+	shortcut("w", 'editor.changeEditMode(components["SimplePolygon"].editModes.editTexture)', true)
+	shortcut("h", 'editor.changeEditMode(components["BorderedFannedPolygon"].editModes.editFanEdges)', true)
 
 	shortcut("tab", 'toggle(components["Core"].static, "showEntityBorders"); toggle(components["Core"].static, "showNames")', true) 
 	shortcut("c", 'toggle(components["Transforms"].static, "showCenterMarkers")', true) 

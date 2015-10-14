@@ -21,8 +21,8 @@ do
             getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon"):remesh() 
         end
         self.__guiElements = {
-            {variable = "", type = "Button", label = "Edit Vertices", cmd = 'editor.changeEditMode(components["SimplePolygon"].editModes.editPoints)'},
-            {variable = "", type = "Button", label = "Edit Texture", cmd = 'editor.changeEditMode(components["SimplePolygon"].editModes.editTexture)'},
+            {variable = "", type = "Button", label = "Edit Vertices", cmd = 'simulateShortcut("q")'},
+            {variable = "", type = "Button", label = "Edit Texture", cmd = 'simulateShortcut("w")'},
             {type = "Line"},
             {variable = "imagePath", type = "File", label = "Image"},
             {variable = "color", type = "Color", label = "Color"},

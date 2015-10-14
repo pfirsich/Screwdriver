@@ -124,6 +124,15 @@ function love.update()
 
 	if gui.base.hovered and gui.base.hovered.cliCmd then 
 		local suffix = ""
+		if gui.base.hovered.cliCmd:sub(1,16) == "simulateShortcut" then 
+			local keys = gui.base.hovered.cliCmd:sub(19,-3)
+			local shortcut = getShortcut(keys)
+			if shortcut then 
+				suffix = suffix .. " = '" .. shortcut[2] .. "'"
+			else 
+				suffix = suffix .. " = nothing bound."
+			end 
+		end 
 		if gui.base.hovered.type == "LineInput" then suffix = " - Press <enter> to apply changes" end
 		gui.consoleWindow:setParam("text", "Console - Hovering: '" .. gui.base.hovered.cliCmd .. "'" .. suffix)
 	else 

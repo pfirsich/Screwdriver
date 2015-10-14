@@ -15,7 +15,7 @@ do
             table.iextend(self.__guiElements,{
                 {variable = "position[1]", type = "Numberwheel", label = "X-Pos"},
                 {variable = "position[2]", type = "Numberwheel", label = "Y-Pos"},
-                {variable = "", type = "Button", label = "Move entities", cmd = 'editor.changeEditMode(components["Transforms"].editModes.move)'},
+                {variable = "", type = "Button", label = "Move entities", cmd = 'simulateShortcut("t")'},
                 {type = "Line"},
             })
         end
@@ -23,7 +23,7 @@ do
         if self.rotation ~= nil then
             table.iextend(self.__guiElements,{
                 {variable = "rotation", type = "Numberwheel", label = "Angle", params = {speed = 1.0}},
-                {variable = "", type = "Button", label = "Rotate entities", cmd = 'editor.changeEditMode(components["Transforms"].editModes.rotate)'},
+                {variable = "", type = "Button", label = "Rotate entities", cmd = 'simulateShortcut("r")'},
                 {type = "Line"},
             })
         end
@@ -42,7 +42,7 @@ do
                 {variable = "scale[1]", type = "Numberwheel", label = "X-Scale", params = {speed = 0.5}},
                 {variable = "scale[2]", type = "Numberwheel", label = "Y-Scale", params = {speed = 0.5}},
                 {variable = "keepAspect", type = "Checkbox", label = "Keep aspect ratio in edit mode"},
-                {variable = "", type = "Button", label = "Scale entities", cmd = 'editor.changeEditMode(components["Transforms"].editModes.scale)'},
+                {variable = "", type = "Button", label = "Scale entities", cmd = 'simulateShortcut("e")'},
                 {type = "Line"},
             })
         end 

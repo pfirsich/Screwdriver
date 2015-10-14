@@ -205,20 +205,20 @@ do
 
 		gui.sceneWindowLayout:newLine()
 		gui.entityUpButton = kraid.widgets.Button{parent = gui.sceneWindowScroll, height = 30, minWidth = 50, text = "Up",
-											cliCmd = 'editor.entityUp(gui.selectedEntities)', onClicked = widgetExecCliCmd}
+											cliCmd = 'simulateShortcut("pageup")', onClicked = widgetExecCliCmd}
 		gui.sceneWindowLayout:addWidget(gui.entityUpButton)
 		gui.entityDownButton = kraid.widgets.Button{parent = gui.sceneWindowScroll, height = 30, minWidth = 50, text = "Down",
-											cliCmd = 'editor.entityDown(gui.selectedEntities)', onClicked = widgetExecCliCmd}
+											cliCmd = 'simulateShortcut("pagedown")', onClicked = widgetExecCliCmd}
 		gui.sceneWindowLayout:addWidget(gui.entityDownButton)
 
 		gui.sceneWindowLayout:newLine()
 		gui.entityFocusButton = kraid.widgets.Button{parent = gui.sceneWindowScroll, height = 30, minWidth = 50, text = "Focus camera",
-											cliCmd = 'editor.focusCamera(gui.selectedEntities)', onClicked = widgetExecCliCmd_nostack}
+											cliCmd = 'simulateShortcut("lctrl+f")', onClicked = widgetExecCliCmd_nostack}
 		gui.sceneWindowLayout:addWidget(gui.entityFocusButton)
 
 		gui.sceneWindowLayout:newLine({["spacing-vertical"] = 20})
 		gui.entityRemoveButton = kraid.widgets.Button{parent = gui.sceneWindowScroll, height = 30, minWidth = 50, text = "Remove entity",
-												cliCmd = 'editor.removeEntities(gui.selectedEntities)',
+												cliCmd = 'simulateShortcut("delete")',
 												onClicked = widgetExecCliCmd}
 		gui.sceneWindowLayout:addWidget(gui.entityRemoveButton)
 
@@ -264,11 +264,10 @@ do
 		end)
 
 		-- CLI window
-		gui.consoleWindow = kraid.widgets.Window{parent = gui.base, text = "Console", width = love.window.getWidth()}
+		gui.consoleWindow = kraid.widgets.Window{parent = gui.base, text = "Console", width = love.window.getWidth(), height = 25}
 		gui.consoleWindow.toggle = function(self)
-			self:setParam("visible", not self.visible)
 			self:setParam("width", love.window.getWidth())
-			self:setParam("height", 200)
+			self:setParam("height", 225 - self.height)
 			self:setParam("position", {0, love.window.getHeight() - self.height})
 		end 
 

@@ -36,9 +36,9 @@ do
             getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "BorderedFannedPolygon"):remesh() 
         end
         self.__guiElements = {
-            {variable = "", type = "Button", label = "Edit Vertices", cmd = 'editor.changeEditMode(components["BorderedFannedPolygon"].editModes.editPoints)'},
-            {variable = "", type = "Button", label = "Edit Texture", cmd = 'editor.changeEditMode(components["BorderedFannedPolygon"].editModes.editTexture)'},
-            {variable = "", type = "Button", label = "Edit fan edges", cmd = 'editor.changeEditMode(components["BorderedFannedPolygon"].editModes.editFanEdges)'},
+            {variable = "", type = "Button", label = "Edit Vertices", cmd = 'simulateShortcut("q")'},
+            {variable = "", type = "Button", label = "Edit Texture", cmd = 'simulateShortcut("w")'},
+            {variable = "", type = "Button", label = "Edit fan edges", cmd = 'simulateShortcut("h")'},
             {type = "Line"},
             {variable = "baseImagePath", type = "File", label = "Base image"},
             {variable = "baseColor", type = "Color", label = "Base color"},
