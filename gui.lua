@@ -149,7 +149,7 @@ do
 		gui.sceneWindow.toggle = function(self)
 			self:setParam("visible", not self.visible)
 			self:setParam("width", self.width)
-			self:setParam("height", love.window.getHeight() - 200)
+			self:setParam("height", love.window.getHeight() - gui.consoleWindow.height)
 			self:setParam("position", {0, 0})
 		end
 
@@ -236,7 +236,7 @@ do
 		gui.propertyWindow.toggle = function(self)
 			self:setParam("visible", not self.visible)
 			self:setParam("width", self.width)
-			self:setParam("height", love.window.getHeight() - 200)
+			self:setParam("height", love.window.getHeight() - gui.consoleWindow.height)
 			self:setParam("position", {love.window.getWidth() - self.width, 0})
 		end 
 

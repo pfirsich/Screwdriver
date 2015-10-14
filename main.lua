@@ -13,18 +13,18 @@ require "colorpicker"
 
 function love.resize(w, h)
 	if callSpecialMode("resize", w, h) then return end
+	
+	local oldVisible = gui.consoleWindow.visible 
+	gui.consoleWindow:toggle()
+	gui.consoleWindow:setParam("visible", oldVisible)
 
-	local oldVisible = gui.sceneWindow.visible 
+	oldVisible = gui.sceneWindow.visible 
 	gui.sceneWindow:toggle()
 	gui.sceneWindow:setParam("visible", oldVisible)
 
 	oldVisible = gui.propertyWindow.visible 
 	gui.propertyWindow:toggle()
 	gui.propertyWindow:setParam("visible", oldVisible)
-	
-	oldVisible = gui.consoleWindow.visible 
-	gui.consoleWindow:toggle()
-	gui.consoleWindow:setParam("visible", oldVisible)
 
 	local center = love.window.getWidth() / 2
 	local buttonW = gui.toggleSceneWindow.width
