@@ -1,7 +1,7 @@
 # ToDo
 * Fancy Polygon
-	* Polygon fans (nicht in SimplePolygon, da SimplePolygon etwas sein sollte, dass überall relativ einfach implementiert werden kann):
-		Checkbox für an-aus, NW für height, NW für y-offset, NW für texture scale (entlang des fans), Texture, Color, angle range (vllt. auch direction und dann symmetrische angle range oder einen editMode in dem man edges damit bemalen kann (links = add, rechts = remove))
+	* Edit modes for edges
+	* texture transforms
 
 * MetadataBoolean, MetadataString, MetadataNumber, MetadataChoice (choices = list of id-label pairs)
 	Maybe leave these out since they are just a single gui element and make the intended way implementing custom components?

@@ -30,15 +30,15 @@ do
             {variable = "renderWireframe", type = "Checkbox", label = "Render as wireframe (debug)"},
         }
 
-        if #self.points > 0 then 
-            self.__mesh = love.graphics.newMesh(#self.points / 2, nil, "triangles")
-        else 
+        if #self.points == 0 then 
             editor.changeEditMode(components["SimplePolygon"].editModes.appendPoints)
             gui.printConsole("New polygon entity created. Changed edit mode to append points mode!")
         end
+        -- otherwise the next call to updateUserdataValues will call remesh and initialize the mesh
     end
 
     function SimplePolygon:updateUserdataValues()
+        -- load image first so image dimensions are available for proper texture coordinate calculation
         self:loadImageFile()
         self:remesh()
     end 
@@ -48,16 +48,10 @@ do
             self.__image = getImage(self.imagePath)
             if self.__image then 
                 self.__image:setWrap("repeat", "repeat")
-                self.__mesh:setTexture(self.__image)
+                if self.__mesh then self.__mesh:setTexture(self.__image) end
             end
         end
     end 
-
-    function SimplePolygon:initMesh()
-        self.__mesh = love.graphics.newMesh(#self.points / 2, nil, "triangles")
-        self:recenter()
-        self:remesh()
-    end
 
     function SimplePolygon:recenter()
         local centerX, centerY = 0, 0
@@ -80,28 +74,30 @@ do
     end
 
     function SimplePolygon:remesh()
-        if self.__mesh then 
-            if #self.points >= 6 then 
-                local tris = love.math.triangulate(self.points)
-                local vertices = {}
-                for _, tri in ipairs(tris) do
-                    for i = 1, 6, 2 do 
-                        local u, v 
-                        if self.__image then 
-                            u = tri[i+0] * self.textureTransforms.scale[1] / self.__image:getWidth()
-                            v = tri[i+1] * self.textureTransforms.scale[2] / self.__image:getHeight()
-                            u, v = rotatePoint(u, v, -self.textureTransforms.rotation)
-                            u = u + self.textureTransforms.offset[1] / self.__image:getWidth()
-                            v = v + self.textureTransforms.offset[2] / self.__image:getHeight()
-                        else 
-                            u, v = 0.0, 0.0
-                        end
-                        local vertex = {tri[i], tri[i+1], u, v, 255, 255, 255, 255}
-                        table.insert(vertices, vertex)
+        if #self.points >= 6 then 
+            local tris = love.math.triangulate(self.points)
+            local vertices = {}
+            for _, tri in ipairs(tris) do
+                for i = 1, 6, 2 do 
+                    local u, v 
+                    if self.__image then 
+                        u = tri[i+0] * self.textureTransforms.scale[1] / self.__image:getWidth()
+                        v = tri[i+1] * self.textureTransforms.scale[2] / self.__image:getHeight()
+                        u, v = rotatePoint(u, v, -self.textureTransforms.rotation)
+                        u = u + self.textureTransforms.offset[1] / self.__image:getWidth()
+                        v = v + self.textureTransforms.offset[2] / self.__image:getHeight()
+                    else 
+                        u, v = 0.0, 0.0
                     end
-                end 
-                self.__mesh:setVertices(vertices)
+                    local vertex = {tri[i], tri[i+1], u, v, 255, 255, 255, 255}
+                    table.insert(vertices, vertex)
+                end
+            end 
+
+            if self.__mesh == nil then 
+                self.__mesh = love.graphics.newMesh(#self.points / 2, self.__image, "triangles")
             end
+            self.__mesh:setVertices(vertices)
         end
     end
 
@@ -138,7 +134,7 @@ do
             love.graphics.draw(self.__image)
             love.graphics.pop()
         else 
-            if #self.points >= 6 and self.__mesh then 
+            if self.__mesh then 
                 if self.renderWireframe then love.graphics.setWireframe(true) end
                 love.graphics.draw(self.__mesh)
                 if self.renderWireframe then love.graphics.setWireframe(false) end
@@ -188,7 +184,10 @@ do
         local entity = getEntityByGUID(gui.selectedEntities[1])
         if entity and entity.__pickableComponent then 
             local polygon = getComponentById(entity, entity.__pickableComponent)
-            if polygon and polygon.initMesh then polygon:initMesh() end
+            if polygon and polygon.recenter and polygon.remesh then 
+                polygon:recenter()
+                polygon:remesh()
+            end
         end
     end 
 
