@@ -44,3 +44,21 @@ entityTypes["polygon"] = {
 		}
 	}
 }
+
+entityTypes["fancy polygon"] = {
+	label = "Fancy Polygon",
+	components = {
+		{
+			id = "core",
+			componentType = "Core",
+		},
+		{	
+			id = "transforms",
+			componentType = "Transforms",
+		},
+		{
+			id = "polygon",
+			componentType = "BorderedFannedPolygon",
+		}
+	}
+}

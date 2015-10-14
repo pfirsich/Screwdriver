@@ -1,6 +1,6 @@
 # ToDo
 * Fancy Polygon
-	* Edit modes for edges
+	* fix fan edge painting
 	* texture transforms
 
 * MetadataBoolean, MetadataString, MetadataNumber, MetadataChoice (choices = list of id-label pairs)
@@ -9,6 +9,7 @@
 	MetadataEntity? Draws connections (on-off-able) and has an edit mode to connect entities (maybe a dropdown?)
 
 # Später
+* Fix fans - siehe fan_triang.jpg
 * Ein "Lineal" um Jump-Height und so im Spiel sehen zu können
 * keepAspect ratio wieder einbauen und reparieren. Dafür in onChange einhooken und gleichsetzen, dann gui.lua so modifizieren, dass bei cliExec für geindexte Variablen (z.B. position[1]), der ganze Tupel gesetzt wird.
 * Show centers of mass for polygons (to see the origin for texture rotation)
@@ -17,10 +18,11 @@
 * "spacing"-gui elemente, die Strukturierung etwas einfacher machen? (bzw. möglich)
 
 # Vielleicht
-* Umnennen: ScrewEd?
+* Fancy Fancy polygons integrieren. Entweder nur bei cliExec oder optional pro Polygon (remesh in modes/onChange ausschalten!)
 * Map nicht nur als Lua speichern (sodass der Editor für alles mögliche verwendet werden kann) - JSON?
 * Farbe und Transforms in ein Textur-Component verschieben und das an Entities hängen
 * __showInDetails ist Quark. Stattdessen ne getDetails() Funktion für Components implementieren.
+* Umnennen: ScrewEd?
 * Arrow key + enter Bedienung im filebrowser
 * Texture-GUI-Element, das File + Preview ist
 * onFocusLost an cliExec für alle anderen Widgets binden
