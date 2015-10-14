@@ -12,23 +12,17 @@ do
         self.renderWireframe = false
         self.points = {}
 
-        self.editBorderTexture = false
         self.baseColor = {255, 255, 255, 255}
         self.borderColor = {255, 255, 255, 255}
         self.baseImagePath = ""
         self.borderImagePath = ""
-        self.baseTextureTransforms = {
-            scale = {1.0, 1.0},
-            offset = {0.0, 0.0},
-            rotation = 0,
-        }
-        self.borderTextureTransforms = {
-            scale = {1.0, 1.0},
-            offset = {0.0, 0.0},
-            rotation = 0,
-        }
         self.borderThickness = 1
         self.blendThickness = 1
+        self.textureTransforms = {
+            scale = {1.0, 1.0},
+            offset = {0.0, 0.0},
+            rotation = 0,
+        }
 
         self.fanImagePath = ""
         self.fanOffset = 0
@@ -43,29 +37,24 @@ do
         end
         self.__guiElements = {
             {variable = "", type = "Button", label = "Edit Vertices", cmd = 'editor.changeEditMode(components["BorderedFannedPolygon"].editModes.editPoints)'},
-            {variable = "editBorderTexture", type = "Checkbox", label = "Edit base (true)/border (false)"},
             {variable = "", type = "Button", label = "Edit Texture", cmd = 'editor.changeEditMode(components["BorderedFannedPolygon"].editModes.editTexture)'},
             {variable = "", type = "Button", label = "Edit fan edges", cmd = 'editor.changeEditMode(components["BorderedFannedPolygon"].editModes.editFanEdges)'},
-
-            {variable = "baseColor", type = "Color", label = "Base color"},
+            
             {variable = "baseImagePath", type = "File", label = "Base image"},
-            {variable = "baseTextureTransforms.scale[1]", type = "Numberwheel", label = "X-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
-            {variable = "baseTextureTransforms.scale[2]", type = "Numberwheel", label = "Y-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
-            {variable = "baseTextureTransforms.offset[1]", type = "Numberwheel", label = "X-Texture offset", params = {speed = 5.0, onChange = remeshOnChange}},
-            {variable = "baseTextureTransforms.offset[2]", type = "Numberwheel", label = "Y-Texture offset", params = {speed = 5.0, onChange = remeshOnChange}},
-            {variable = "baseTextureTransforms.rotation", type = "Numberwheel", label = "Texture angle", params = {speed = 1.0, onChange = remeshOnChange}},
+            {variable = "baseColor", type = "Color", label = "Base color"},
 
-            {variable = "borderColor", type = "Color", label = "Border color"},
             {variable = "borderImagePath", type = "File", label = "Border image"},
-            {variable = "borderTextureTransforms.scale[1]", type = "Numberwheel", label = "X-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
-            {variable = "borderTextureTransforms.scale[2]", type = "Numberwheel", label = "Y-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
-            {variable = "borderTextureTransforms.offset[1]", type = "Numberwheel", label = "X-Texture offset", params = {speed = 5.0, onChange = remeshOnChange}},
-            {variable = "borderTextureTransforms.offset[2]", type = "Numberwheel", label = "Y-Texture offset", params = {speed = 5.0, onChange = remeshOnChange}},
-            {variable = "borderTextureTransforms.rotation", type = "Numberwheel", label = "Texture angle", params = {speed = 1.0, onChange = remeshOnChange}},
+            {variable = "borderColor", type = "Color", label = "Border color"},
 
             {variable = "borderThickness", type = "Numberwheel", label = "Border thickness", params = {minValue = 1, speed = 5.0, onChange = remeshOnChange}},
             {variable = "blendThickness", type = "Numberwheel", label = "Blend thickness", params = {minValue = 1, speed = 5.0, onChange = remeshOnChange}},
 
+            {variable = "textureTransforms.scale[1]", type = "Numberwheel", label = "X-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
+            {variable = "textureTransforms.scale[2]", type = "Numberwheel", label = "Y-Texture scale", params = {speed = 0.5, onChange = remeshOnChange}},
+            {variable = "textureTransforms.offset[1]", type = "Numberwheel", label = "X-Texture offset", params = {speed = 5.0, onChange = remeshOnChange}},
+            {variable = "textureTransforms.offset[2]", type = "Numberwheel", label = "Y-Texture offset", params = {speed = 5.0, onChange = remeshOnChange}},
+            {variable = "textureTransforms.rotation", type = "Numberwheel", label = "Texture angle", params = {speed = 1.0, onChange = remeshOnChange}},
+            
             {variable = "fanImagePath", type = "File", label = "Image"},
             {variable = "fanOffset", type = "Numberwheel", label = "Fan offset", params = {speed = 5.0, onChange = remeshOnChange}},
             {variable = "fanHeight", type = "Numberwheel", label = "Fan height", params = {speed = 5.0, onChange = remeshOnChange}},
@@ -109,15 +98,21 @@ do
 
     function BorderedFannedPolygon:remesh()
         if #self.points >= 6 and self.buildMesh then 
+            local imgWidth, imgHeight = 1, 1
+            if self.__baseImage then 
+                imgWidth, imgHeight = imgWidth + self.__baseImage:getWidth(), imgHeight + self.__baseImage:getHeight()
+            end 
+            if self.__borderImage then 
+                imgWidth, imgHeight = imgWidth + self.__borderImage:getWidth(), imgHeight + self.__borderImage:getHeight()
+            end 
+            if self.__baseImage and self.__borderImage then 
+                imgWidth, imgHeight = imgWidth / 2.0, imgHeight / 2.0
+            end 
+            
             local vertices = buildPolygonGeometry(self.points, self.borderThickness, self.blendThickness)
             for i = 1, #vertices do
                 local vertex = vertices[i] 
-                if self.__baseImage and vertex[5] == 0 then 
-                    vertex[3], vertex[4] = transformTexCoords(vertex[1], vertex[2], self.__baseImage, self.baseTextureTransforms)
-                end
-                if self.__borderImage and vertex[5] == 255 then 
-                    vertex[3], vertex[4] = transformTexCoords(vertex[1], vertex[2], self.__borderImage, self.borderTextureTransforms)
-                end
+                vertex[3], vertex[4] = transformTexCoords(vertex[1], vertex[2], imgWidth, imgHeight, self.textureTransforms)
             end 
             self.__mesh = love.graphics.newMesh(vertices, nil, "triangles")
 
@@ -176,7 +171,7 @@ do
     end
 
     function BorderedFannedPolygon:getTextureTransformsToEdit()
-        return self.editBorderTexture and "borderTextureTransforms" or "baseTextureTransforms"
+        return "textureTransforms"
     end
 
     BorderedFannedPolygon.static.__unique = true

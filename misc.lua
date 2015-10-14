@@ -209,12 +209,12 @@ function getLineShape(fromX, fromY, toX, toY, margin, thickness)
     return ret
 end 
 
-function transformTexCoords(x, y, image, transforms)
-    u = x / image:getWidth()
-    v = y / image:getHeight()
+function transformTexCoords(x, y, imgWidth, imgHeight, transforms)
+    u = x / imgWidth
+    v = y / imgHeight
     u, v = rotatePoint(u, v, -transforms.rotation)
-    u = u * transforms.scale[1] + transforms.offset[1] / image:getWidth()
-    v = v * transforms.scale[2] + transforms.offset[2] / image:getHeight()
+    u = u * transforms.scale[1] + transforms.offset[1] / imgWidth
+    v = v * transforms.scale[2] + transforms.offset[2] / imgHeight
     return u, v
 end
 

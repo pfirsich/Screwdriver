@@ -1,7 +1,4 @@
 # ToDo
-* Fancy Polygon
-	* texture transforms -> only one transform, "average" image dimensions
-
 * MetadataBoolean, MetadataString, MetadataNumber, MetadataChoice (choices = list of id-label pairs)
 	Maybe leave these out since they are just a single gui element and make the intended way implementing custom components?
 		Downside: For every entity type in game you would have to create a new component type = No.

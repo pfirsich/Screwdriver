@@ -11,8 +11,8 @@ return {
 					["id"] = "core",
 					["hidden"] = false,
 					["componentType"] = "Core",
-					["locked"] = false,
 					["name"] = "polygon",
+					["locked"] = false,
 				},
 				[2] = {
 					["scale"] = {
@@ -96,23 +96,23 @@ return {
 					["renderWireframe"] = false,
 					["entityGUID"] = 1,
 					["imagePath"] = "rock.jpg",
+					["textureTransforms"] = {
+						["rotation"] = 0,
+						["scale"] = {
+							[1] = 1,
+							[2] = 1,
+						},
+						["offset"] = {
+							[1] = 0,
+							[2] = 0,
+						},
+					},
 					["renderWholeTexture"] = false,
 					["color"] = {
 						[1] = 255,
 						[2] = 255,
 						[3] = 255,
 						[4] = 255,
-					},
-					["textureTransforms"] = {
-						["offset"] = {
-							[1] = 0,
-							[2] = 0,
-						},
-						["rotation"] = 0,
-						["scale"] = {
-							[1] = 1,
-							[2] = 1,
-						},
 					},
 				},
 			},
@@ -125,10 +125,11 @@ return {
 					["id"] = "core",
 					["hidden"] = false,
 					["componentType"] = "Core",
-					["locked"] = false,
 					["name"] = "fancy polygon",
+					["locked"] = false,
 				},
 				[2] = {
+					["keepAspect"] = true,
 					["scale"] = {
 						[1] = 1,
 						[2] = 1,
@@ -139,12 +140,11 @@ return {
 					},
 					["id"] = "transforms",
 					["componentType"] = "Transforms",
-					["rotation"] = 0,
 					["offset"] = {
 						[1] = 0,
 						[2] = 0,
 					},
-					["keepAspect"] = true,
+					["rotation"] = 0,
 				},
 				[3] = {
 					["points"] = {
@@ -184,32 +184,52 @@ return {
 					["fanOffset"] = -10,
 					["id"] = "polygon",
 					["blendThickness"] = 78.462258829544,
-					["textureTransforms"] = {
-						["offset"] = {
-							[1] = 0,
-							[2] = 0,
-						},
+					["borderTextureTransforms"] = {
 						["rotation"] = 0,
 						["scale"] = {
 							[1] = 1,
 							[2] = 1,
 						},
+						["offset"] = {
+							[1] = 0,
+							[2] = 0,
+						},
+					},
+					["textureTransforms"] = {
+						["rotation"] = -0.026874426209874,
+						["scale"] = {
+							[1] = 1,
+							[2] = 1,
+						},
+						["offset"] = {
+							[1] = 525.05753930489,
+							[2] = -209.71358872469,
+						},
 					},
 					["baseImagePath"] = "drylake.jpg",
-					["color"] = {
-						[1] = 255,
-						[2] = 255,
-						[3] = 255,
-						[4] = 255,
-					},
+					["fanHeight"] = 80,
 					["fanEdgeMask"] = {
-						[7] = true,
-						[14] = true,
+						[1] = true,
 						[11] = true,
-						[6] = true,
+						[12] = true,
+						[13] = true,
+						[14] = true,
+						[15] = true,
+						[16] = true,
 					},
-					["renderWholeTexture"] = false,
 					["borderImagePath"] = "grass.jpg",
+					["baseTextureTransforms"] = {
+						["rotation"] = 0,
+						["scale"] = {
+							[1] = 1,
+							[2] = 1,
+						},
+						["offset"] = {
+							[1] = 0,
+							[2] = 0,
+						},
+					},
+					["borderThickness"] = 24.181456754175,
 					["componentType"] = "BorderedFannedPolygon",
 					["borderColor"] = {
 						[1] = 255,
@@ -218,11 +238,16 @@ return {
 						[4] = 255,
 					},
 					["buildMesh"] = true,
-					["editBorderTexture"] = false,
+					["color"] = {
+						[1] = 255,
+						[2] = 255,
+						[3] = 255,
+						[4] = 255,
+					},
 					["renderWireframe"] = false,
 					["fanImagePath"] = "grassfan.png",
+					["editBorderTexture"] = false,
 					["imagePath"] = "",
-					["borderThickness"] = 24.181456754175,
 					["fanTextureScale"] = 10.288775738325,
 					["baseColor"] = {
 						[1] = 255,
@@ -230,29 +255,7 @@ return {
 						[3] = 255,
 						[4] = 255,
 					},
-					["baseTextureTransforms"] = {
-						["offset"] = {
-							[1] = 0,
-							[2] = 0,
-						},
-						["rotation"] = 0,
-						["scale"] = {
-							[1] = 1,
-							[2] = 1,
-						},
-					},
-					["fanHeight"] = 80,
-					["borderTextureTransforms"] = {
-						["offset"] = {
-							[1] = 0,
-							[2] = 0,
-						},
-						["rotation"] = 0,
-						["scale"] = {
-							[1] = 1,
-							[2] = 1,
-						},
-					},
+					["renderWholeTexture"] = false,
 				},
 			},
 			["guid"] = 2,
@@ -264,10 +267,11 @@ return {
 					["hidden"] = false,
 					["id"] = "core",
 					["componentType"] = "Core",
-					["locked"] = false,
 					["name"] = "fancy polygon",
+					["locked"] = false,
 				},
 				[2] = {
+					["keepAspect"] = true,
 					["scale"] = {
 						[1] = 1,
 						[2] = 1,
@@ -278,12 +282,11 @@ return {
 					},
 					["id"] = "transforms",
 					["componentType"] = "Transforms",
-					["rotation"] = 0,
 					["offset"] = {
 						[1] = 0,
 						[2] = 0,
 					},
-					["keepAspect"] = true,
+					["rotation"] = 0,
 				},
 				[3] = {
 					["points"] = {
@@ -326,28 +329,45 @@ return {
 					["id"] = "polygon",
 					["blendThickness"] = 148.62885260095,
 					["textureTransforms"] = {
-						["scale"] = {
-							[1] = 1,
-							[2] = 1,
-						},
 						["offset"] = {
 							[1] = 0,
 							[2] = 0,
 						},
 						["rotation"] = 0,
+						["scale"] = {
+							[1] = 1,
+							[2] = 1,
+						},
 					},
 					["baseImagePath"] = "rock.jpg",
+					["borderTextureTransforms"] = {
+						["offset"] = {
+							[1] = 0,
+							[2] = 0,
+						},
+						["rotation"] = 0,
+						["scale"] = {
+							[1] = 1,
+							[2] = 1,
+						},
+					},
 					["fanEdgeMask"] = {
 					},
+					["borderImagePath"] = "rock.jpg",
+					["renderWholeTexture"] = false,
+					["baseColor"] = {
+						[1] = 80,
+						[2] = 80,
+						[3] = 80,
+						[4] = 255,
+					},
+					["borderThickness"] = 5.0417891256085,
 					["color"] = {
 						[1] = 255,
 						[2] = 255,
 						[3] = 255,
 						[4] = 255,
 					},
-					["renderWholeTexture"] = false,
-					["borderImagePath"] = "rock.jpg",
-					["componentType"] = "BorderedFannedPolygon",
 					["borderColor"] = {
 						[1] = 255,
 						[2] = 255,
@@ -355,41 +375,24 @@ return {
 						[4] = 255,
 					},
 					["buildMesh"] = true,
-					["editBorderTexture"] = false,
+					["componentType"] = "BorderedFannedPolygon",
 					["renderWireframe"] = false,
 					["fanImagePath"] = "",
+					["editBorderTexture"] = false,
 					["imagePath"] = "",
-					["borderThickness"] = 5.0417891256085,
 					["fanTextureScale"] = 1,
-					["baseColor"] = {
-						[1] = 80,
-						[2] = 80,
-						[3] = 80,
-						[4] = 255,
+					["baseTextureTransforms"] = {
+						["offset"] = {
+							[1] = 0,
+							[2] = 0,
+						},
+						["rotation"] = 0,
+						["scale"] = {
+							[1] = 1,
+							[2] = 1,
+						},
 					},
 					["fanHeight"] = 0,
-					["baseTextureTransforms"] = {
-						["scale"] = {
-							[1] = 1,
-							[2] = 1,
-						},
-						["offset"] = {
-							[1] = 0,
-							[2] = 0,
-						},
-						["rotation"] = 0,
-					},
-					["borderTextureTransforms"] = {
-						["scale"] = {
-							[1] = 1,
-							[2] = 1,
-						},
-						["offset"] = {
-							[1] = 0,
-							[2] = 0,
-						},
-						["rotation"] = 0,
-					},
 				},
 			},
 			["guid"] = 3,
@@ -399,19 +402,19 @@ return {
 		["Sprite"] = {
 		},
 		["Transforms"] = {
-			["showCenterMarkers"] = true,
+			["showCenterMarkers"] = false,
 		},
 		["Core"] = {
 			["gridSpacing"] = 200,
 			["showGrid"] = true,
-			["showEntityBorders"] = true,
+			["showEntityBorders"] = false,
 			["backgroundColor"] = {
 				[1] = 140.66214651388,
 				[2] = 0,
 				[3] = 0,
 				[4] = 255,
 			},
-			["showNames"] = false,
+			["showNames"] = true,
 			["showDetails"] = true,
 		},
 		["SimplePolygon"] = {

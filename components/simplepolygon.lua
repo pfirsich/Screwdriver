@@ -85,7 +85,7 @@ do
                 for i = 1, 6, 2 do 
                     local u, v 
                     if self.__image then 
-                        u, v = transformTexCoords(tri[i+0], tri[i+1], self.__image, self.textureTransforms)
+                        u, v = transformTexCoords(tri[i+0], tri[i+1], self.__image:getWidth(), self.__image:getHeight(), self.textureTransforms)
                     else 
                         u, v = 0.0, 0.0
                     end
