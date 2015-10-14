@@ -223,12 +223,12 @@ do
 		gui.sceneWindowLayout:addWidget(gui.entityRemoveButton)
 
 		gui.sceneWindow:setParam("onResize", function(window) 
+			gui.sceneWindowLayout:arrange() 
+
 			gui.sceneWindowScroll:setParam("width", window.width)
 			gui.sceneWindowScrollBar:setParam("length", window.height - 25)
 			gui.sceneWindowScrollBar:setParam("position", {window.width - gui.sceneWindowScrollBar.width, 25})
 			gui.sceneWindowScrollBar:onChange()
-
-			gui.sceneWindowLayout:arrange() 
 		end)
 
 		-- property window
@@ -255,12 +255,12 @@ do
 		gui.propertyWindowLayout = kraid.layouts.LineLayout(gui.propertyWindowScroll, {["spacing"] = 5, ["padding"] = 5, ["padding-top"] = 30, ["padding-right"] = 5 + gui.propertyWindowScrollBar.width})
 
 		gui.propertyWindow:setParam("onResize", function(self) 
+			gui.propertyWindowLayout:arrange()
+
 			gui.propertyWindowScroll:setParam("width", self.width)
 			gui.propertyWindowScrollBar:setParam("length", self.height - 25)
 			gui.propertyWindowScrollBar:setParam("position", {self.width - gui.propertyWindowScrollBar.width, 25})
 			gui.propertyWindowScrollBar:onChange()
-
-			gui.propertyWindowLayout:arrange()
 		end)
 
 		-- CLI window
@@ -420,7 +420,7 @@ do
 
 			numberWheel:setParam("onChange", function(self, value) 
 				eval(self.target .. "." .. element.variable .. " = " .. tostring(value))
-				if element.params.onChange then element.params.onChange() end
+				if element.params.onChange then element.params.onChange(); print("onChange") end
 			end)
 			numberWheel:setParam("onFocusLost", widgetExecCliCmd) -- no need to updateText here, since it will be updated anyway if not focused (see updateElementWidgets)
 			parent.layout:addWidget(numberWheel)
@@ -536,6 +536,7 @@ do
 					createElementWidgets(cat, element, 'getComponentById(getEntityByGUID(gui.selectedEntities[1]), "' .. component.id ..  '")')
 				end
 				gui.propertyWindowLayout:arrange()
+				gui.propertyWindowScrollBar:onChange()
 			end 
 		end 
 	end
