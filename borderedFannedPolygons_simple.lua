@@ -39,9 +39,7 @@ do
 	function buildPolygonGeometry(polygon, borderThickness, blendThickness)
 		local vertices = {}
 
-		local textureScale = 0.003
-		-- TODO: custom texture transforms (for each texture)
-		local function pushVert(x, y, blend) vertices[#vertices+1] = {x, y, x * textureScale, y * textureScale, blend, blend, blend, blend} end
+		local function pushVert(x, y, blend) vertices[#vertices+1] = {x, y, x, y, blend, blend, blend, blend} end
 
 		local function pushStripe(inner, outer, innerBlend, outerBlend)
 			for i = 1, #outer, 2 do
@@ -74,7 +72,7 @@ do
 		return vertices
 	end
 
-	function buildFanGeometry(polygon, fanStart, fanHeight, textureWidth, textureScale, edgeMask)
+	function buildFanGeometry(polygon, fanStart, fanHeight, edgeMask)
 		local fanVertices = {}
 
 		local fanStartPolygon = moveEdges(polygon, fanStart)
@@ -85,7 +83,7 @@ do
 			local iNext = wrappedIndex(fanEndPolygon, i+2)
 
 			local dx, dy = fanStartPolygon[i] - fanStartPolygon[iNext], fanStartPolygon[i+1] - fanStartPolygon[iNext+1]
-			local uNext = u + math.sqrt(dx*dx + dy*dy) / textureWidth * textureScale
+			local uNext = u + math.sqrt(dx*dx + dy*dy)
 
 			if not edgeMask or not edgeMask[(i+1)/2] then 
 				fanVertices[#fanVertices+1] = {fanEndPolygon[i],       fanEndPolygon[i+1],       u,     0.0}

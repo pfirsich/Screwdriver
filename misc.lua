@@ -209,6 +209,15 @@ function getLineShape(fromX, fromY, toX, toY, margin, thickness)
     return ret
 end 
 
+function transformTexCoords(x, y, image, transforms)
+    u = x / image:getWidth()
+    v = y / image:getHeight()
+    u, v = rotatePoint(u, v, -transforms.rotation)
+    u = u * transforms.scale[1] + transforms.offset[1] / image:getWidth()
+    v = v * transforms.scale[2] + transforms.offset[2] / image:getHeight()
+    return u, v
+end
+
 function printTableShallow(name, t)
     print("--- " .. name .. "(" .. tostring(t) .. "):")
     for k, v in pairs(t) do 

@@ -85,11 +85,7 @@ do
                 for i = 1, 6, 2 do 
                     local u, v 
                     if self.__image then 
-                        u = tri[i+0] / self.__image:getWidth()
-                        v = tri[i+1] / self.__image:getHeight()
-                        u, v = rotatePoint(u, v, -self.textureTransforms.rotation)
-                        u = u * self.textureTransforms.scale[1] + self.textureTransforms.offset[1] / self.__image:getWidth()
-                        v = v * self.textureTransforms.scale[2] + self.textureTransforms.offset[2] / self.__image:getHeight()
+                        u, v = transformTexCoords(tri[i+0], tri[i+1], self.__image, self.textureTransforms)
                     else 
                         u, v = 0.0, 0.0
                     end

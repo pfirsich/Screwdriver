@@ -43,7 +43,7 @@ do
         end
         self.__guiElements = {
             {variable = "", type = "Button", label = "Edit Vertices", cmd = 'editor.changeEditMode(components["BorderedFannedPolygon"].editModes.editPoints)'},
-            {variable = "editBorderTexture", type = "Checkbox", label = "Edit base texture (checked)/border texture(false)"},
+            {variable = "editBorderTexture", type = "Checkbox", label = "Edit base (true)/border (false)"},
             {variable = "", type = "Button", label = "Edit Texture", cmd = 'editor.changeEditMode(components["BorderedFannedPolygon"].editModes.editTexture)'},
             {variable = "", type = "Button", label = "Edit fan edges", cmd = 'editor.changeEditMode(components["BorderedFannedPolygon"].editModes.editFanEdges)'},
 
@@ -75,7 +75,6 @@ do
         }
 
         if #self.points == 0 then 
-            print("crap")
             editor.changeEditMode(BorderedFannedPolygon.editModes.appendPoints)
             gui.printConsole("New polygon entity created. Changed edit mode to append points mode!")
         end
@@ -111,10 +110,20 @@ do
     function BorderedFannedPolygon:remesh()
         if #self.points >= 6 and self.buildMesh then 
             local vertices = buildPolygonGeometry(self.points, self.borderThickness, self.blendThickness)
+            for i = 1, #vertices do
+                local vertex = vertices[i] 
+                if self.__baseImage and vertex[5] == 0 then 
+                    vertex[3], vertex[4] = transformTexCoords(vertex[1], vertex[2], self.__baseImage, self.baseTextureTransforms)
+                end
+                if self.__borderImage and vertex[5] == 255 then 
+                    vertex[3], vertex[4] = transformTexCoords(vertex[1], vertex[2], self.__borderImage, self.borderTextureTransforms)
+                end
+            end 
             self.__mesh = love.graphics.newMesh(vertices, nil, "triangles")
 
             if self.__fanImage then 
-                local fanVertices = buildFanGeometry(self.points, self.fanOffset, self.fanHeight, self.__fanImage:getWidth(), self.fanTextureScale, self.fanEdgeMask)
+                local fanVertices = buildFanGeometry(self.points, self.fanOffset, self.fanHeight, self.fanEdgeMask)
+                for i = 1, #fanVertices do fanVertices[i][3] = fanVertices[i][3] / self.__fanImage:getWidth() * self.fanTextureScale end
                 self.__fanMesh = #fanVertices > 1 and love.graphics.newMesh(fanVertices, self.__fanImage, "triangles") or nil
             end 
         end
