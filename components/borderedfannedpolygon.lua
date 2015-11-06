@@ -163,6 +163,7 @@ do
         end
 
         if self.__fanMesh then 
+            love.graphics.setColor(255, 255, 255, 255)
             love.graphics.draw(self.__fanMesh)
         end 
         if self.renderWireframe then love.graphics.setWireframe(false) end
