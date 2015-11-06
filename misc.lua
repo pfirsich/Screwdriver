@@ -210,11 +210,10 @@ function getLineShape(fromX, fromY, toX, toY, margin, thickness)
 end 
 
 function transformTexCoords(x, y, imgWidth, imgHeight, transforms)
-    u = x / imgWidth
-    v = y / imgHeight
-    u, v = rotatePoint(u, v, -transforms.rotation)
-    u = u * transforms.scale[1] + transforms.offset[1] / imgWidth
-    v = v * transforms.scale[2] + transforms.offset[2] / imgHeight
+    local u, v = x, y --x / imgWidth, y / imgHeight
+    u, v = rotatePoint(x, y, -transforms.rotation)
+    u, v = u / imgWidth * transforms.scale[1], v / imgHeight * transforms.scale[2]
+    u, v = u + transforms.offset[1] / imgWidth, v + transforms.offset[2] / imgHeight
     return u, v
 end
 
