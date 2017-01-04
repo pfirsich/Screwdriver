@@ -1,12 +1,21 @@
 # ToDo
+* "saved" not just a boolean, but a pointer to a mapStack-element, so undo knows if the current state was saved
+* Tex-Transforms still fucked
+* Investigate Bug in Video
+* Think about "stitching" and cutting fancy polygons.
 * MetadataBoolean, MetadataString, MetadataNumber, MetadataChoice (choices = list of id-label pairs)
 	Maybe leave these out since they are just a single gui element and make the intended way implementing custom components?
 		Downside: For every entity type in game you would have to create a new component type = No.
 	MetadataEntity? Draws connections (on-off-able) and has an edit mode to connect entities (maybe a dropdown?)
 
 # Später
+* Gucken welches dieser Features man einbauen kann: https://www.youtube.com/watch?v=f4jeS9e2Gts (Ferr2D Terrain) / https://www.youtube.com/watch?v=d3SSBeVpaVE
+* https://www.youtube.com/watch?v=XoLpPw864eA Hier auch
+* And here: https://www.humblebundle.com/store/p/mayandeathrobots_storefront?utm_source=Humble+Bundle+Newsletter&utm_campaign=3c1c9250b0-Humble_Weekly_Bundle_Team_17_Threequel&utm_medium=email&utm_term=0_990b1b6399-3c1c9250b0-92494777&mc_cid=3c1c9250b0&mc_eid=5b4ae7d8ab
+http://store.steampowered.com/app/347470/?l=german
+* "Plugins" für Assets im Filebrowser
 * Fix fans - siehe fan_triang.jpg
-* Ein "Lineal" um Jump-Height und so im Spiel sehen zu können
+* Ein "Lineal" um Jump-Height und so im Spiel sehen zu können - Grid?
 * keepAspect ratio wieder einbauen und reparieren. Dafür in onChange einhooken und gleichsetzen, dann gui.lua so modifizieren, dass bei cliExec für geindexte Variablen (z.B. position[1]), der ganze Tupel gesetzt wird.
 * Show centers of mass for polygons (to see the origin for texture rotation)
 * edit mode fürs offsetting - vermutlich nicht, da man das in der Regel genau machen will

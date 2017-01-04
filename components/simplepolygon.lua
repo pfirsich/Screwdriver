@@ -16,13 +16,14 @@ do
         self.buildMesh = false
         addTable(self, properties)
 
-        local remeshOnChange = function() 
+        local remeshOnChange = function()
             -- this should never fail, since it is only called when all of these sub calls will succeed
-            getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon"):remesh() 
+            getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon"):remesh()
         end
         self.__guiElements = {
             {variable = "", type = "Button", label = "Edit Vertices", cmd = 'simulateShortcut("q")'},
             {variable = "", type = "Button", label = "Edit Texture", cmd = 'simulateShortcut("w")'},
+            {variable = "", type = "Button", label = "Make Axis Aligned Box", cmd = 'getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "SimplePolygon"):toAAB()'},
             {type = "Line"},
             {variable = "imagePath", type = "File", label = "Image"},
             {variable = "color", type = "Color", label = "Color"},
@@ -37,7 +38,7 @@ do
             {variable = "renderWireframe", type = "Checkbox", label = "Render as wireframe (debug)"},
         }
 
-        if #self.points == 0 then 
+        if #self.points == 0 then
             editor.changeEditMode(components["SimplePolygon"].editModes.appendPoints)
             gui.printConsole("New polygon entity created. Changed edit mode to append points mode!")
         end
@@ -48,56 +49,76 @@ do
         -- load image first so image dimensions are available for proper texture coordinate calculation
         self:loadImageFile()
         self:remesh()
-    end 
+    end
 
     function SimplePolygon:loadImageFile()
-        if self.imagePath ~= "" then 
+        if self.imagePath ~= "" then
             self.__image = getImage(self.imagePath)
-            if self.__image then 
+            if self.__image then
                 self.__image:setWrap("repeat", "repeat")
                 if self.__mesh then self.__mesh:setTexture(self.__image) end
             end
         end
-    end 
+    end
+
+    function SimplePolygon:toAAB()
+        local minX, maxX = math.huge, -math.huge
+        local minY, maxY = math.huge, -math.huge
+        for i = 1, #self.points, 2 do
+            minX = math.min(minX, self.points[i+0])
+            minY = math.min(minY, self.points[i+1])
+            maxX = math.max(maxX, self.points[i+0])
+            maxY = math.max(maxY, self.points[i+1])
+        end
+
+        self.points = {
+            minX, minY,
+            minX, maxY,
+            maxX, maxY,
+            maxX, minY,
+        }
+
+        self:remesh()
+    end
 
     function SimplePolygon:recenter()
         local centerX, centerY = 0, 0
-        for i = 1, #self.points, 2 do 
-            centerX = centerX + self.points[i+0] 
+        for i = 1, #self.points, 2 do
+            centerX = centerX + self.points[i+0]
             centerY = centerY + self.points[i+1]
-        end 
+        end
         centerX = centerX / #self.points * 2
         centerY = centerY / #self.points * 2
 
-        for i = 1, #self.points, 2 do 
+        for i = 1, #self.points, 2 do
             self.points[i+0] = self.points[i+0] - centerX
             self.points[i+1] = self.points[i+1] - centerY
-        end 
+        end
 
         local transforms = getComponentByType(getEntityByComponent(self), "Transforms")
-        if transforms then 
+        if transforms then
             transforms.position = {transforms.position[1] + centerX, transforms.position[2] + centerY}
         end
     end
 
     function SimplePolygon:remesh()
-        if #self.points >= 6 and self.buildMesh then 
+        if #self.points >= 6 and self.buildMesh then
             local tris = love.math.triangulate(self.points)
             local vertices = {}
             for _, tri in ipairs(tris) do
-                for i = 1, 6, 2 do 
-                    local u, v 
-                    if self.__image then 
+                for i = 1, 6, 2 do
+                    local u, v
+                    if self.__image then
                         u, v = transformTexCoords(tri[i+0], tri[i+1], self.__image:getWidth(), self.__image:getHeight(), self.textureTransforms)
-                    else 
+                    else
                         u, v = 0.0, 0.0
                     end
                     local vertex = {tri[i], tri[i+1], u, v, 255, 255, 255, 255}
                     table.insert(vertices, vertex)
                 end
-            end 
+            end
 
-            if self.__mesh == nil then 
+            if self.__mesh == nil then
                 self.__mesh = love.graphics.newMesh(#self.points / 2, self.__image, "triangles")
             end
             self.__mesh:setVertices(vertices)
@@ -106,38 +127,38 @@ do
 
     function SimplePolygon:getShapes()
         local ret = {}
-        if editor.editMode == SimplePolygon.editModes.appendPoints or editor.editMode == SimplePolygon.editModes.editPoints then 
+        if editor.editMode == SimplePolygon.editModes.appendPoints or editor.editMode == SimplePolygon.editModes.editPoints then
             local radius = 10/camera.scale
-            for i = 1, #self.points, 2 do 
+            for i = 1, #self.points, 2 do
                 table.insert(ret, getCircleShape(self.points[i], self.points[i+1], radius))
-            end 
+            end
 
             if #self.points >= 6 then
-                for i = 1, #self.points, 2 do 
+                for i = 1, #self.points, 2 do
                     local ni = i + 2
                     if ni > #self.points then ni = 1 end
                     table.insert(ret, getLineShape(self.points[i], self.points[i+1], self.points[ni], self.points[ni+1], radius, 8.0/camera.scale))
-                end 
-            end 
-        else 
-            if #self.points >= 6 then 
+                end
+            end
+        else
+            if #self.points >= 6 then
                 ret = {{unpack(self.points)}}
-            end 
-        end 
+            end
+        end
         return ret
     end
 
     function SimplePolygon:renderStart()
         love.graphics.setColor(unpack(self.color))
-        if self.renderWholeTexture and self.__image then 
+        if self.renderWholeTexture and self.__image then
             love.graphics.push()
             love.graphics.rotate(self.textureTransforms.rotation)
             love.graphics.scale(1.0/self.textureTransforms.scale[1], 1.0/self.textureTransforms.scale[2])
             love.graphics.translate(-self.textureTransforms.offset[1], -self.textureTransforms.offset[2])
             love.graphics.draw(self.__image)
             love.graphics.pop()
-        else 
-            if self.__mesh then 
+        else
+            if self.__mesh then
                 if self.renderWireframe then love.graphics.setWireframe(true) end
                 love.graphics.draw(self.__mesh)
                 if self.renderWireframe then love.graphics.setWireframe(false) end
@@ -154,7 +175,7 @@ do
     function SimplePolygon:removePoint(index)
         table.remove(self.points, index*2 - 1)
         table.remove(self.points, index*2 - 1)
-    end 
+    end
 
     function SimplePolygon:movePoint(index, x, y) -- index is point index, x and y are absolute in world space
         local i = index * 2 - 1
@@ -185,30 +206,43 @@ do
     function SimplePolygon.editModes.appendPoints.onExit()
         -- This might go wrong, if another entity is created and the first one didn't have any points appended
         local entity = getEntityByGUID(gui.selectedEntities[1])
-        if entity and entity.__pickableComponent then 
+        if entity and entity.__pickableComponent then
             local polygon = getComponentById(entity, entity.__pickableComponent)
-            if polygon and polygon.recenter and polygon.remesh then 
+            if polygon and polygon.recenter and polygon.remesh then
+                -- a special case for polygons with two points -> make axis aligned box
+                if #polygon.points == 4 then
+                    local minX, maxX = math.min(polygon.points[1], polygon.points[3]), math.max(polygon.points[1], polygon.points[3])
+                    local minY, maxY = math.min(polygon.points[2], polygon.points[4]), math.max(polygon.points[2], polygon.points[4])
+                    polygon.points = {
+                        minX, minY,
+                        minX, maxY,
+                        maxX, maxY,
+                        maxX, minY
+                    }
+                end
+
+                -- for all cases
                 polygon:recenter()
                 polygon.buildMesh = true
             end
         end
-    end 
+    end
 
     function SimplePolygon.editModes.appendPoints.onMouseDown(x, y, button)
         local mode = SimplePolygon.editModes.appendPoints
-        if button == "l" then 
+        if button == "l" then
             mode.entity = getEntityByGUID(gui.selectedEntities[1])
-            if mode.entity and mode.entity.__pickableComponent then 
+            if mode.entity and mode.entity.__pickableComponent then
                 mode.polygon = getComponentById(mode.entity, mode.entity.__pickableComponent)
-                if mode.polygon and mode.polygon.addPoint then 
+                if mode.polygon and mode.polygon.addPoint then
                     x, y = camera.screenToWorld(x, y)
                     local transforms = getComponentByType(mode.entity, "Transforms")
-                    if transforms then 
+                    if transforms then
                         x, y = transforms:worldToLocal(x, y)
                     end
                     cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "'..mode.polygon.componentType..'"):addPoint(' .. x .. ", " .. y .. ')')
-                end 
-            end 
+                end
+            end
         end
     end
 
@@ -218,76 +252,76 @@ do
     end
 
 
-    function SimplePolygon.editModes.editPoints.onMouseDown(x, y, button) 
+    function SimplePolygon.editModes.editPoints.onMouseDown(x, y, button)
         local mode = SimplePolygon.editModes.editPoints
         mode.entity = getEntityByGUID(gui.selectedEntities[1])
-        if mode.entity and mode.entity.__pickableComponent then 
+        if mode.entity and mode.entity.__pickableComponent then
             mode.polygon = getComponentById(mode.entity, mode.entity.__pickableComponent)
             mode.transforms = getComponentByType(mode.entity, "Transforms")
-            if mode.polygon and mode.polygon.removePoint and mode.polygon.addPoint and mode.polygon.movePoint then 
+            if mode.polygon and mode.polygon.removePoint and mode.polygon.addPoint and mode.polygon.movePoint then
                 local wx, wy = camera.screenToWorld(x, y)
                 mode.shapeIndex = pickShapeFromEntity(wx, wy, mode.entity)
-                if mode.shapeIndex then 
-                    if button == "r" and mode.shapeIndex <= #mode.polygon.points/2 then 
+                if mode.shapeIndex then
+                    if button == "r" and mode.shapeIndex <= #mode.polygon.points/2 then
                         cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "'..mode.polygon.componentType..'"):removePoint(' .. mode.shapeIndex .. ')')
                         mode.shapeIndex = nil
-                    end 
+                    end
 
-                    if button == "l" and mode.shapeIndex > #mode.polygon.points/2 then 
+                    if button == "l" and mode.shapeIndex > #mode.polygon.points/2 then
                         local pointIndex = mode.shapeIndex - #mode.polygon.points/2
-                        if mode.transforms then 
+                        if mode.transforms then
                             x, y = mode.transforms:worldToLocal(wx, wy)
                         end
                         local args = x .. ", " .. y .. ", " .. pointIndex
                         cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "'..mode.polygon.componentType..'"):addPoint(' .. args .. ')')
-                    end 
-                end 
-            end 
-        end 
-    end 
+                    end
+                end
+            end
+        end
+    end
 
     function SimplePolygon.editModes.editPoints.onMouseMove(x, y, dx, dy)
         local mode = SimplePolygon.editModes.editPoints
-        if mode.shapeIndex and mode.shapeIndex <= #mode.polygon.points/2 then 
-            if mode.transforms then 
+        if mode.shapeIndex and mode.shapeIndex <= #mode.polygon.points/2 then
+            if mode.transforms then
                 dx = dx / mode.transforms.scale[1]
                 dy = dy / mode.transforms.scale[2]
                 dx, dy = rotatePoint(dx, dy, -mode.transforms.rotation)
-            end 
+            end
 
             local i = mode.shapeIndex * 2 - 1
             mode.polygon.points[i+0] = mode.polygon.points[i+0] + dx / camera.scale
             mode.polygon.points[i+1] = mode.polygon.points[i+1] + dy / camera.scale
             mode.polygon:remesh()
-        end 
-    end 
+        end
+    end
 
     function SimplePolygon.editModes.editPoints.onMouseUp(x, y, button)
         local mode = SimplePolygon.editModes.editPoints
-        if button == "l" and mode.shapeIndex and mode.shapeIndex <= #mode.polygon.points/2 then 
+        if button == "l" and mode.shapeIndex and mode.shapeIndex <= #mode.polygon.points/2 then
             local i = mode.shapeIndex * 2 - 1
             local args = mode.shapeIndex .. ", " .. mode.polygon.points[i+0] .. ", " .. mode.polygon.points[i+1]
             cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "'..mode.polygon.componentType..'"):movePoint(' .. args .. ')')
-        end 
+        end
         mode.shapeIndex = nil
-    end 
+    end
 
     -- Texture mode
     function SimplePolygon.editModes.editTexture.onEnter(x, y, transformsKey)
         SimplePolygon.editModes.editTexture.transformsKey = transformsKey
     end
 
-    function SimplePolygon.editModes.editTexture.onMouseDown(x, y, button) 
+    function SimplePolygon.editModes.editTexture.onMouseDown(x, y, button)
         local mode = SimplePolygon.editModes.editTexture
         mode.entity = getEntityByGUID(gui.selectedEntities[1])
-        if mode.entity and mode.entity.__pickableComponent then 
+        if mode.entity and mode.entity.__pickableComponent then
             mode.transforms = getComponentByType(mode.entity, "Transforms")
             mode.polygon = getComponentById(mode.entity, mode.entity.__pickableComponent)
 
-            if mode.polygon and mode.polygon.getTextureTransformsToEdit then 
+            if mode.polygon and mode.polygon.getTextureTransformsToEdit then
                 mode.transformsKey = mode.polygon:getTextureTransformsToEdit()
 
-                if mode.transforms then 
+                if mode.transforms then
                     local wx, wy = camera.screenToWorld(x, y)
                     mode.mouseAngleStart = math.atan2(wy - mode.transforms.position[2], wx - mode.transforms.position[1])
                     mode.trafoRotStart = mode.polygon[mode.transformsKey].rotation
@@ -296,42 +330,42 @@ do
                 local wx, wy = camera.screenToWorld(x, y)
                 if button == "l" then mode.translate = true end
                 if button == "r" then mode.rotate = true end
-            end 
-        end 
-    end 
+            end
+        end
+    end
 
     function SimplePolygon.editModes.editTexture.onMouseMove(x, y, dx, dy)
         local mode = SimplePolygon.editModes.editTexture
-        if mode.translate then 
-            if mode.transforms then  
+        if mode.translate then
+            if mode.transforms then
                 dx = dx / mode.transforms.scale[1]
                 dy = dy / mode.transforms.scale[2]
                 dx, dy = rotatePoint(dx, dy, -mode.transforms.rotation)
             end
 
             dx, dy = rotatePoint(dx, dy, -mode.polygon[mode.transformsKey].rotation)
-            mode.polygon[mode.transformsKey].offset[1] = mode.polygon[mode.transformsKey].offset[1] - dx * mode.polygon[mode.transformsKey].scale[1] / camera.scale 
-            mode.polygon[mode.transformsKey].offset[2] = mode.polygon[mode.transformsKey].offset[2] - dy * mode.polygon[mode.transformsKey].scale[2] / camera.scale 
+            mode.polygon[mode.transformsKey].offset[1] = mode.polygon[mode.transformsKey].offset[1] - dx * mode.polygon[mode.transformsKey].scale[1] / camera.scale
+            mode.polygon[mode.transformsKey].offset[2] = mode.polygon[mode.transformsKey].offset[2] - dy * mode.polygon[mode.transformsKey].scale[2] / camera.scale
             mode.polygon:remesh()
-        end 
+        end
 
-        if mode.rotate then 
+        if mode.rotate then
             local wx, wy = camera.screenToWorld(x, y)
             local angle = math.atan2(wy - mode.transforms.position[2], wx - mode.transforms.position[1])
             mode.polygon[mode.transformsKey].rotation = mode.trafoRotStart + angle - mode.mouseAngleStart
             mode.polygon:remesh()
-        end 
-    end 
+        end
+    end
 
-    function SimplePolygon.editModes.editTexture.onMouseUp(x, y, button) 
+    function SimplePolygon.editModes.editTexture.onMouseUp(x, y, button)
         local mode = SimplePolygon.editModes.editTexture
-        if mode.translate then 
+        if mode.translate then
             cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "'..mode.polygon.componentType..'").'..mode.transformsKey..'.offset = {' .. table.concat(mode.polygon[mode.transformsKey].offset, ", ") .. "}")
-        end 
-        if mode.rotate then 
+        end
+        if mode.rotate then
             cliExec('getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "'..mode.polygon.componentType..'").'..mode.transformsKey..'.rotation = ' .. tostring(mode.polygon[mode.transformsKey].rotation))
         end
         mode.translate = false
         mode.rotate = false
     end
-end 
+end
