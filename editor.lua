@@ -81,6 +81,13 @@ do
 		return entity
 	end
 
+	function editor.duplicateEntities(entities)
+		for _, entityGUID in ipairs(gui.selectedEntities) do
+			local entity = getEntityByGUID(entityGUID)
+			editor.createEntity(entity.type, entity.components)
+		end
+	end
+
 	function editor.entityUp(selected)
 		for i = #map.entities, 1, -1 do
 			for _, guid in ipairs(selected) do

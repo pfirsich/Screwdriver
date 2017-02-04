@@ -61,10 +61,12 @@ do
 	end
 
 	shortcut("lctrl+a,rctrl+a", "gui.selectEntities(table.map(map.entities, function(entity) return entity.guid end))")
-	shortcut("lctrl+d,rctrl+d", "gui.selectEntities({})")
+	shortcut("lalt+a,ralt+a", "gui.selectEntities({})")
 	shortcut("lctrl+z,rctrl+z", "mapStack:seek(-1)")
 	shortcut("lctrl+y,rctrl+y", "mapStack:seek(1)")
 	shortcut("lctrl+f,rctrl+f", "editor.focusCamera(gui.selectedEntities)")
+	shortcut("lctrl+lalt", "editor.snapMouseToGrid()")
+	shortcut("capslock", 'toggle(components["Core"].static, "showMouseWorldPosition")', false)
 
 	shortcut("lctrl+s,rctrl+s", 'editor.saveMap()')
 	shortcut("f1", 'gui.sceneWindow:toggle()')
@@ -83,9 +85,8 @@ do
 	shortcut("tab", 'toggle(components["Core"].static, "showEntityBorders"); toggle(components["Core"].static, "showNames")', true)
 	shortcut("c", 'toggle(components["Transforms"].static, "showCenterMarkers")', true)
 	shortcut("g", 'toggle(components["Core"].static, "showGrid")', true)
-	shortcut("capslock", 'toggle(components["Core"].static, "showMouseWorldPosition")', true)
-	shortcut("lctrl+lalt", "editor.snapMouseToGrid()", true)
 	shortcut("pageup", "editor.entityUp(gui.selectedEntities)", true)
 	shortcut("pagedown", "editor.entityDown(gui.selectedEntities)", true)
 	shortcut("delete", "editor.removeEntities(gui.selectedEntities)", true)
+	shortcut("lctrl+d,rctrl+d", "editor.duplicateEntities(gui.selectedEntities)", true)
 end

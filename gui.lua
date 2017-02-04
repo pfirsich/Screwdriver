@@ -217,11 +217,17 @@ do
 											cliCmd = 'simulateShortcut("lctrl+f")', onClicked = widgetExecCliCmd_nostack}
 		gui.sceneWindowLayout:addWidget(gui.entityFocusButton)
 
-		gui.sceneWindowLayout:newLine({["spacing-vertical"] = 20})
+		gui.sceneWindowLayout:newLine()
 		gui.entityRemoveButton = kraid.widgets.Button{parent = gui.sceneWindowScroll, height = 30, minWidth = 50, text = "Remove entity",
 												cliCmd = 'simulateShortcut("delete")',
 												onClicked = widgetExecCliCmd}
 		gui.sceneWindowLayout:addWidget(gui.entityRemoveButton)
+
+		gui.sceneWindowLayout:newLine({["spacing-vertical"] = 20})
+		gui.entityDuplicateButton = kraid.widgets.Button{parent = gui.sceneWindowScroll, height = 30, minWidth = 50, text = "Duplicate entity",
+												cliCmd = 'simulateShortcut("lctrl+d")',
+												onClicked = widgetExecCliCmd}
+		gui.sceneWindowLayout:addWidget(gui.entityDuplicateButton)
 
 		gui.sceneWindow:setParam("onResize", function(window)
 			gui.sceneWindowLayout:arrange()
