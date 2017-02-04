@@ -1,49 +1,49 @@
-do 
+do
 	shortcuts = {}
 	function shortcut(keys, cmd, usestack)
 		shortcuts[#shortcuts+1] =  {keys, cmd, usestack or false}
-	end 
+	end
 
-	function isPressed(keys) 
+	function isPressed(keys)
 		local delim = keys:find(",", 1, true)
-		if delim == nil then 
+		if delim == nil then
 			local pressed = true
 			for key in string.gmatch(keys, "([^%+]+)") do
 				pressed = love.keyboard.isDown(key) and pressed
 			end
 			return pressed
-		else 
+		else
 			return isPressed(keys:sub(1, delim-1)) or isPressed(keys:sub(delim+1))
-		end 
-	end 
+		end
+	end
 
 	function checkAndExecShortcuts()
-		for _, shortcut in ipairs(shortcuts) do 
-			if isPressed(shortcut[1]) then 
-				if shortcut[3] then 
+		for _, shortcut in ipairs(shortcuts) do
+			if isPressed(shortcut[1]) then
+				if shortcut[3] then
 					cliExec(shortcut[2])
 				else
 					cliExec_nostack(shortcut[2])
 				end
 				break
-			end 
-		end 
+			end
+		end
 	end
 
 	function getShortcut(keys)
-		for _, shortcut in ipairs(shortcuts) do 
+		for _, shortcut in ipairs(shortcuts) do
 			for str in string.gmatch(shortcut[1], "([^,]+)") do
-				if str == keys then 
+				if str == keys then
 					return shortcut
 				end
 			end
 		end
-	end 
+	end
 
 	function simulateShortcut(keys)
 		local shortcut = getShortcut(keys)
-		if shortcut then 
-			if shortcut[3] then 
+		if shortcut then
+			if shortcut[3] then
 				cliExec(shortcut[2])
 			else
 				cliExec_nostack(shortcut[2])
@@ -53,9 +53,9 @@ do
 
 	function printShortcut(keys)
 		local shortcut = getShortcut(keys)
-		if shortcut then 
+		if shortcut then
 			gui.printConsole("keys: " .. shortcut[1] .. ", uses map stack: " .. tostring(shortcut[3]) .. ", command: " .. shortcut[2])
-		else 
+		else
 			gui.printConsole("No shortcut found matching this key combination.")
 		end
 	end
@@ -80,9 +80,11 @@ do
 	shortcut("w", 'editor.changeEditMode(components["SimplePolygon"].editModes.editTexture)', true)
 	shortcut("h", 'editor.changeEditMode(components["BorderedFannedPolygon"].editModes.editFanEdges)', true)
 
-	shortcut("tab", 'toggle(components["Core"].static, "showEntityBorders"); toggle(components["Core"].static, "showNames")', true) 
-	shortcut("c", 'toggle(components["Transforms"].static, "showCenterMarkers")', true) 
-	shortcut("g", 'toggle(components["Core"].static, "showGrid")', true) 
+	shortcut("tab", 'toggle(components["Core"].static, "showEntityBorders"); toggle(components["Core"].static, "showNames")', true)
+	shortcut("c", 'toggle(components["Transforms"].static, "showCenterMarkers")', true)
+	shortcut("g", 'toggle(components["Core"].static, "showGrid")', true)
+	shortcut("capslock", 'toggle(components["Core"].static, "showMouseWorldPosition")', true)
+	shortcut("lctrl+lalt", "editor.snapMouseToGrid()", true)
 	shortcut("pageup", "editor.entityUp(gui.selectedEntities)", true)
 	shortcut("pagedown", "editor.entityDown(gui.selectedEntities)", true)
 	shortcut("delete", "editor.removeEntities(gui.selectedEntities)", true)

@@ -20,10 +20,11 @@ do
 
 	Core.static.showGrid = true
 	Core.static.gridSpacing = 200
-	Core.static.showNames = true 
+	Core.static.showNames = true
 	Core.static.showDetails = true
 	Core.static.showEntityBorders = true
 	Core.static.backgroundColor = {0, 0, 0, 255}
+	Core.static.showMouseWorldPosition = false
 
 	Core.static.__guiElements = { -- background color
 		--{id = "showDetails", name = "Show details", type = "Checkbox"},
