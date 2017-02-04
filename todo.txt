@@ -2,7 +2,7 @@
 * "saved" not just a boolean, but a pointer to a mapStack-element, so undo knows if the current state was saved
 * Tex-Transforms still fucked
 * Investigate Bug in Video
-* Think about "stitching" and cutting fancy polygons.
+* Think about "stitching" and cutting fancy polygons. -> Union
 * MetadataBoolean, MetadataString, MetadataNumber, MetadataChoice (choices = list of id-label pairs)
 	Maybe leave these out since they are just a single gui element and make the intended way implementing custom components?
 		Downside: For every entity type in game you would have to create a new component type = No.

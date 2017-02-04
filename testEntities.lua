@@ -15,7 +15,7 @@ entityTypes["Sprite + Transforms"] = {
 			id = "core",
 			componentType = "Core",
 		},
-		{	
+		{
 			id = "transforms",
 			componentType = "Transforms",
 		},
@@ -34,7 +34,7 @@ entityTypes["polygon"] = {
 			id = "core",
 			componentType = "Core",
 		},
-		{	
+		{
 			id = "transforms",
 			componentType = "Transforms",
 		},
@@ -45,6 +45,34 @@ entityTypes["polygon"] = {
 	}
 }
 
+entityTypes["metadataPoly"] = {
+	label = "Polygon with Metadata",
+	components = {
+		{
+			id = "core",
+			componentType = "Core",
+		},
+		{
+			id = "transforms",
+			componentType = "Transforms",
+		},
+		{
+			id = "polygon",
+			componentType = "SimplePolygon",
+		},
+		{
+			id = "isEnemy",
+			label = "Enemy",
+			componentType = "MetadataBoolean",
+		},
+		{
+			id = "destructible",
+			label = "Destructible",
+			componentType = "MetadataBoolean",
+		},
+	}
+}
+
 entityTypes["fancy polygon"] = {
 	label = "Fancy Polygon",
 	components = {
@@ -52,13 +80,13 @@ entityTypes["fancy polygon"] = {
 			id = "core",
 			componentType = "Core",
 		},
-		{	
+		{
 			id = "transforms",
 			componentType = "Transforms",
 		},
 		{
 			id = "polygon",
 			componentType = "BorderedFannedPolygon",
-		}
+		},
 	}
 }
