@@ -73,9 +73,9 @@ do
 
         self.points = {
             minX, minY,
-            minX, maxY,
-            maxX, maxY,
             maxX, minY,
+            maxX, maxY,
+            minX, maxY,
         }
 
         self:remesh()
@@ -215,9 +215,9 @@ do
                     local minY, maxY = math.min(polygon.points[2], polygon.points[4]), math.max(polygon.points[2], polygon.points[4])
                     polygon.points = {
                         minX, minY,
-                        minX, maxY,
+                        maxX, minY,
                         maxX, maxY,
-                        maxX, minY
+                        minX, maxY,
                     }
                 end
 
