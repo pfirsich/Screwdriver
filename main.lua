@@ -338,6 +338,8 @@ function love.draw()
 				local x, y = entity.__shapes.bbox[1], entity.__shapes.bbox[2]
 				local w, h = entity.__shapes.bbox[3] - entity.__shapes.bbox[1], entity.__shapes.bbox[4] - entity.__shapes.bbox[2]
 				lg.rectangle("line", x, y, w, h)
+				lg.print(tostring(w) .. ", " .. tostring(h), x + 5/camera.scale, y - 5/camera.scale - lg.getFont():getHeight()/camera.scale,
+						 0, 1.2/camera.scale)
 			end
 		end
 		lg.setLineWidth(1)
