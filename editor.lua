@@ -58,6 +58,9 @@ do
 			if component.componentType == "Core" and component.name == nil then pass.name = type end
 
 			if componentProperties then
+				if componentProperties[i] == nil then
+					error("Component with id '" .. component.id .. "' missing for entity")
+				end
 				-- addTable only works properly if number and order of components still matches the entity type
 				-- This check should be enough to make sure most of the time, but is by no means sufficient for all cases
 				if component.id ~= componentProperties[i].id then
