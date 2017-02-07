@@ -244,6 +244,8 @@ function love.mousemoved(x, y, dx, dy)
 	end
 
 	if #gui.selectedEntities > 0 and editor.editMode.onMouseMove then
+		if love.keyboard.isDown("x") then dy = 0 end
+		if love.keyboard.isDown("y") then dx = 0 end
 		editor.editMode.onMouseMove(x, y, dx, dy)
 	end
 end
