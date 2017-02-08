@@ -21,8 +21,9 @@ do
     end
 
     function Sprite:getShapes()
-        if self.__image then
-            local w, h = self.__image:getWidth(), self.__image:getHeight()
+        if self.imagePath ~= "" then
+            local img = getImage(self.imagePath)
+            local w, h = img:getWidth(), img:getHeight()
             return {{0, 0,   0, h,   w, h,   w, 0}}
         end
         return {}
