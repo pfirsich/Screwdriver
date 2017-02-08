@@ -1,17 +1,17 @@
-function inArray(array, elem) 
-	for _, e in ipairs(array) do 
-		if e == elem then return true end 
-	end 
+function inArray(array, elem)
+	for _, e in ipairs(array) do
+		if e == elem then return true end
+	end
 	return false
-end 
+end
 
 function tableCopy(from)
-    local to = {} 
-    for k, v in pairs(from) do 
+    local to = {}
+    for k, v in pairs(from) do
         to[k] = v
-    end 
+    end
     return to
-end 
+end
 
 function rotatePoint(x, y, angle)
     local sinphi = math.sin(angle)
@@ -35,34 +35,34 @@ function tableDeepCopy(tbl)
 end
 
 function table.iextend(to, from)
-    for i = 1, #from do 
+    for i = 1, #from do
         table.insert(to, from[i])
-    end 
+    end
 end
 
 function table.map(tbl, func)
     local ret = {}
-    for k, v in pairs(tbl) do 
+    for k, v in pairs(tbl) do
         ret[k] = func(v)
-    end 
+    end
     return ret
-end  
+end
 
 function foreach(tbl, func)
-    for k, v in pairs(tbl) do 
+    for k, v in pairs(tbl) do
         func(v)
-    end 
+    end
 end
 
 function toggle(tbl, key)
     tbl[key] = not tbl[key]
 end
 
-function eval(str) 
+function eval(str)
     f, err = loadstring(str)
-    if f == nil then 
+    if f == nil then
         error(err .. " - String: '" .. str .. "'")
-    end 
+    end
     return f()
 end
 
@@ -81,20 +81,20 @@ end
 
 function string.splitLast(str, sep)
     local before, after = str:match("(.+)" .. sep .. "([^" .. sep .. "]+)")
-    if before == nil then 
+    if before == nil then
         return "", str
-    else 
+    else
         return before, after
     end
-end 
+end
 
-function newImage(path) 
+function newImage(path)
     local attr, err = lfs.attributes(path)
-    if attr == nil then 
+    if attr == nil then
         gui.dialogNotice("Error", "Attributes of image file could not be checked - '" .. self.imagePath .. "': " .. err)
         return nil
     end
-    if attr.mode ~= "file" then 
+    if attr.mode ~= "file" then
         gui.dialogNotice("Error", "'" .. self.imagePath .. "' is not a file.")
         return nil
     end
@@ -104,23 +104,23 @@ function newImage(path)
     file:close()
 
     local status, ret = pcall(love.graphics.newImage, filedata)
-    if status == false then 
+    if status == false then
         gui.dialogNotice("Error", "Error while loading image: " .. ret)
-        return nil 
-    else 
+        return nil
+    else
         return ret
     end
 end
 
-do 
+do
     local imageMap = {}
-    function getImage(path)
+    function getImage(path, reload)
         local img = imageMap[path]
-        if img == nil then
+        if img == nil or reload then
             imageMap[path] = newImage(path)
             return imageMap[path]
-        else 
-            return img 
+        else
+            return img
         end
     end
 end
@@ -129,27 +129,27 @@ paths = {
     splitFile = function(origPath) -- origPath has to point to a file sensible results!
         local path, file = string.splitLast(origPath, "/")
         return path == "" and "." or path, file
-    end, 
+    end,
 
     getExt = function(path)
         local rest, ext = string.splitLast(path, "%.")
         return ext
-    end, 
+    end,
 
     normalize = function(path)
         local parts = string.split(path:gsub("\\", "/"), "/")
         local i = 1
-        while i <= #parts do 
-            if parts[i] == ".." then 
+        while i <= #parts do
+            if parts[i] == ".." then
                 i = i - 1
                 table.remove(parts, i) -- remove the part before this
                 table.remove(parts, i) -- remove this part
-            elseif parts[i] == "." then 
+            elseif parts[i] == "." then
                 table.remove(parts, i)
             else
                 i = i + 1
             end
-        end 
+        end
         return table.concat(parts, "/")
     end,
 
@@ -160,16 +160,16 @@ paths = {
         local partIndex = 1
         local retParts = {}
         local matching = true
-        for i = 1, #baseParts do 
-            if i > #parts or parts[i] ~= baseParts[i] then matching = false end 
-            if matching then 
+        for i = 1, #baseParts do
+            if i > #parts or parts[i] ~= baseParts[i] then matching = false end
+            if matching then
                 partIndex = i
-            else 
+            else
                 retParts[#retParts+1] = ".."
             end
         end
 
-        for i = partIndex + 1, #parts do 
+        for i = partIndex + 1, #parts do
             retParts[#retParts+1] = parts[i]
         end
         return table.concat(retParts, "/")
@@ -179,12 +179,12 @@ paths = {
 function getCircleShape(x, y, r)
     local ret = {}
     local segments = 12
-    for i = 1, segments do 
+    for i = 1, segments do
         local ri = i*2 - 1
         local angle = 2.0 * math.pi / segments * (i-1)
         ret[ri+0] = r * math.cos(angle) + x
         ret[ri+1] = r * math.sin(angle) + y
-    end 
+    end
     return ret
 end
 
@@ -201,13 +201,13 @@ function getLineShape(fromX, fromY, toX, toY, margin, thickness)
     ret[4] = fromY + dirY / dirLen * margin - orthoDirY * thickness / 2
 
     ret[5] = fromX + dirX / dirLen * (dirLen - margin) - orthoDirX * thickness / 2
-    ret[6] = fromY + dirY / dirLen * (dirLen - margin) - orthoDirY * thickness / 2      
+    ret[6] = fromY + dirY / dirLen * (dirLen - margin) - orthoDirY * thickness / 2
 
     ret[7] = fromX + dirX / dirLen * (dirLen - margin) + orthoDirX * thickness / 2
     ret[8] = fromY + dirY / dirLen * (dirLen - margin) + orthoDirY * thickness / 2
 
     return ret
-end 
+end
 
 function transformTexCoords(x, y, imgWidth, imgHeight, transforms)
     local u, v = x, y --x / imgWidth, y / imgHeight
@@ -219,12 +219,12 @@ end
 
 function printTableShallow(name, t)
     print("--- " .. name .. "(" .. tostring(t) .. "):")
-    for k, v in pairs(t) do 
+    for k, v in pairs(t) do
         print("\t" .. k .. " = " .. tostring(v))
     end
 end
 
-function printTable(t) -- from here: https://coronalabs.com/blog/2014/09/02/tutorial-printing-table-contents/  
+function printTable(t) -- from here: https://coronalabs.com/blog/2014/09/02/tutorial-printing-table-contents/
     local print_r_cache={}
     local function sub_print_r(t,indent)
         if (print_r_cache[tostring(t)]) then

@@ -9,22 +9,19 @@ do
 
         self.__guiElements = {
             {variable = "imagePath", type = "File", label = "Image"},
+            {variable = "", type = "Button", label = "Reload Image", cmd = 'getComponentByType(getEntityByGUID(gui.selectedEntities[1]), "Sprite"):reloadImage()'},
             {variable = "color", type = "Color", label = "Color"},
         }
     end
 
-    function Sprite:updateUserdataValues()
-        self:loadImageFile()
-    end 
-
-    function Sprite:loadImageFile()
-        if self.imagePath ~= "" then             
-            self.__image = getImage(self.imagePath)
+    function Sprite:reloadImage()
+        if self.imagePath ~= "" then
+            getImage(self.imagePath, true)
         end
-    end 
+    end
 
     function Sprite:getShapes()
-        if self.__image then 
+        if self.__image then
             local w, h = self.__image:getWidth(), self.__image:getHeight()
             return {{0, 0,   0, h,   w, h,   w, 0}}
         end
@@ -32,19 +29,19 @@ do
     end
 
     function Sprite:renderStart()
-        if self.__image then 
+        if self.imagePath ~= "" then
             love.graphics.setColor(unpack(self.color))
-            love.graphics.draw(self.__image)
+            love.graphics.draw(getImage(self.imagePath))
         end
     end
 
     function Sprite:renderEnd()
         love.graphics.setColor(255, 255, 255, 255)
-    end 
+    end
 
     Sprite.static.__unique = true
     Sprite.static.__pickable = true
 
     Sprite.static.__guiElements = {}
 
-end 
+end
